@@ -7,6 +7,44 @@
 
 // Utilities provided by utils.js (escapeHtml, formatScore, formatNumber)
 
+// Inject component-specific styles into <head>
+(function() {
+  var style = document.createElement('style');
+  style.textContent = [
+    '.achboard-wrapper { overflow-x: auto; }',
+    '.achboard-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono, "Courier New", monospace); font-size: 0.8rem; }',
+    '.achboard-table thead tr { background: #d4d4d4; border: 1px solid var(--border-strong, #808080); }',
+    '.achboard-table th { padding: 8px 12px; text-align: left; font-size: 0.7rem; font-weight: 700; color: var(--text-muted, #666); text-transform: uppercase; letter-spacing: 0.06em; }',
+    '.achboard-row { border: 1px solid #d0d0d0; border-top: none; background: #ffffff; }',
+    '.achboard-row:nth-child(even) { background: #f5f5ef; }',
+    '.achboard-row:hover { background: #e8e8ff; }',
+    '.achboard-row td { padding: 8px 12px; }',
+    '.achboard-top1 { background: #fffde6 !important; }',
+    '.achboard-top2 { background: #f5f5f5 !important; }',
+    '.achboard-top3 { background: #fdf5ef !important; }',
+    '.achboard-rank { font-weight: 700; color: var(--text-primary, #1a1a1a); white-space: nowrap; }',
+    '.achboard-name a { color: var(--accent-blue, #0000cc); text-decoration: none; font-weight: 700; }',
+    '.achboard-name a:hover { text-decoration: underline; }',
+    '.achboard-points { font-weight: 700; color: var(--accent-blue, #0000cc); }',
+    '.achboard-unlocked { color: var(--text-secondary, #444); }',
+    '.achboard-progress-cell { display: flex; align-items: center; gap: 8px; }',
+    '.achboard-progress { flex: 1; height: 12px; background: #e8e8e8; border: 1px inset #c0c0c0; overflow: hidden; min-width: 60px; }',
+    '.achboard-progress-fill { height: 100%; background: var(--accent-green, #008800); transition: width 0.6s ease; }',
+    '.achboard-pct { font-size: 0.75rem; color: var(--text-muted, #666); white-space: nowrap; }',
+    '.achboard-loading, .achboard-empty { text-align: center; padding: 24px; font-family: var(--font-mono, "Courier New", monospace); font-size: 0.8rem; color: var(--text-muted, #666); }',
+    '@media (max-width: 768px) {',
+    '  .achboard-table { font-size: 0.75rem; }',
+    '  .achboard-row td, .achboard-table th { padding: 6px 8px; }',
+    '  .achboard-progress { min-width: 40px; }',
+    '}',
+    '@media (max-width: 480px) {',
+    '  .achboard-progress-cell { flex-direction: column; align-items: flex-start; gap: 2px; }',
+    '  .achboard-progress { width: 100%; }',
+    '}'
+  ].join('\n');
+  document.head.appendChild(style);
+})();
+
 /**
  * Initializes the Achievement Leaderboard by fetching data and rendering
  * a Top-10 table with rank, name, points, unlocked count, and progress bar.

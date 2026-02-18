@@ -7,6 +7,38 @@
 
 // Utilities provided by utils.js (escapeHtml, formatScore, formatScoreShort)
 
+// Inject component-specific styles into <head>
+(function() {
+  var style = document.createElement('style');
+  style.textContent = [
+    '.hof-timeline { position: relative; padding-left: 24px; border-left: 2px solid #c0c0c0; margin-left: 12px; }',
+    '.hof-entry { position: relative; padding: 12px 16px; margin-bottom: 8px; background: #ffffff; border: 1px solid #d0d0d0; font-family: var(--font-mono, "Courier New", monospace); }',
+    '.hof-entry:hover { background: #f5f5ff; }',
+    '.hof-entry-current { border-color: var(--accent-blue, #0000cc); border-width: 2px; background: #f8f8ff; }',
+    '.hof-marker { position: absolute; left: -33px; top: 16px; }',
+    '.hof-marker-dot { display: block; width: 12px; height: 12px; background: #c0c0c0; border: 2px solid #808080; }',
+    '.hof-marker-active { background: var(--accent-blue, #0000cc); border-color: var(--accent-blue, #0000cc); }',
+    '.hof-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }',
+    '.hof-week { font-size: 0.7rem; font-weight: 700; color: var(--text-muted, #666); text-transform: uppercase; letter-spacing: 0.06em; }',
+    '.hof-badge { font-size: 0.6rem; font-weight: 700; color: #ffffff; background: var(--accent-blue, #0000cc); padding: 1px 6px; text-transform: uppercase; letter-spacing: 0.05em; }',
+    '.hof-name { font-size: 0.9rem; font-weight: 700; color: var(--text-primary, #1a1a1a); margin-bottom: 4px; }',
+    '.hof-stats { display: flex; gap: 8px; align-items: center; font-size: 0.75rem; color: var(--text-secondary, #444); }',
+    '.hof-stat { white-space: nowrap; }',
+    '.hof-sep { color: var(--text-muted, #666); }',
+    '.hof-loading, .hof-empty { text-align: center; padding: 24px; font-family: var(--font-mono, "Courier New", monospace); font-size: 0.8rem; color: var(--text-muted, #666); }',
+    '@media (max-width: 768px) {',
+    '  .hof-timeline { padding-left: 16px; margin-left: 8px; }',
+    '  .hof-marker { left: -25px; }',
+    '  .hof-entry { padding: 10px 12px; }',
+    '}',
+    '@media (max-width: 480px) {',
+    '  .hof-stats { flex-direction: column; gap: 2px; }',
+    '  .hof-sep { display: none; }',
+    '}'
+  ].join('\n');
+  document.head.appendChild(style);
+})();
+
 /**
  * Initializes the Hall of Fame by fetching the MOTW archive
  * and rendering a timeline list of winners.
