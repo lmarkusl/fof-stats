@@ -601,6 +601,7 @@
           <li><a href="https://stats.foldingathome.org/team/240890" target="_blank" rel="noopener noreferrer">Team Stats</a></li>
           <li><a href="https://fof1.de" target="_blank" rel="noopener noreferrer">fof1.de</a></li>
           <li><a href="#impressum" onclick="document.getElementById('impressum-modal').style.display='flex'">Impressum</a></li>
+          <li><a href="/datenschutz.html">Datenschutz</a></li>
         </ul>
         <p class="footer-credit">
           FreilaufendeOnlineFuzzies | Team #240890 | Data: api.foldingathome.org<br>
@@ -642,11 +643,11 @@
   </script>
 
   <!-- Impressum Modal -->
-  <div id="impressum-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
-    <div style="background:var(--bg-primary,#1e1e1e);border:2px solid var(--border-color,#555);max-width:540px;width:90%;padding:32px;position:relative;font-family:'Courier New',monospace;">
+  <div id="impressum-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;overflow-y:auto;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:var(--bg-primary,#1e1e1e);border:2px solid var(--border-color,#555);max-width:600px;width:90%;padding:32px;position:relative;font-family:'Courier New',monospace;margin:40px auto;max-height:90vh;overflow-y:auto;">
       <button onclick="document.getElementById('impressum-modal').style.display='none'" style="position:absolute;top:8px;right:12px;background:none;border:none;color:var(--text-primary,#ccc);font-size:1.4rem;cursor:pointer;">&times;</button>
       <h2 style="margin:0 0 16px;color:var(--text-accent,#0f0);">C:\&gt; IMPRESSUM</h2>
-      <p style="margin:0 0 8px;"><strong>Angaben gemaess &sect; 5 TMG</strong></p>
+      <p style="margin:0 0 8px;"><strong>Angaben gem&auml;&szlig; &sect; 5 DDG</strong></p>
       <p style="margin:0 0 16px;">
         Markus Keppel<br>
         Hauptstra&szlig;e 149<br>
@@ -656,13 +657,20 @@
       <p style="margin:0 0 16px;">
         E-Mail: mail@markus-keppel.de
       </p>
-      <p style="margin:0 0 8px;"><strong>Haftungsausschluss</strong></p>
+      <p style="margin:0 0 8px;"><strong>Haftung f&uuml;r Inhalte</strong></p>
       <p style="margin:0 0 16px;font-size:0.85rem;">
-        Die Inhalte dieser Seite werden mit groesster Sorgfalt erstellt. Fuer die Richtigkeit, Vollstaendigkeit und Aktualitaet der Inhalte kann jedoch keine Gewaehr uebernommen werden. Die dargestellten Statistiken stammen von der offiziellen Folding@Home API (api.foldingathome.org) und werden ohne Gewaehr bereitgestellt.
+        Die Inhalte dieser Website werden mit gr&ouml;&szlig;ter Sorgfalt erstellt. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird jedoch keine Gew&auml;hr &uuml;bernommen. Als Diensteanbieter bin ich gem&auml;&szlig; &sect; 7 Abs. 1 DDG f&uuml;r eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach &sect;&sect; 8 bis 10 DDG bin ich als Diensteanbieter jedoch nicht verpflichtet, &uuml;bermittelte oder gespeicherte fremde Informationen zu &uuml;berwachen. Die dargestellten Statistiken stammen von der offiziellen Folding@Home-API (api.foldingathome.org) und werden ohne Gew&auml;hr bereitgestellt.
       </p>
-      <p style="margin:0 0 8px;"><strong>Datenschutz</strong></p>
+      <p style="margin:0 0 8px;"><strong>Haftung f&uuml;r Links</strong></p>
+      <p style="margin:0 0 16px;font-size:0.85rem;">
+        Diese Website enth&auml;lt Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. F&uuml;r die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf m&ouml;gliche Rechtsverst&ouml;&szlig;e &uuml;berpr&uuml;ft. Rechtswidrige Inhalte waren nicht erkennbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.
+      </p>
+      <p style="margin:0 0 8px;"><strong>Urheberrecht</strong></p>
+      <p style="margin:0 0 16px;font-size:0.85rem;">
+        Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielf&auml;ltigung, Bearbeitung, Verbreitung und jede Art der Verwertung au&szlig;erhalb der Grenzen des Urheberrechtes bed&uuml;rfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+      </p>
       <p style="margin:0;font-size:0.85rem;">
-        Diese Website speichert keine personenbezogenen Daten der Besucher. Es werden keine Cookies gesetzt und keine Tracking-Dienste verwendet. Die angezeigten Folding@Home-Statistiken sind oeffentlich ueber die offizielle API verfuegbar.
+        <a href="/datenschutz.html" style="color:var(--text-accent,#0f0);">&#x2192; Datenschutzerkl&auml;rung</a>
       </p>
     </div>
   </div>
