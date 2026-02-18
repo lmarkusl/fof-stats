@@ -2,15 +2,17 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Alle Mitglieder des FreilaufendeOnlineFuzzies Folding@Home Teams #240890">
   <meta name="theme-color" content="#2c2c2c">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
   <title>Alle Mitglieder | FOF Stats</title>
+  <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/donor.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
   <nav class="navbar">
     <div class="container">
       <a href="/" class="nav-brand">
@@ -25,7 +27,7 @@
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
   <header class="hero" style="min-height:200px; padding:80px 20px 40px;">
     <div class="hero-content">
       <div class="terminal-prefix">C:\FOF\MEMBERS></div>
@@ -38,7 +40,7 @@
     <div class="container">
       <div class="search-box" style="margin-bottom:20px; max-width:400px;">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="member-search" placeholder="Mitglied suchen..." autocomplete="off" spellcheck="false">
+        <input type="text" id="member-search" placeholder="Mitglied suchen..." aria-label="Mitglieder durchsuchen" autocomplete="off" spellcheck="false">
       </div>
       <div class="donors-grid" id="donors-grid">
         <div class="forecast-loading">Lade Mitglieder...</div>

@@ -18,7 +18,7 @@
 
   --text-primary: #1a1a1a;
   --text-secondary: #444444;
-  --text-muted: #666666;
+  --text-muted: #555555;
   --text-inverse: #f0f0e8;
 
   --accent-blue: #0000cc;
@@ -559,7 +559,7 @@ a:visited {
 .leaderboard-table th .sort-indicator {
   margin-left: 4px;
   opacity: 0.4;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .leaderboard-table th.sort-asc .sort-indicator,
@@ -640,7 +640,7 @@ a:visited {
   align-items: center;
   gap: 4px;
   padding: 1px 8px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -809,7 +809,7 @@ a:visited {
 }
 
 .achievement-title {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1027,6 +1027,53 @@ a:visited {
   font-size: 1.8rem;
   margin-bottom: 8px;
   display: block;
+}
+
+/* ============================================================
+   SKIP LINK
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: -1;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #ffffff;
+  background: var(--accent-blue);
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  z-index: 10000;
+}
+
+/* ============================================================
+   TOUCH TARGETS
+   ============================================================ */
+.search-box input,
+.heatmap-select,
+.export-btn,
+.error-banner button,
+.period-btn,
+.tab-btn {
+  min-height: 44px;
+}
+
+.footer-links a {
+  display: inline-block;
+  min-height: 44px;
+  line-height: 44px;
 }
 
 /* ============================================================
@@ -1268,7 +1315,7 @@ button:focus-visible {
 
 .motw-title {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1304,7 +1351,7 @@ button:focus-visible {
 
 .motw-stat-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   text-transform: uppercase;
 }
@@ -1428,7 +1475,7 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -1576,7 +1623,7 @@ button:focus-visible {
 
 .equiv-desc {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -1597,7 +1644,7 @@ button:focus-visible {
 
 .ascii-art {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   line-height: 1.2;
   color: var(--accent-amber);
   margin-bottom: 8px;
@@ -1616,7 +1663,7 @@ button:focus-visible {
 
 .ascii-desc {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -1694,7 +1741,7 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -1830,7 +1877,7 @@ button:focus-visible {
 
 .profile-stat-label {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1929,7 +1976,7 @@ button:focus-visible {
 @media (max-width: 480px) {
   .tab-btn {
     padding: 6px 8px;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
   }
 }
 

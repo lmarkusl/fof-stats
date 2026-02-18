@@ -1,0 +1,10 @@
+{
+  "name": "FOF Stats - Folding@Home Dashboard",
+  "short_name": "FOF Stats",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2c2c2c",
+  "theme_color": "#2c2c2c",
+  "description": "Team Dashboard für FreilaufendeOnlineFuzzies #240890",
+  "icons": []
+}

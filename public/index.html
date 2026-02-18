@@ -2,11 +2,12 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="FreilaufendeOnlineFuzzies - Folding@Home Team #240890 Statistics Dashboard">
   <meta name="theme-color" content="#2c2c2c">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
   <title>FreilaufendeOnlineFuzzies | F@H Team #240890 Stats</title>
+  <link rel="manifest" href="/manifest.json">
 
   <!-- Courier New is a system font, no external loading needed -->
 
@@ -17,6 +18,7 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
   <!-- ============================================================
        NAVIGATION
@@ -38,7 +40,7 @@
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
   <!-- ============================================================
        HERO HEADER
        ============================================================ -->
@@ -51,7 +53,7 @@
       <div class="hero-rank-badge">
         RANK #20 WORLDWIDE --- PROTEIN FOLDING SINCE 2020
       </div>
-      <p class="hero-tagline">Fighting disease through distributed computing</p>
+      <p class="hero-tagline">Krankheitsbekaempfung durch verteiltes Rechnen</p>
     </div>
   </header>
 
@@ -99,13 +101,13 @@
         <div class="card kpi-card" id="kpi-members-card">
           <span class="kpi-icon" aria-hidden="true">&#x1F465;</span>
           <div class="kpi-value counting" id="kpi-members">---</div>
-          <div class="kpi-label">Team Members</div>
+          <div class="kpi-label">Mitglieder</div>
         </div>
 
         <div class="card kpi-card" id="kpi-rank-card">
           <span class="kpi-icon" aria-hidden="true">&#127942;</span>
           <div class="kpi-value counting" id="kpi-rank">---</div>
-          <div class="kpi-label">Global Rank</div>
+          <div class="kpi-label">Globaler Rank</div>
         </div>
 
       </div>
@@ -113,7 +115,7 @@
       <!-- Data freshness -->
       <div class="data-status" id="data-status">
         <span class="status-dot"></span>
-        <span id="data-timestamp" aria-live="polite">Loading data...</span>
+        <span id="data-timestamp" aria-live="polite">Lade Daten...</span>
         <label class="auto-refresh-toggle" title="Auto-refresh every 5 minutes">
           <input type="checkbox" id="auto-refresh"> Auto-Refresh
         </label>
@@ -215,6 +217,44 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       GLOBAL CONTEXT
+       ============================================================ -->
+  <section class="section" id="global-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F30D;</span>
+          GLOBAL.DAT
+        </h2>
+        <p class="section-subtitle">Unser Team im globalen Kontext</p>
+      </div>
+
+      <div id="global-context">
+        <div class="forecast-loading">Lade globale Statistiken...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESEARCH IMPACT
+       ============================================================ -->
+  <section class="section" id="research-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F9EC;</span>
+          RESEARCH.EXE
+        </h2>
+        <p class="section-subtitle">Wissenschaftlicher Impact - an welchen Krankheiten forschen wir?</p>
+      </div>
+
+      <div id="research-stats">
+        <div class="forecast-loading">Lade Forschungsdaten...</div>
+      </div>
+    </div>
+  </section>
+
   </div><!-- /tab-overview -->
 
   <!-- ============================================================
@@ -232,7 +272,7 @@
           <span class="section-icon" aria-hidden="true">&#x1F3C6;</span>
           DIR MEMBERS /S
         </h2>
-        <p class="section-subtitle">Individual contributions ranked by total score</p>
+        <p class="section-subtitle">Individuelle Beitraege nach Score sortiert</p>
       </div>
 
       <div id="active-filter-container"></div>
@@ -243,13 +283,14 @@
           <input
             type="text"
             id="leaderboard-search"
-            placeholder="Search members..."
+            placeholder="Mitglieder suchen..."
+            aria-label="Mitglieder durchsuchen"
             autocomplete="off"
             spellcheck="false"
           >
         </div>
         <div class="leaderboard-info" id="leaderboard-info">
-          Showing <span id="visible-count">0</span> of <span id="total-count">0</span> members
+          Zeige <span id="visible-count">0</span> von <span id="total-count">0</span> Mitgliedern
         </div>
       </div>
 
@@ -262,8 +303,8 @@
               <th data-sort="name">Name <span class="sort-indicator">&#x25B2;</span></th>
               <th data-sort="score">Score <span class="sort-indicator">&#x25B2;</span></th>
               <th data-sort="wus">Work Units <span class="sort-indicator">&#x25B2;</span></th>
-              <th data-sort="efficiency">Efficiency <span class="sort-indicator">&#x25B2;</span></th>
-              <th data-sort="contribution">Contribution <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="efficiency">Effizienz <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="contribution">Beitrag <span class="sort-indicator">&#x25B2;</span></th>
             </tr>
           </thead>
           <tbody id="leaderboard-body" aria-live="polite">
@@ -330,6 +371,44 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       ACHIEVEMENT LEADERBOARD
+       ============================================================ -->
+  <section class="section" id="ach-board-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3C5;</span>
+          ACHIEVEMENTS.EXE
+        </h2>
+        <p class="section-subtitle">Wer hat die meisten Achievement-Punkte gesammelt?</p>
+      </div>
+
+      <div id="achievement-board">
+        <div class="forecast-loading">Lade Achievement-Rangliste...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HALL OF FAME
+       ============================================================ -->
+  <section class="section" id="halloffame-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F451;</span>
+          HALLOFFAME.DAT
+        </h2>
+        <p class="section-subtitle">Member of the Week - Archiv</p>
+      </div>
+
+      <div id="hall-of-fame">
+        <div class="forecast-loading">Lade Hall of Fame...</div>
+      </div>
+    </div>
+  </section>
+
   </div><!-- /tab-rankings -->
 
   <!-- ============================================================
@@ -347,14 +426,14 @@
           <span class="section-icon" aria-hidden="true">&#x1F4C8;</span>
           ANALYZE.EXE
         </h2>
-        <p class="section-subtitle">Visualizing team performance and member statistics</p>
+        <p class="section-subtitle">Visualisierung der Team-Leistung und Mitglieder-Statistiken</p>
       </div>
 
       <div class="charts-grid">
 
         <div class="card chart-card">
           <div class="chart-card-title">PARETO.EXE</div>
-          <div class="chart-card-subtitle">Cumulative contribution by top members</div>
+          <div class="chart-card-subtitle">Kumulative Beitraege der Top-Mitglieder</div>
           <div class="chart-container" id="chart-distribution">
             <div class="skeleton" style="width:100%;height:100%;"></div>
           </div>
@@ -362,7 +441,7 @@
 
         <div class="card chart-card">
           <div class="chart-card-title">SCATTER.COM</div>
-          <div class="chart-card-subtitle">Score per Work Unit vs total output</div>
+          <div class="chart-card-subtitle">Score pro Work Unit vs. Gesamtleistung</div>
           <div class="chart-container" id="chart-efficiency">
             <div class="skeleton" style="width:100%;height:100%;"></div>
           </div>
@@ -370,7 +449,7 @@
 
         <div class="card chart-card">
           <div class="chart-card-title">SHARE.COM</div>
-          <div class="chart-card-subtitle">Share of total team score by member</div>
+          <div class="chart-card-subtitle">Anteil am Team-Score pro Mitglied</div>
           <div class="chart-container" id="chart-contribution">
             <div class="skeleton" style="width:100%;height:100%;"></div>
           </div>
@@ -378,7 +457,7 @@
 
         <div class="card chart-card">
           <div class="chart-card-title">CLASSIFY.BAT</div>
-          <div class="chart-card-subtitle">Distribution across tier levels</div>
+          <div class="chart-card-subtitle">Verteilung ueber die Tier-Stufen</div>
           <div class="chart-container" id="chart-tiers">
             <div class="skeleton" style="width:100%;height:100%;"></div>
           </div>
@@ -386,7 +465,7 @@
 
         <div class="card chart-card">
           <div class="chart-card-title">RANKS.DAT</div>
-          <div class="chart-card-subtitle">How members are spread across global ranks</div>
+          <div class="chart-card-subtitle">Verteilung der Mitglieder ueber globale Raenge</div>
           <div class="chart-container" id="chart-ranks">
             <div class="skeleton" style="width:100%;height:100%;"></div>
           </div>
@@ -475,7 +554,7 @@
           <span class="section-icon" aria-hidden="true">&#x2B50;</span>
           TYPE STATS.TXT
         </h2>
-        <p class="section-subtitle">Interesting facts and milestones from our folding journey</p>
+        <p class="section-subtitle">Interessante Fakten und Meilensteine unserer Folding-Reise</p>
       </div>
 
       <div class="achievements-grid" id="achievements-grid" aria-live="polite">
@@ -585,6 +664,44 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       MEMBER COMPARE
+       ============================================================ -->
+  <section class="section" id="compare-section-wrapper">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x2696;&#xFE0F;</span>
+          COMPARE.EXE
+        </h2>
+        <p class="section-subtitle">Vergleiche zwei Mitglieder direkt miteinander</p>
+      </div>
+
+      <div id="compare-section">
+        <div class="forecast-loading">Lade Vergleichs-Tool...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TEAM CHALLENGES
+       ============================================================ -->
+  <section class="section" id="challenges-section-wrapper">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3C1;</span>
+          CHALLENGE.EXE
+        </h2>
+        <p class="section-subtitle">Aktive Team-Challenges und Wettbewerbe</p>
+      </div>
+
+      <div id="challenges-section">
+        <div class="forecast-loading">Lade Challenges...</div>
+      </div>
+    </div>
+  </section>
+
   </div><!-- /tab-extras -->
 
   </main>
@@ -624,6 +741,13 @@
   <script src="/js/feature-monthly.js" defer></script>
   <script src="/js/feature-certificate.js" defer></script>
   <script src="/js/feature-export.js" defer></script>
+  <script src="/js/feature-research.js" defer></script>
+  <script src="/js/feature-compare.js" defer></script>
+  <script src="/js/feature-global.js" defer></script>
+  <script src="/js/feature-ach-board.js" defer></script>
+  <script src="/js/feature-halloffame.js" defer></script>
+  <script src="/js/feature-challenges.js" defer></script>
+  <script src="/js/easter-eggs.js" defer></script>
   <script src="/js/app.js" defer></script>
   <script src="/js/nav-toggle.js" defer></script>
 

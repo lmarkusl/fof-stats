@@ -275,6 +275,33 @@ db.exec(`
     UNIQUE(name, milestone)
   );
   CREATE INDEX IF NOT EXISTS idx_milestone_events_date ON milestone_events(detected_at);
+
+  CREATE TABLE IF NOT EXISTS motw_history (
+    week TEXT NOT NULL,
+    name TEXT NOT NULL,
+    score_gain INTEGER NOT NULL,
+    wu_gain INTEGER NOT NULL,
+    PRIMARY KEY (week)
+  );
+
+  CREATE TABLE IF NOT EXISTS challenges (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    type TEXT NOT NULL,
+    target INTEGER NOT NULL,
+    start_date TEXT NOT NULL,
+    end_date TEXT NOT NULL,
+    active INTEGER DEFAULT 1
+  );
+
+  CREATE TABLE IF NOT EXISTS challenge_progress (
+    challenge_id INTEGER NOT NULL,
+    donor_name TEXT NOT NULL,
+    progress INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (challenge_id, donor_name),
+    FOREIGN KEY (challenge_id) REFERENCES challenges(id)
+  );
 `);
 
 // ============================================================
@@ -298,6 +325,14 @@ const insertManyMembers = db.transaction((members) => {
 
 const insertMilestone = db.prepare(
   'INSERT OR IGNORE INTO milestone_events (name, milestone, score_at_time) VALUES (?, ?, ?)'
+);
+
+const insertMotwHistory = db.prepare(
+  'INSERT OR REPLACE INTO motw_history (week, name, score_gain, wu_gain) VALUES (?, ?, ?, ?)'
+);
+
+const updateChallengeProgress = db.prepare(
+  'INSERT OR REPLACE INTO challenge_progress (challenge_id, donor_name, progress) VALUES (?, ?, ?)'
 );
 
 /** Score thresholds that trigger milestone events (1M, 10M, ... 1T). */
@@ -1444,6 +1479,59 @@ async function takeSnapshot() {
       }
     }
     console.log(`[SNAPSHOT] Achievement evaluation complete for ${evalMembers.length} members`);
+
+    // Record MOTW (Member of the Week) in history table on weekly boundaries
+    const currentWeek = new Date().toISOString().slice(0, 10);
+    const existingMotw = db.prepare('SELECT week FROM motw_history WHERE week = ?').get(currentWeek);
+    if (!existingMotw) {
+      const motwData = db.prepare(`
+        WITH latest AS (
+          SELECT name, MAX(score) as current_score, MAX(wus) as current_wus
+          FROM member_snapshots WHERE timestamp >= datetime('now', '-1 day') GROUP BY name
+        ),
+        week_ago AS (
+          SELECT name, MIN(score) as old_score, MIN(wus) as old_wus
+          FROM member_snapshots
+          WHERE timestamp >= datetime('now', '-8 days') AND timestamp < datetime('now', '-6 days')
+          GROUP BY name
+        )
+        SELECT l.name,
+          l.current_score - COALESCE(w.old_score, l.current_score) as score_gain,
+          l.current_wus - COALESCE(w.old_wus, l.current_wus) as wu_gain
+        FROM latest l LEFT JOIN week_ago w ON l.name = w.name
+        ORDER BY score_gain DESC LIMIT 1
+      `).get();
+      if (motwData && motwData.score_gain > 0) {
+        insertMotwHistory.run(currentWeek, motwData.name, motwData.score_gain, motwData.wu_gain);
+        console.log(`[SNAPSHOT] MOTW recorded: ${motwData.name} (+${motwData.score_gain})`);
+      }
+    }
+
+    // Update challenge progress for active challenges
+    const activeChallenges = db.prepare('SELECT * FROM challenges WHERE active = 1 AND end_date >= date(\'now\')').all();
+    for (const challenge of activeChallenges) {
+      for (const m of members) {
+        let progress = 0;
+        if (challenge.type === 'score') {
+          progress = m.score;
+        } else if (challenge.type === 'wus') {
+          progress = m.wus;
+        } else if (challenge.type === 'score_gain') {
+          const snap = db.prepare(
+            'SELECT MIN(score) as start_score FROM member_snapshots WHERE name = ? AND timestamp >= ?'
+          ).get(m.name, challenge.start_date);
+          progress = snap ? m.score - (snap.start_score || 0) : 0;
+        } else if (challenge.type === 'wu_gain') {
+          const snap = db.prepare(
+            'SELECT MIN(wus) as start_wus FROM member_snapshots WHERE name = ? AND timestamp >= ?'
+          ).get(m.name, challenge.start_date);
+          progress = snap ? m.wus - (snap.start_wus || 0) : 0;
+        }
+        if (progress > 0) {
+          updateChallengeProgress.run(challenge.id, m.name, progress);
+        }
+      }
+    }
   } catch (err) {
     console.error('[SNAPSHOT ERROR]', err.message);
   }
@@ -1996,12 +2084,24 @@ app.get('/api/achievements/leaderboard', (req, res) => {
       const a = ALL_ACHIEVEMENTS.find(ach => ach.id === id);
       return s + (a ? a.points || 0 : 0);
     }, 0);
+
+    // Tier distribution: count unlocked achievements per tier
+    const tierDistribution = {};
+    for (const id of ids) {
+      const a = ALL_ACHIEVEMENTS.find(ach => ach.id === id);
+      if (a && a.tier) {
+        tierDistribution[a.tier] = (tierDistribution[a.tier] || 0) + 1;
+      }
+    }
+
     return {
       donor_name: row.donor_name,
       unlocked_count: row.unlocked_count,
       points,
       total: ALL_ACHIEVEMENTS.length,
+      points_total: TOTAL_ACHIEVEMENT_POINTS,
       completion_pct: parseFloat(((row.unlocked_count / ALL_ACHIEVEMENTS.length) * 100).toFixed(1)),
+      tier_distribution: tierDistribution,
     };
   });
 
@@ -2210,6 +2310,231 @@ app.get('/api/export/:format', async (req, res) => {
     console.error('[API /api/export]', err.message);
     res.status(502).json({ error: 'Failed to export data.' });
   }
+});
+
+// ============================================================
+// API routes - Research Impact, Global Stats, Compare, Hall of Fame, Challenges
+// ============================================================
+
+/** GET /api/research - Aggregated research impact by disease/cause */
+app.get('/api/research', heavyRateLimit, async (req, res) => {
+  try {
+    // Fetch project-cause mapping (cached 1h via fahFetch)
+    let causeData;
+    try {
+      causeData = await fahFetch('/project/cause');
+    } catch {
+      causeData = null;
+    }
+
+    // Build cause-to-project mapping from cause data
+    const causeMap = new Map(); // cause name -> Set of project IDs
+    if (Array.isArray(causeData)) {
+      for (const entry of causeData) {
+        const causeName = entry.cause || entry.name || 'Unknown';
+        if (!causeMap.has(causeName)) causeMap.set(causeName, new Set());
+        if (entry.project) causeMap.get(causeName).add(entry.project);
+      }
+    }
+
+    // Fetch members and their projects
+    const raw = await fahFetch(`/team/${TEAM_ID}/members`);
+    const members = parseMembers(raw);
+
+    const causeStats = new Map(); // cause -> { projects: Set, wus: number }
+    const MAX_PROJECT_FETCH = 50;
+    const fetchMembers = members.slice(0, MAX_PROJECT_FETCH);
+
+    for (const m of fetchMembers) {
+      try {
+        const projects = await fahFetch(`/user/${encodeURIComponent(m.name)}/projects`);
+        if (Array.isArray(projects)) {
+          for (const p of projects) {
+            // Try to find the cause for this project
+            let foundCause = 'Other';
+            for (const [cause, projectIds] of causeMap) {
+              if (projectIds.has(p.project)) {
+                foundCause = cause;
+                break;
+              }
+            }
+            // Also check if the project itself has a cause field
+            if (p.cause) foundCause = p.cause;
+
+            if (!causeStats.has(foundCause)) {
+              causeStats.set(foundCause, { projects: new Set(), wus: 0 });
+            }
+            const cs = causeStats.get(foundCause);
+            cs.projects.add(p.project);
+            cs.wus += p.wus || p.credit || 0;
+          }
+        }
+      } catch {
+        // Skip members whose projects cannot be fetched
+      }
+    }
+
+    const causes = [];
+    for (const [name, stats] of causeStats) {
+      causes.push({
+        name,
+        projects: stats.projects.size,
+        wus: stats.wus,
+      });
+    }
+    causes.sort((a, b) => b.wus - a.wus);
+
+    res.json({ causes });
+  } catch (err) {
+    console.error('[API /api/research]', err.message);
+    res.status(502).json({ error: 'Failed to fetch research data.' });
+  }
+});
+
+/** GET /api/global-stats - Global F@H context with our team's position */
+app.get('/api/global-stats', async (req, res) => {
+  try {
+    const [userCount, teamCount, ourTeam] = await Promise.all([
+      fahFetch('/user-count'),
+      fahFetch('/team/count'),
+      fahFetch(`/team/${TEAM_ID}`),
+    ]);
+
+    // Extract counts - API may return number directly or as an object
+    const totalUsers = typeof userCount === 'number' ? userCount : (userCount.count || userCount.total || 0);
+    const totalTeams = typeof teamCount === 'number' ? teamCount : (teamCount.count || teamCount.total || 0);
+
+    const raw = await fahFetch(`/team/${TEAM_ID}/members`);
+    const members = parseMembers(raw);
+
+    res.json({
+      total_users: totalUsers,
+      total_teams: totalTeams,
+      our_rank: ourTeam.rank || 0,
+      our_members: members.length,
+    });
+  } catch (err) {
+    console.error('[API /api/global-stats]', err.message);
+    res.status(502).json({ error: 'Failed to fetch global stats.' });
+  }
+});
+
+/** GET /api/compare/:name1/:name2 - Side-by-side member comparison */
+app.get('/api/compare/:name1/:name2', heavyRateLimit, async (req, res) => {
+  const name1 = validateName(req.params.name1);
+  const name2 = validateName(req.params.name2);
+  if (!name1 || !name2) return res.status(400).json({ error: 'Invalid member name(s).' });
+  if (name1 === name2) return res.status(400).json({ error: 'Cannot compare a member to themselves.' });
+
+  try {
+    const raw = await fahFetch(`/team/${TEAM_ID}/members`);
+    const members = parseMembers(raw);
+    const sorted = [...members].sort((a, b) => b.score - a.score);
+
+    const m1 = members.find(m => m.name === name1);
+    const m2 = members.find(m => m.name === name2);
+    if (!m1) return res.status(404).json({ error: `Member '${name1}' not found.` });
+    if (!m2) return res.status(404).json({ error: `Member '${name2}' not found.` });
+
+    const teamRank1 = sorted.findIndex(m => m.name === name1) + 1;
+    const teamRank2 = sorted.findIndex(m => m.name === name2) + 1;
+    const eff1 = m1.wus > 0 ? Math.round(m1.score / m1.wus) : 0;
+    const eff2 = m2.wus > 0 ? Math.round(m2.score / m2.wus) : 0;
+
+    // 7-day PPD from snapshots
+    const getPpd7d = (name) => {
+      const latest = db.prepare(
+        'SELECT MAX(score) as score FROM member_snapshots WHERE name = ? AND timestamp >= datetime(\'now\', \'-1 day\')'
+      ).get(name);
+      const weekAgo = db.prepare(
+        'SELECT MIN(score) as score FROM member_snapshots WHERE name = ? AND timestamp >= datetime(\'now\', \'-8 days\') AND timestamp < datetime(\'now\', \'-6 days\')'
+      ).get(name);
+      if (latest && weekAgo && weekAgo.score) {
+        return Math.round((latest.score - weekAgo.score) / 7);
+      }
+      return 0;
+    };
+
+    const ppd7d_1 = getPpd7d(name1);
+    const ppd7d_2 = getPpd7d(name2);
+
+    const member1 = {
+      name: m1.name,
+      score: m1.score,
+      wus: m1.wus,
+      rank: m1.rank,
+      team_rank: teamRank1,
+      efficiency: eff1,
+      ppd_7d: ppd7d_1,
+    };
+
+    const member2 = {
+      name: m2.name,
+      score: m2.score,
+      wus: m2.wus,
+      rank: m2.rank,
+      team_rank: teamRank2,
+      efficiency: eff2,
+      ppd_7d: ppd7d_2,
+    };
+
+    res.json({
+      member1,
+      member2,
+      differences: {
+        score_diff: m1.score - m2.score,
+        wus_diff: m1.wus - m2.wus,
+        rank_diff: m1.rank - m2.rank,
+        team_rank_diff: teamRank1 - teamRank2,
+        efficiency_diff: eff1 - eff2,
+        ppd_7d_diff: ppd7d_1 - ppd7d_2,
+      },
+    });
+  } catch (err) {
+    console.error('[API /api/compare]', err.message);
+    res.status(502).json({ error: 'Failed to compare members.' });
+  }
+});
+
+/** GET /api/halloffame - MOTW history (last 52 weeks) */
+app.get('/api/halloffame', (req, res) => {
+  const rows = db.prepare(`
+    SELECT week, name, score_gain, wu_gain
+    FROM motw_history
+    ORDER BY week DESC
+    LIMIT 52
+  `).all();
+
+  res.json(rows);
+});
+
+/** GET /api/challenges - List active challenges with participant progress */
+app.get('/api/challenges', (req, res) => {
+  const challenges = db.prepare(
+    "SELECT * FROM challenges WHERE active = 1 AND end_date >= date('now') ORDER BY end_date ASC"
+  ).all();
+
+  const result = challenges.map(challenge => {
+    const participants = db.prepare(
+      'SELECT donor_name, progress FROM challenge_progress WHERE challenge_id = ? ORDER BY progress DESC'
+    ).all(challenge.id);
+
+    const completedCount = participants.filter(p => p.progress >= challenge.target).length;
+
+    return {
+      ...challenge,
+      participants: participants.map(p => ({
+        name: p.donor_name,
+        progress: p.progress,
+        progress_pct: Math.min(100, parseFloat(((p.progress / challenge.target) * 100).toFixed(1))),
+        completed: p.progress >= challenge.target,
+      })),
+      participant_count: participants.length,
+      completed_count: completedCount,
+    };
+  });
+
+  res.json(result);
 });
 
 // ============================================================

@@ -51,12 +51,16 @@ function initTabContent(tabId) {
   if (tabId === 'tab-rankings') {
     if (typeof initRivals === 'function') initRivals();
     if (typeof initMonthly === 'function') initMonthly();
+    if (typeof initAchievementBoard === 'function') initAchievementBoard();
+    if (typeof initHallOfFame === 'function') initHallOfFame();
   }
 
   if (tabId === 'tab-extras') {
     if (typeof initCertificate === 'function') initCertificate();
     if (typeof initExportFeatures === 'function') initExportFeatures();
     if (typeof initMilestoneChronology === 'function') initMilestoneChronology();
+    if (typeof initCompare === 'function') initCompare();
+    if (typeof initChallenges === 'function') initChallenges();
   }
 }
 
@@ -582,6 +586,16 @@ async function loadDashboard(isRefresh = false) {
     // PPD: Points Per Day + Production Stats
     if (typeof initPPD === 'function') {
       initPPD();
+    }
+
+    // Global Context: Team im weltweiten Vergleich
+    if (typeof initGlobalContext === 'function') {
+      initGlobalContext();
+    }
+
+    // Research Impact: Forschungsgebiete
+    if (typeof initResearch === 'function') {
+      initResearch();
     }
 
     updateTimestamp();

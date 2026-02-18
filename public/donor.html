@@ -2,16 +2,18 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Donor-Profil - FreilaufendeOnlineFuzzies Folding@Home Team #240890">
   <meta name="theme-color" content="#2c2c2c">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
   <title>Donor Profile | FOF Stats</title>
+  <link rel="manifest" href="/manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/donor.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
   <!-- Navigation -->
   <nav class="navbar">
@@ -29,12 +31,12 @@
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
   <!-- Hero with donor name -->
   <header class="hero donor-hero">
     <div class="hero-content">
       <div class="terminal-prefix">C:\FOF\DONOR></div>
-      <h1 class="hero-title" id="donor-name">Loading...</h1>
+      <h1 class="hero-title" id="donor-name">Lade...</h1>
       <p class="hero-subtitle" id="donor-subtitle">Lade Profil...</p>
     </div>
   </header>
@@ -56,7 +58,7 @@
         <div class="card kpi-card">
           <span class="kpi-icon">&#127942;</span>
           <div class="kpi-value" id="donor-rank">---</div>
-          <div class="kpi-label">Global Rank</div>
+          <div class="kpi-label">Globaler Rank</div>
         </div>
         <div class="card kpi-card">
           <span class="kpi-icon">&#x1F465;</span>
@@ -156,9 +158,9 @@
         <div class="ach-summary-stats">
           <span class="ach-summary-count" id="ach-summary-count">---/--- Achievements</span>
           <span class="ach-summary-sep">|</span>
-          <span class="ach-summary-points" id="ach-summary-points">--- Points</span>
+          <span class="ach-summary-points" id="ach-summary-points">--- Punkte</span>
           <span class="ach-summary-sep">|</span>
-          <span class="ach-summary-pct" id="ach-summary-pct">--% Complete</span>
+          <span class="ach-summary-pct" id="ach-summary-pct">--% Abgeschlossen</span>
         </div>
         <div class="ach-progress-bar">
           <div class="ach-progress-fill" id="ach-progress-fill" style="width:0%"></div>
@@ -169,10 +171,10 @@
       <div class="ach-controls">
         <div class="ach-search">
           <span class="search-icon">&#x1F50D;</span>
-          <input type="text" id="ach-search-input" placeholder="Achievement suchen..." />
+          <input type="text" id="ach-search-input" placeholder="Achievement suchen..." aria-label="Achievements durchsuchen" />
         </div>
         <div class="ach-tabs" id="ach-tabs">
-          <button class="ach-tab active" data-category="all">All</button>
+          <button class="ach-tab active" data-category="all">Alle</button>
           <button class="ach-tab" data-category="score">Score</button>
           <button class="ach-tab" data-category="wus">WUs</button>
           <button class="ach-tab" data-category="streak">Streak</button>
@@ -233,7 +235,7 @@
         </ul>
         <p class="footer-credit">
           FreilaufendeOnlineFuzzies | Team #240890<br>
-          Donor Profile Page
+          Mitglieder-Profil
         </p>
       </div>
     </div>
