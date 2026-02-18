@@ -1,4 +1,11 @@
-// feature-rivals.js - Rank History, Team Rivals, Team Crossings
+// ============================================================
+// Feature: Rivals - Rank History, Team Rivals & Crossings
+// Displays team rank history chart (90 days), nearby rival teams
+// with score deltas, and a timeline of rank crossing events.
+// Fetches from /api/history/team, /api/rivals, /api/crossings
+// Containers: #chart-rank-history, #rivals-container, #crossings-timeline
+// Called via initRivals(). Depends on: utils.js (escapeHtml, formatScore), Chart.js
+// ============================================================
 
 // Inject CSS
 (function() {

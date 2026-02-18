@@ -1,4 +1,11 @@
-// feature-monthly.js - Monthly Leaderboard and Active Member Filter
+// ============================================================
+// Feature: Monthly Leaderboard & Active Member Filter
+// Displays top contributors of the current month with score and
+// WU gains. Includes a toggle filter for active members (7 days).
+// Fetches from /api/leaderboard/monthly
+// Container: #monthly-leaderboard, #active-filter-container
+// Called via initMonthly(). Depends on: utils.js (escapeHtml, formatScore, formatNumber)
+// ============================================================
 
 (function() {
   var style = document.createElement('style');

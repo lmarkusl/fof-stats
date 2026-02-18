@@ -1,18 +1,25 @@
 /**
- * @file server.js - Folding@Home Team Statistics Dashboard
+ * @file server.js - Folding@Home Team Statistics Dashboard (v2.0.0)
  *
  * Express server that proxies the Folding@Home API, stores periodic snapshots
  * in SQLite for historical tracking, and provides analytics endpoints including
- * milestones, achievements, PPD calculations, and member profiles.
+ * milestones, achievements, PPD calculations, member profiles, gamification
+ * systems, real-time activity tracking, and advanced visualizations.
  *
  * Architecture overview:
  *  1. Security & rate-limiting middleware
- *  2. SQLite database setup (snapshots, achievements, milestones)
- *  3. Achievement engine (300 achievements with condition evaluator)
+ *  2. SQLite database setup (16 tables: snapshots, achievements, milestones,
+ *     seasons, versus duels, quests, raffles, challenges, and more)
+ *  3. Achievement engine (300+ achievements with condition evaluator)
  *  4. In-memory API cache with TTL
  *  5. Periodic snapshot scheduler
- *  6. REST API routes (live proxy, historical, analytics, donor profiles)
- *  7. Graceful shutdown handling
+ *  6. REST API routes - Core (live proxy, historical, analytics, donor profiles)
+ *  7. REST API routes - Gamification (SEASON.EXE, VERSUS.EXE, Quests, Challenges, Raffle)
+ *  8. REST API routes - Activity & Visualization (Activity Feed, Timeline, Weather,
+ *     Constellation, Power Rankings, Matrix)
+ *  9. REST API routes - Advanced Analytics (Zeitgeist, Fun-Facts, Predictions, Diary/Recap)
+ * 10. REST API routes - Community (Hall of Fame, Compare, Research Impact, Global Context)
+ * 11. Graceful shutdown handling
  */
 
 const express = require('express');
@@ -48,7 +55,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';");
   // Prevent caching of API responses that may contain user-specific data
   if (req.path.startsWith('/api/')) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -3956,8 +3963,15 @@ app.get('/api/weather', (req, res) => {
 
   if (!latest) {
     return res.json({
-      current: { condition: 'cloudy', icon: 'cloud', description: 'Keine Daten verfuegbar...', score_delta_24h: 0, active_members: 0, trend: 'steady' },
-      forecast: [],
+      condition: 'foggy',
+      condition_label: 'Neblig',
+      temperature: 0,
+      humidity: 0,
+      wind: { speed: 0, label: 'Ruhig' },
+      description: 'Keine Daten verfuegbar... Warte auf erste Snapshots.',
+      details: { ppd_24h: 0, ppd_7d: 0, ppd_30d: 0, active_members_today: 0, total_members: 0, activity_ratio: 0 },
+      alerts: [],
+      forecast: []
     });
   }
 
@@ -4018,16 +4032,75 @@ app.get('/api/weather', (req, res) => {
     forecast.push({ day: dayName, condition: fCondition, icon: fIcon });
   }
 
+  // Condition labels (German)
+  const conditionLabels = {
+    thunderstorm: 'Gewitter',
+    sunny: 'Sonnig',
+    partly_cloudy: 'Leicht bewoelkt',
+    cloudy: 'Bewoelkt',
+    rainy: 'Regnerisch',
+    snowy: 'Schnee',
+    foggy: 'Neblig'
+  };
+
+  // Wind label from PPD speed
+  const windSpeed = ppd7d;
+  let windLabel = 'Ruhig';
+  if (windSpeed > 500000) windLabel = 'Orkan';
+  else if (windSpeed > 200000) windLabel = 'Sturm';
+  else if (windSpeed > 100000) windLabel = 'Stark';
+  else if (windSpeed > 50000) windLabel = 'Maessig';
+  else if (windSpeed > 10000) windLabel = 'Leicht';
+  else if (windSpeed > 1000) windLabel = 'Brise';
+
+  // Humidity = participation rate (active / total * 100)
+  const totalMembers = latest.member_count || 1;
+  const humidity = Math.round((activeMembers / totalMembers) * 100);
+
+  // Temperature = activity percentage (capped for display)
+  const temperature = Math.round(activityPct);
+
+  // Activity ratio
+  const activityRatio = ppd30d > 0 ? parseFloat((scoreDelta24h / ppd30d).toFixed(2)) : 1.0;
+
+  // Alerts
+  const alerts = [];
+  if (activityPct > 200) {
+    alerts.push({ type: 'hot_streak', message: 'HITZEWELLE: Ueber 200% Aktivitaet! Alle GPUs gluehen!' });
+  }
+  if (activityPct < 30) {
+    alerts.push({ type: 'cold_snap', message: 'KAELTEWELLE: Unter 30% Aktivitaet. Die GPUs schlafen.' });
+  }
+  if (trend === 'rising' && ppd7d > ppd30d * 1.5) {
+    alerts.push({ type: 'new_record', message: 'REKORD: 7-Tage-PPD liegt 50%+ ueber dem 30-Tage-Schnitt!' });
+  }
+
+  // Forecast with temperature
+  const forecastWithTemp = forecast.map(f => {
+    const fPct = f.condition === 'thunderstorm' ? 250 :
+                 f.condition === 'sunny' ? 140 :
+                 f.condition === 'partly_cloudy' ? 100 :
+                 f.condition === 'cloudy' ? 65 : 35;
+    return { day: f.day, condition: f.condition, temperature: fPct };
+  });
+
   res.json({
-    current: {
-      condition,
-      icon,
-      description,
-      score_delta_24h: scoreDelta24h,
-      active_members: activeMembers,
-      trend,
+    condition,
+    condition_label: conditionLabels[condition] || condition,
+    temperature,
+    humidity,
+    wind: { speed: windSpeed, label: windLabel },
+    description,
+    details: {
+      ppd_24h: scoreDelta24h,
+      ppd_7d: ppd7d,
+      ppd_30d: ppd30d,
+      active_members_today: activeMembers,
+      total_members: totalMembers,
+      activity_ratio: activityRatio
     },
-    forecast,
+    alerts,
+    forecast: forecastWithTemp
   });
 });
 

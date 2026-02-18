@@ -14,11 +14,13 @@ Statistik-Dashboard fuer das Folding@Home-Team **FreilaufendeOnlineFuzzies** (Te
 
 ## Features
 
+### Kern-Features
+
 - **Team-Uebersicht** - Gesamtpunktzahl, Rang und Mitgliederanzahl des Teams
 - **Leaderboard** - Rangliste aller Team-Mitglieder mit Tier-System (Copper bis Diamond)
 - **Mitglieder-Profile** - Detailseiten mit persoenlicher Statistik und Projektliste
 - **Historische Daten** - Zeitreihen fuer Team- und Einzelstatistiken (stuendlich bis jaehrlich)
-- **Achievements** - Umfangreiches Achievement-System mit ueber 100 Erfolgen (achievements.json)
+- **Achievements** - Umfangreiches Achievement-System mit ueber 300 Erfolgen (achievements.json)
 - **Achievement-Leaderboard** - Rangliste nach freigeschalteten Achievements
 - **Monatliches Leaderboard** - Top-Beitraeger des aktuellen Monats
 - **PPD-Analyse** - Points-per-Day-Berechnung und -Verlauf
@@ -30,10 +32,45 @@ Statistik-Dashboard fuer das Folding@Home-Team **FreilaufendeOnlineFuzzies** (Te
 - **Rank-Crossings** - Erkennung von Ueberholmanoevern zwischen Mitgliedern
 - **Member of the Week** - Automatische Wahl des aktivsten Mitglieds der Woche
 - **Gini-Koeffizient** - Verteilungsanalyse der Team-Beitraege
-- **Zertifikat-Generator** - Personalisierte Teilnahme-Zertifikate
+- **Zertifikat-Generator** - Personalisierte Teilnahme-Zertifikate (PNG-Download)
 - **Datenexport** - Export als JSON oder CSV
-- **Social-Sharing** - Teilen von Statistiken
+- **Social-Sharing** - Teilen von Statistiken und Forum-Signatur-Generator
 - **Datenschutzseite** - DSGVO-konforme Datenschutzerklaerung
+
+### Gamification (neu in v2.0)
+
+- **SEASON.EXE** - Saisonales XP/Level-System mit Countdown und Saison-Rangliste
+- **VERSUS.EXE** - Woechentliche 1v1-Duelle mit VS-Grafik, Fortschrittsbalken und Duell-Rangliste
+- **Quest-System** - Taegliche, woechentliche und monatliche Aufgaben mit XP-Belohnungen
+- **Team Challenges** - Gemeinschaftliche Herausforderungen mit Fortschrittsanzeige
+- **Raffle/Verlosung** - Monatliche Verlosung mit Eintragsverwaltung und Gewinner-Historie
+
+### Aktivitaet und Visualisierung (neu in v2.0)
+
+- **TIMELINE.EXE** - DOS-Terminal-Ansicht als chronologischer Event-Log
+- **Activity Feed (EVENTLOG.EXE)** - Live-Event-Stream mit Meilensteinen, Achievements und Rang-Aenderungen
+- **WEATHER.EXE** - Team-Aktivitaets-Wetterbericht mit Vorhersage-Visualisierung
+- **CONSTELLATION.EXE** - Netzwerk-Visualisierung der Team-Mitglieder-Beziehungen
+- **POWERRANK.EXE** - Power Rankings mit Composite Scores und Radar-Chart
+- **Matrix-Ansicht** - Matrix-Darstellung der Team-Aktivitaet
+
+### Erweiterte Analyse (neu in v2.0)
+
+- **ZEITGEIST.EXE** - Perioden-Rueckblick (Woche/Monat/Jahr) mit Highlights und Rekorden
+- **PREDICT.EXE (Fun-Facts)** - Fun-Facts-Ticker mit interessanten Statistiken und Prognosen
+- **Donor Predictions** - Persoenliche Score-/Rang-Prognosen und Meilenstein-ETAs
+- **DIARY.EXE** - Wochen-/Monats-Recap auf Donor-Profilseiten
+
+### Community (neu in v2.0)
+
+- **Hall of Fame** - Member-of-the-Week-Archiv (letzte 52 Wochen)
+- **Member Comparison** - Side-by-Side 1v1-Vergleich zweier Mitglieder
+- **Research Impact** - Forschungs-Impact-Dashboard nach Krankheit/Ursache
+- **Global Context** - Einordnung des Teams im globalen F@H-Ranking
+
+### Sonstiges
+
+- **Easter Eggs** - Versteckte Interaktionen (Boot-Sequenz, Terminal, BSOD, CRT-Effekte)
 
 ## Voraussetzungen
 
@@ -118,6 +155,45 @@ Die Tests nutzen den integrierten Node.js Test Runner und befinden sich im Ordne
 | `GET /api/achievements/leaderboard` | Achievement-Rangliste |
 | `GET /api/donor/:name/summary` | Donor-Profil-Zusammenfassung |
 | `GET /api/donor/:name/achievements` | Achievements eines Donors |
+| `GET /api/donor/:name/predictions` | Persoenliche Score-/Rang-Prognosen und Meilenstein-ETAs |
+| `GET /api/donor/:name/recap` | Wochen-/Monats-Recap fuer einen Donor |
+
+### Gamification
+
+| Endpunkt | Beschreibung |
+|---|---|
+| `GET /api/season/current` | Aktuelle Saison-Info (Name, Zeitraum, Countdown) |
+| `GET /api/season/leaderboard` | Saison-Rangliste mit XP und Levels |
+| `GET /api/versus/current` | Aktuelle Wochenduell-Paarungen |
+| `GET /api/versus/rankings` | Duell-Rangliste (Siege, Niederlagen, Winrate) |
+| `GET /api/challenges` | Aktive Team-Challenges mit Fortschritt |
+| `GET /api/quests` | Quest-Definitionen (taeglich/woechentlich/monatlich) |
+| `GET /api/quests/:donorName` | Quest-Fortschritt eines Donors |
+| `GET /api/quests/leaderboard/xp` | XP-Rangliste aus Quest-System |
+| `GET /api/raffle` | Aktuelle Monatsverlosung mit Eintraegen und Historie |
+| `POST /api/raffle/draw` | Verlosung durchfuehren (einziger POST-Endpunkt) |
+
+### Aktivitaet und Visualisierung
+
+| Endpunkt | Beschreibung |
+|---|---|
+| `GET /api/activity-feed` | Activity Feed mit Events (Meilensteine, Achievements, Rang-Aenderungen) |
+| `GET /api/timeline` | Chronologischer Event-Log (Meilensteine, Rang-Aenderungen) |
+| `GET /api/weather` | Team-Aktivitaets-Wetterbericht mit Forecast |
+| `GET /api/constellation` | Team-Netzwerk-Visualisierung mit Nodes, Edges, Clusters |
+| `GET /api/power-rankings` | Power Rankings mit Composite Scores und Radar-Chart-Daten |
+| `GET /api/matrix` | Matrix-Ansicht der Team-Aktivitaet |
+
+### Erweiterte Analyse
+
+| Endpunkt | Beschreibung |
+|---|---|
+| `GET /api/zeitgeist/:period` | Perioden-Rueckblick (week/month/year) mit Highlights und Records |
+| `GET /api/funfacts` | Fun-Facts und Prognosen aus History-Daten |
+| `GET /api/research` | Forschungs-Impact nach Krankheit/Ursache |
+| `GET /api/global-stats` | Globaler F@H-Kontext mit Team-Position |
+| `GET /api/compare/:name1/:name2` | Side-by-Side Mitglieder-Vergleich |
+| `GET /api/halloffame` | Member-of-the-Week-Archiv (letzte 52 Wochen) |
 
 ### Export
 
@@ -129,35 +205,114 @@ Die Tests nutzen den integrierten Node.js Test Runner und befinden sich im Ordne
 
 ```
 fah-stats/
-├── server.js                # Express-Server, API-Routen, Caching, Snapshots
-├── lib.js                   # Geteilte Hilfsfunktionen (parseMembers, getTier, etc.)
-├── achievements.json        # Achievement-Definitionen
-├── package.json             # Abhaengigkeiten und Scripts
-├── ecosystem.config.js      # PM2-Konfiguration
-├── DEPLOYMENT.md            # Deployment-Anleitung (Linux VPS + Plesk)
+├── server.js                  # Express-Server, API-Routen, Caching, Snapshots (49 Endpunkte)
+├── lib.js                     # Geteilte Hilfsfunktionen (parseMembers, getTier, etc.)
+├── achievements.json          # Achievement-Definitionen (300+ Achievements)
+├── package.json               # Abhaengigkeiten und Scripts
+├── ecosystem.config.js        # PM2-Konfiguration
+├── DEPLOYMENT.md              # Deployment-Anleitung (Linux VPS + Plesk)
+├── CLAUDE.md                  # Projekt-Kontext fuer AI-Assistenten
+├── CHANGELOG.md               # Versionshistorie
 ├── .gitignore
-├── public/                  # Statische Frontend-Dateien
-│   ├── index.html           # Hauptseite / Dashboard
-│   ├── donors.html          # Mitglieder-Uebersicht
-│   ├── donor.html           # Einzelnes Mitglieder-Profil
-│   ├── datenschutz.html     # Datenschutzerklaerung
+├── public/                    # Statische Frontend-Dateien
+│   ├── index.html             # Hauptseite / Dashboard (Tab-System)
+│   ├── donors.html            # Mitglieder-Uebersicht
+│   ├── donor.html             # Einzelnes Mitglieder-Profil
+│   ├── datenschutz.html       # Datenschutzerklaerung
+│   ├── manifest.json          # Web App Manifest
 │   ├── css/
-│   │   ├── style.css        # Haupt-Stylesheet
-│   │   └── donor.css        # Donor-Seiten-Styles
+│   │   ├── style.css          # Haupt-Stylesheet (DOS/Win95-Theme)
+│   │   └── donor.css          # Donor-Seiten-Styles
 │   ├── js/
-│   │   ├── app.js           # Haupt-Anwendungslogik
-│   │   ├── charts.js        # Chart.js-Diagramme
-│   │   ├── utils.js         # Frontend-Hilfsfunktionen
-│   │   ├── nav-toggle.js    # Navigation (mobil)
-│   │   ├── donor-page.js    # Donor-Profilseiten-Logik
-│   │   ├── donors-page.js   # Mitglieder-Uebersicht-Logik
-│   │   ├── feature-*.js     # Feature-Module (Heatmap, PPD, Rivalen, etc.)
-│   │   └── ...
-│   └── img/                 # Bilder und Icons
+│   │   ├── app.js             # Haupt-Anwendungslogik und Tab-Steuerung
+│   │   ├── charts.js          # Chart.js-Diagramme und Canvas-Management
+│   │   ├── utils.js           # Frontend-Hilfsfunktionen (escapeHtml, formatScore, etc.)
+│   │   ├── nav-toggle.js      # Navigation (mobil)
+│   │   ├── donor-page.js      # Donor-Profilseiten-Logik
+│   │   ├── donors-page.js     # Mitglieder-Uebersicht-Logik
+│   │   ├── easter-eggs.js     # Easter Eggs (Boot, Terminal, BSOD, CRT)
+│   │   ├── feature-ach-board.js       # Achievement-Leaderboard
+│   │   ├── feature-activity-feed.js   # Activity Feed / EVENTLOG.EXE
+│   │   ├── feature-certificate.js     # Zertifikat-Generator
+│   │   ├── feature-challenges.js      # Team Challenges
+│   │   ├── feature-compare.js         # Member Comparison (1v1)
+│   │   ├── feature-constellation.js   # CONSTELLATION.EXE - Netzwerk-Visualisierung
+│   │   ├── feature-diary.js           # DIARY.EXE - Wochen-/Monats-Recap
+│   │   ├── feature-export.js          # Datenexport und Signatur-Generator
+│   │   ├── feature-extras.js          # Extras-Tab Verwaltung
+│   │   ├── feature-funfacts.js        # PREDICT.EXE - Fun-Facts-Ticker
+│   │   ├── feature-global.js          # Global Context (F@H-Einordnung)
+│   │   ├── feature-halloffame.js      # Hall of Fame (MOTW-Archiv)
+│   │   ├── feature-heatmap.js         # Aktivitaets-Heatmap
+│   │   ├── feature-milestone.js       # Meilensteine
+│   │   ├── feature-monthly.js         # Monatliches Leaderboard
+│   │   ├── feature-power-rankings.js  # POWERRANK.EXE - Power Rankings
+│   │   ├── feature-ppd.js             # PPD-Analyse
+│   │   ├── feature-predictions.js     # Donor Predictions
+│   │   ├── feature-profile.js         # Donor-Profil-Features
+│   │   ├── feature-research.js        # Research Impact Dashboard
+│   │   ├── feature-rivals.js          # Rivalen und Rank-Crossings
+│   │   ├── feature-season.js          # SEASON.EXE - Saison-System
+│   │   ├── feature-social.js          # Social-Sharing
+│   │   ├── feature-timeline.js        # TIMELINE.EXE - Event-Log
+│   │   ├── feature-versus.js          # VERSUS.EXE - 1v1 Wochenduell
+│   │   ├── feature-weather.js         # WEATHER.EXE - Aktivitaets-Wetterbericht
+│   │   └── feature-zeitgeist.js       # ZEITGEIST.EXE - Perioden-Rueckblick
+│   └── img/                   # Bilder und Icons
 └── test/
-    ├── api.test.js          # API-Integrationstests
-    └── lib.test.js          # Unit-Tests fuer lib.js
+    ├── api.test.js            # API-Integrationstests
+    └── lib.test.js            # Unit-Tests fuer lib.js
 ```
+
+## Datenbank-Schema
+
+Die SQLite-Datenbank (`fah-stats.db`, WAL-Modus) enthaelt 16 Tabellen, die beim Serverstart automatisch erstellt werden:
+
+### Snapshots
+
+| Tabelle | Beschreibung |
+|---|---|
+| `team_snapshots` | Stuendliche Team-Statistik-Snapshots (Score, Rang, WUs, Mitgliederzahl) |
+| `member_snapshots` | Stuendliche Mitglieder-Snapshots (Score, WUs, Rang pro Mitglied) |
+
+### Achievements und Events
+
+| Tabelle | Beschreibung |
+|---|---|
+| `donor_achievements` | Freigeschaltete Achievements pro Donor mit Zeitstempel |
+| `milestone_events` | Erkannte Score-Meilensteine (1M, 10M, 100M, etc.) |
+| `motw_history` | Member-of-the-Week-Archiv mit Wochen-Statistik |
+
+### Challenges und Quests
+
+| Tabelle | Beschreibung |
+|---|---|
+| `challenges` | Team-Challenge-Definitionen (Typ, Ziel, Zeitraum) |
+| `challenge_progress` | Fortschritt pro Challenge und Donor |
+| `quest_definitions` | Quest-Definitionen (taeglich/woechentlich/monatlich) |
+| `quest_progress` | Quest-Fortschritt pro Donor und Periode |
+| `donor_xp` | Donor-XP und Level aus dem Quest-System |
+
+### Raffle (Verlosung)
+
+| Tabelle | Beschreibung |
+|---|---|
+| `raffle_entries` | Monatsverlosungs-Eintraege mit Donor und Losnummer |
+| `raffle_winners` | Verlosungs-Gewinner-Historie |
+
+### Seasons (Saison-System)
+
+| Tabelle | Beschreibung |
+|---|---|
+| `seasons` | Saison-Definitionen (Name, Start-/Enddatum) |
+| `season_xp` | Saison-XP pro Donor mit Level-Berechnung |
+
+### Versus (Duell-System)
+
+| Tabelle | Beschreibung |
+|---|---|
+| `versus_duels` | Wochenduell-Paarungen (Spieler A vs B, Scores, Gewinner) |
+| `versus_history` | Kumulative Duell-Statistiken pro Donor (Siege, Niederlagen, Winrate) |
 
 ## Sicherheit
 

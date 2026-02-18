@@ -1,4 +1,10 @@
-// feature-certificate.js - Certificate Generator
+// ============================================================
+// Feature: Certificate Generator (ZERTIFIKAT)
+// Generates downloadable PNG certificates for member milestones
+// using Canvas API. Member dropdown populated from /api/members.
+// Container: #certificate-section
+// Called via initCertificate(). Depends on: utils.js (escapeHtml, formatScore)
+// ============================================================
 
 (function() {
   var style = document.createElement('style');

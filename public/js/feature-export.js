@@ -1,4 +1,11 @@
-// feature-export.js - Data Export and Forum Signature Generator
+// ============================================================
+// Feature: Data Export & Forum Signature Generator
+// Provides CSV/JSON team data download buttons and a forum
+// signature generator with Plain Text, BBCode, and HTML formats.
+// Fetches from /api/export/:format, /api/team, /api/ppd
+// Containers: #export-data-container, #signature-container
+// Called via initExportFeatures(). Depends on: utils.js (escapeHtml, formatScore)
+// ============================================================
 
 (function() {
   var style = document.createElement('style');
