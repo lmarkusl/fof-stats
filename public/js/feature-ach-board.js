@@ -63,12 +63,12 @@ function renderAchievementBoard(container, data) {
     else if (rank === 2) medal = '&#x1F948; ';
     else if (rank === 3) medal = '&#x1F949; ';
 
-    var name = escapeHtml(entry.name || '---');
+    var name = escapeHtml(entry.donor_name || entry.name || '---');
     var points = entry.points || 0;
-    var unlocked = entry.unlocked || 0;
+    var unlocked = entry.unlocked_count || entry.unlocked || 0;
     var total = entry.total || totalAchievements || unlocked;
-    var pct = total > 0 ? Math.round((unlocked / total) * 100) : 0;
-    var encodedName = encodeURIComponent(entry.name || '');
+    var pct = entry.completion_pct || (total > 0 ? Math.round((unlocked / total) * 100) : 0);
+    var encodedName = encodeURIComponent(entry.donor_name || entry.name || '');
 
     var rankClass = '';
     if (rank <= 3) rankClass = ' achboard-top' + rank;

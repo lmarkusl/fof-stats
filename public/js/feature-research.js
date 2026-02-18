@@ -77,7 +77,7 @@ function initResearch() {
  * @param {object} data - API response with diseases array and summary fields.
  */
 function renderResearch(container, data) {
-  var diseases = data.diseases || data.areas || [];
+  var diseases = data.causes || data.diseases || data.areas || [];
   if (!diseases.length) {
     container.innerHTML = '<div class="error-message">Keine Forschungsdaten verfuegbar.</div>';
     return;

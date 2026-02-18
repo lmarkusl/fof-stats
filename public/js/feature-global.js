@@ -65,9 +65,9 @@ function initGlobalContext() {
  * @param {object} data - API response with global stats fields.
  */
 function renderGlobalContext(container, data) {
-  var teamRank = data.team_rank || data.rank || 0;
+  var teamRank = data.our_rank || data.team_rank || data.rank || 0;
   var totalTeams = data.total_teams || 0;
-  var teamMembers = data.team_members || data.members || 0;
+  var teamMembers = data.our_members || data.team_members || data.members || 0;
   var totalUsers = data.total_users || data.total_donors || 0;
   var percentile = data.percentile || data.top_percent || 0;
 
