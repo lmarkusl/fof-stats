@@ -40,6 +40,7 @@ function initTabContent(tabId) {
     if (typeof initHeatmapSelector === 'function' && window._dashboardData) {
       initHeatmapSelector(window._dashboardData.members);
     }
+    if (typeof initConstellation === 'function') initConstellation();
     // Resize charts after they become visible
     setTimeout(function() {
       if (typeof chartInstances !== 'undefined') {
@@ -53,6 +54,9 @@ function initTabContent(tabId) {
     if (typeof initMonthly === 'function') initMonthly();
     if (typeof initAchievementBoard === 'function') initAchievementBoard();
     if (typeof initHallOfFame === 'function') initHallOfFame();
+    if (typeof initPowerRankings === 'function') initPowerRankings();
+    if (typeof initSeason === 'function') initSeason();
+    if (typeof initVersus === 'function') initVersus();
   }
 
   if (tabId === 'tab-extras') {
@@ -61,6 +65,7 @@ function initTabContent(tabId) {
     if (typeof initMilestoneChronology === 'function') initMilestoneChronology();
     if (typeof initCompare === 'function') initCompare();
     if (typeof initChallenges === 'function') initChallenges();
+    if (typeof initZeitgeist === 'function') initZeitgeist();
   }
 }
 
@@ -596,6 +601,26 @@ async function loadDashboard(isRefresh = false) {
     // Research Impact: Forschungsgebiete
     if (typeof initResearch === 'function') {
       initResearch();
+    }
+
+    // Activity Feed: Live Event Stream
+    if (typeof initActivityFeed === 'function') {
+      initActivityFeed();
+    }
+
+    // Timeline: DOS-Terminal-Log Event Feed
+    if (typeof initTimeline === 'function') {
+      initTimeline();
+    }
+
+    // Weather: Team-Aktivitaets-Wetterbericht
+    if (typeof initWeather === 'function') {
+      initWeather();
+    }
+
+    // Fun Facts: Prognosen und Ticker
+    if (typeof initFunFacts === 'function') {
+      initFunFacts();
     }
 
     updateTimestamp();

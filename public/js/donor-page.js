@@ -601,6 +601,16 @@ async function loadDonorProfile() {
       }
     }
 
+    // Donor Predictions
+    if (typeof initDonorPredictions === 'function') {
+      initDonorPredictions(name);
+    }
+
+    // Donor Diary (Wochen-Recap)
+    if (typeof initDiary === 'function') {
+      initDiary(name);
+    }
+
   } catch (err) {
     console.error('[DONOR] Profile load error:', err.message);
     document.getElementById('donor-subtitle').textContent = 'Fehler beim Laden des Profils.';
