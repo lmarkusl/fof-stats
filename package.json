@@ -1,6 +1,6 @@
 {
   "name": "fah-stats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Folding@Home Statistics Dashboard for Team FreilaufendeOnlineFuzzies (#240890)",
   "main": "server.js",
   "scripts": {
