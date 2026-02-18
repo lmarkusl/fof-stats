@@ -1,0 +1,6 @@
+node_modules/
+fah-stats.db
+fah-stats.db-shm
+fah-stats.db-wal
+*.log
+.env

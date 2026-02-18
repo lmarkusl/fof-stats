@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FreilaufendeOnlineFuzzies - Folding@Home Team #240890 Statistics Dashboard">
+  <meta name="theme-color" content="#2c2c2c">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <title>FreilaufendeOnlineFuzzies | F@H Team #240890 Stats</title>
+
+  <!-- Courier New is a system font, no external loading needed -->
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
+  <nav class="navbar" id="navbar" aria-label="Hauptnavigation">
+    <div class="container">
+      <a href="#" class="nav-brand">
+        <span class="brand-icon">&#x1F9EC;</span>
+        FOF Stats
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Navigation umschalten" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#tab-overview" data-tab="tab-overview" class="active">Uebersicht</a></li>
+        <li><a href="#tab-rankings" data-tab="tab-rankings">Rangliste</a></li>
+        <li><a href="#tab-analytics" data-tab="tab-analytics">Analyse</a></li>
+        <li><a href="#tab-extras" data-tab="tab-extras">Extras</a></li>
+        <li><a href="/donors">Mitglieder</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+  <!-- ============================================================
+       HERO HEADER
+       ============================================================ -->
+  <header class="hero" id="overview">
+
+    <div class="hero-content">
+      <div class="terminal-prefix">C:\FOF></div>
+      <h1 class="hero-title">FreilaufendeOnlineFuzzies</h1>
+      <p class="hero-subtitle">TEAM #240890 | RANK <span>#20</span> | STATUS: <span style="color:#ffcc00">ONLINE</span></p>
+      <div class="hero-rank-badge">
+        RANK #20 WORLDWIDE --- PROTEIN FOLDING SINCE 2020
+      </div>
+      <p class="hero-tagline">Fighting disease through distributed computing</p>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       TAB BAR - DOS Program Switcher
+       ============================================================ -->
+  <div class="tab-bar" id="tab-bar" role="tablist" aria-label="Dashboard Bereiche">
+    <button class="tab-btn active" data-tab="tab-overview" role="tab" aria-selected="true" aria-controls="tab-overview">C:\&gt; UEBERSICHT</button>
+    <button class="tab-btn" data-tab="tab-rankings" role="tab" aria-selected="false" aria-controls="tab-rankings">C:\&gt; RANGLISTE</button>
+    <button class="tab-btn" data-tab="tab-analytics" role="tab" aria-selected="false" aria-controls="tab-analytics">C:\&gt; ANALYSE</button>
+    <button class="tab-btn" data-tab="tab-extras" role="tab" aria-selected="false" aria-controls="tab-extras">C:\&gt; EXTRAS</button>
+  </div>
+
+  <!-- ============================================================
+       TAB 1: OVERVIEW
+       ============================================================ -->
+  <div class="tab-panel active" id="tab-overview" role="tabpanel">
+
+  <!-- ============================================================
+       KPI CARDS
+       ============================================================ -->
+  <section class="section" id="kpi-section">
+    <div class="container">
+      <pre class="ascii-banner" aria-hidden="true">
+ _____ ___  _____   ___ _        _
+|  ___/ _ \|  ___| / __| |_ __ _| |_ ___
+| |_ | | | | |_   \__ \  _/ _` |  _(_-&lt;
+|  _|| |_| |  _|  |___/\__\__,_|\__/__/
+|_|   \___/|_|    Team #240890 | Rank #20
+</pre>
+      <div class="kpi-grid">
+
+        <div class="card kpi-card" id="kpi-score-card">
+          <span class="kpi-icon" aria-hidden="true">&#x1F4CA;</span>
+          <div class="kpi-value counting" id="kpi-score">---</div>
+          <div class="kpi-label">Total Score</div>
+        </div>
+
+        <div class="card kpi-card" id="kpi-wus-card">
+          <span class="kpi-icon" aria-hidden="true">&#x2699;&#xFE0F;</span>
+          <div class="kpi-value counting" id="kpi-wus">---</div>
+          <div class="kpi-label">Work Units</div>
+        </div>
+
+        <div class="card kpi-card" id="kpi-members-card">
+          <span class="kpi-icon" aria-hidden="true">&#x1F465;</span>
+          <div class="kpi-value counting" id="kpi-members">---</div>
+          <div class="kpi-label">Team Members</div>
+        </div>
+
+        <div class="card kpi-card" id="kpi-rank-card">
+          <span class="kpi-icon" aria-hidden="true">&#127942;</span>
+          <div class="kpi-value counting" id="kpi-rank">---</div>
+          <div class="kpi-label">Global Rank</div>
+        </div>
+
+      </div>
+
+      <!-- Data freshness -->
+      <div class="data-status" id="data-status">
+        <span class="status-dot"></span>
+        <span id="data-timestamp" aria-live="polite">Loading data...</span>
+        <label class="auto-refresh-toggle" title="Auto-refresh every 5 minutes">
+          <input type="checkbox" id="auto-refresh"> Auto-Refresh
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PPD / THROUGHPUT
+       ============================================================ -->
+  <section class="section" id="ppd-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x26A1;</span>
+          THROUGHPUT.EXE
+        </h2>
+        <p class="section-subtitle">Punkte pro Tag und aktuelle Produktion</p>
+      </div>
+
+      <div id="ppd-stats">
+        <div class="forecast-loading">Lade PPD-Daten...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HIGHLIGHTS: Streak + Member of the Week
+       ============================================================ -->
+  <section class="section" id="highlights">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F525;</span>
+          HIGHLIGHTS.EXE
+        </h2>
+        <p class="section-subtitle">Aktuelle Team-Highlights und Auszeichnungen</p>
+      </div>
+
+      <div class="highlights-grid">
+        <div class="card highlight-card" id="streak-counter">
+          <div class="highlight-loading">Lade Streak-Daten...</div>
+        </div>
+        <div class="card highlight-card" id="member-of-week">
+          <div class="highlight-loading">Lade Member of the Week...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MILESTONES + RANK PREDICTION
+       ============================================================ -->
+  <section class="section" id="milestones">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3AF;</span>
+          FORECAST.EXE
+        </h2>
+        <p class="section-subtitle">Meilensteine und Rang-Prognosen basierend auf historischen Daten</p>
+      </div>
+
+      <div class="forecast-grid">
+        <div class="card forecast-card">
+          <div class="forecast-card-title">MILESTONE.DAT</div>
+          <div class="forecast-card-subtitle">Naechste Punkte-Meilensteine mit geschaetzter Ankunft</div>
+          <div id="milestone-tracker">
+            <div class="forecast-loading">Lade Meilenstein-Daten...</div>
+          </div>
+        </div>
+        <div class="card forecast-card">
+          <div class="forecast-card-title">PREDICT.COM</div>
+          <div class="forecast-card-subtitle">Rang-Entwicklung basierend auf 30-Tage-Trend</div>
+          <div id="rank-prediction">
+            <div class="forecast-loading">Lade Prognose-Daten...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TEAM GOALS
+       ============================================================ -->
+  <section class="section" id="goals-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3AF;</span>
+          GOALS.BAT
+        </h2>
+        <p class="section-subtitle">Team-Ziele und Fortschritt</p>
+      </div>
+
+      <div class="goals-grid" id="team-goals">
+        <div class="forecast-loading">Lade Ziele...</div>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /tab-overview -->
+
+  <!-- ============================================================
+       TAB 2: RANKINGS
+       ============================================================ -->
+  <div class="tab-panel" id="tab-rankings" role="tabpanel">
+
+  <!-- ============================================================
+       LEADERBOARD
+       ============================================================ -->
+  <section class="section" id="leaderboard">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3C6;</span>
+          DIR MEMBERS /S
+        </h2>
+        <p class="section-subtitle">Individual contributions ranked by total score</p>
+      </div>
+
+      <div id="active-filter-container"></div>
+
+      <div class="leaderboard-controls">
+        <div class="search-box">
+          <span class="search-icon">&#x1F50D;</span>
+          <input
+            type="text"
+            id="leaderboard-search"
+            placeholder="Search members..."
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+        <div class="leaderboard-info" id="leaderboard-info">
+          Showing <span id="visible-count">0</span> of <span id="total-count">0</span> members
+        </div>
+      </div>
+
+      <div class="table-wrapper card">
+        <table class="leaderboard-table" id="leaderboard-table">
+          <thead>
+            <tr>
+              <th data-sort="rank">Rank <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="tier">Tier <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="name">Name <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="score">Score <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="wus">Work Units <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="efficiency">Efficiency <span class="sort-indicator">&#x25B2;</span></th>
+              <th data-sort="contribution">Contribution <span class="sort-indicator">&#x25B2;</span></th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body" aria-live="polite">
+            <!-- Populated by app.js -->
+            <tr>
+              <td colspan="7" class="skeleton" style="height: 400px;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MONTHLY LEADERBOARD
+       ============================================================ -->
+  <section class="section" id="monthly-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4C5;</span>
+          MONTHLY.EXE
+        </h2>
+        <p class="section-subtitle">Rangliste des aktuellen Monats nach Score-Gewinn</p>
+      </div>
+
+      <div class="card" style="padding: 16px;">
+        <div id="monthly-leaderboard">
+          <div class="forecast-loading">Lade Monatsdaten...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RIVALS / TEAM COMPARISON
+       ============================================================ -->
+  <section class="section" id="rivals-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x2694;&#xFE0F;</span>
+          RIVALS.EXE
+        </h2>
+        <p class="section-subtitle">Nachbar-Teams und Rang-Wechsel</p>
+      </div>
+
+      <div class="rivals-grid">
+        <div class="card">
+          <div class="chart-card-title">NEARBY.DAT</div>
+          <div class="chart-card-subtitle">Teams in unserer Rang-Naehe</div>
+          <div id="rivals-container">
+            <div class="forecast-loading">Lade Rivalen-Daten...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chart-card-title">CROSSINGS.LOG</div>
+          <div class="chart-card-subtitle">Wann haben wir andere Teams ueberholt?</div>
+          <div id="crossings-timeline">
+            <div class="forecast-loading">Lade Crossing-Daten...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /tab-rankings -->
+
+  <!-- ============================================================
+       TAB 3: ANALYTICS
+       ============================================================ -->
+  <div class="tab-panel" id="tab-analytics" role="tabpanel">
+
+  <!-- ============================================================
+       ANALYTICS / CHARTS
+       ============================================================ -->
+  <section class="section" id="analytics">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4C8;</span>
+          ANALYZE.EXE
+        </h2>
+        <p class="section-subtitle">Visualizing team performance and member statistics</p>
+      </div>
+
+      <div class="charts-grid">
+
+        <div class="card chart-card">
+          <div class="chart-card-title">PARETO.EXE</div>
+          <div class="chart-card-subtitle">Cumulative contribution by top members</div>
+          <div class="chart-container" id="chart-distribution">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">SCATTER.COM</div>
+          <div class="chart-card-subtitle">Score per Work Unit vs total output</div>
+          <div class="chart-container" id="chart-efficiency">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">SHARE.COM</div>
+          <div class="chart-card-subtitle">Share of total team score by member</div>
+          <div class="chart-container" id="chart-contribution">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">CLASSIFY.BAT</div>
+          <div class="chart-card-subtitle">Distribution across tier levels</div>
+          <div class="chart-container" id="chart-tiers">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">RANKS.DAT</div>
+          <div class="chart-card-subtitle">How members are spread across global ranks</div>
+          <div class="chart-container" id="chart-ranks">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">TIMELINE.LOG</div>
+          <div class="chart-card-subtitle">Historischer Trend mit Zuwachs pro Periode</div>
+          <div class="history-controls" style="margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap;">
+            <span style="color:var(--text-secondary); font-size:0.85rem; align-self:center;">Zeitraum:</span>
+            <button class="period-btn active" data-period="hourly">Stuendlich</button>
+            <button class="period-btn" data-period="daily">Taeglich</button>
+            <button class="period-btn" data-period="weekly">Woechentlich</button>
+            <button class="period-btn" data-period="monthly">Monatlich</button>
+          </div>
+          <div class="chart-container" id="chart-monthly">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">MOVERS.EXE /DAYS:7</div>
+          <div class="chart-card-subtitle">Wer hat in den letzten 7 Tagen am meisten beigetragen?</div>
+          <div class="chart-container" id="chart-movers">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">LORENZ.EXE</div>
+          <div class="chart-card-subtitle">Ungleichverteilung der Score-Beitraege (Lorenz-Kurve)</div>
+          <div class="chart-container" id="chart-lorenz">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">DISTRIB.COM</div>
+          <div class="chart-card-subtitle">Verteilung der Member-Scores (logarithmisch)</div>
+          <div class="chart-container" id="chart-scoredist">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">HEATMAP.EXE</div>
+          <div class="chart-card-subtitle">Aktivitaets-Heatmap pro Mitglied (Wochentag x Uhrzeit)</div>
+          <div class="heatmap-controls">
+            <label for="heatmap-member-select" class="heatmap-label">Mitglied:</label>
+            <select id="heatmap-member-select" class="heatmap-select">
+              <option>Lade...</option>
+            </select>
+          </div>
+          <div id="heatmap-container" class="heatmap-container">
+            <div class="skeleton" style="width:100%;height:160px;"></div>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-title">RANKHISTORY.DAT</div>
+          <div class="chart-card-subtitle">Team-Rang Verlauf der letzten 90 Tage</div>
+          <div class="chart-container" id="chart-rank-history">
+            <div class="skeleton" style="width:100%;height:100%;"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  </div><!-- /tab-analytics -->
+
+  <!-- ============================================================
+       TAB 4: EXTRAS
+       ============================================================ -->
+  <div class="tab-panel" id="tab-extras" role="tabpanel">
+
+  <!-- ============================================================
+       FUN STATS / ACHIEVEMENTS
+       ============================================================ -->
+  <section class="section" id="achievements">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x2B50;</span>
+          TYPE STATS.TXT
+        </h2>
+        <p class="section-subtitle">Interesting facts and milestones from our folding journey</p>
+      </div>
+
+      <div class="achievements-grid" id="achievements-grid" aria-live="polite">
+        <!-- Populated by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCORE EQUIVALENTS + ASCII ACHIEVEMENTS
+       ============================================================ -->
+  <section class="section" id="equivalents">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4BB;</span>
+          CONVERT.EXE
+        </h2>
+        <p class="section-subtitle">Was bedeutet unser Score in anderen Einheiten?</p>
+      </div>
+
+      <div class="equiv-grid" id="score-equivalents">
+        <div class="forecast-loading">Lade Score-Aequivalente...</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ascii-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3C6;</span>
+          TROPHY.EXE
+        </h2>
+        <p class="section-subtitle">ASCII-Art Achievements fuer erreichte Meilensteine</p>
+      </div>
+
+      <div class="ascii-grid" id="ascii-achievements">
+        <div class="forecast-loading">Lade Achievements...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MILESTONE CHRONOLOGY
+       ============================================================ -->
+  <section class="section" id="chronology-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4DC;</span>
+          HISTORY.LOG
+        </h2>
+        <p class="section-subtitle">Chronologie der Mitglieder-Meilensteine</p>
+      </div>
+
+      <div class="card" style="padding: 16px;">
+        <div id="milestone-chronology">
+          <div class="forecast-loading">Lade Meilenstein-Chronologie...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       EXPORT / TOOLS
+       ============================================================ -->
+  <section class="section" id="export-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4BE;</span>
+          EXPORT.EXE
+        </h2>
+        <p class="section-subtitle">Daten exportieren, Zertifikate erstellen, Forum-Signatur generieren</p>
+      </div>
+
+      <div class="export-bar" style="margin-bottom: 16px;">
+        <span class="export-label">C:\FOF> EXPORT.EXE /FORMAT:PNG</span>
+        <button class="export-btn" id="export-share-btn">&#x1F4BE; Score-Card herunterladen</button>
+      </div>
+
+      <div class="export-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="card" style="padding: 16px;">
+          <div class="chart-card-title">DOWNLOAD.BAT</div>
+          <div class="chart-card-subtitle">Team-Daten herunterladen</div>
+          <div id="export-data-container">
+            <div class="forecast-loading">Lade Export...</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 16px;">
+          <div class="chart-card-title">SIGNATURE.TXT</div>
+          <div class="chart-card-subtitle">Forum-Signatur generieren</div>
+          <div id="signature-container">
+            <div class="forecast-loading">Lade Signatur...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 16px; margin-top: 16px;">
+        <div class="chart-card-title">CERTGEN.EXE</div>
+        <div class="chart-card-subtitle">Meilenstein-Zertifikat fuer ein Mitglied erstellen</div>
+        <div id="certificate-section">
+          <div class="forecast-loading">Lade Zertifikat-Generator...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /tab-extras -->
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <ul class="footer-links">
+          <li><a href="/donors">Alle Mitglieder</a></li>
+          <li><a href="https://foldingathome.org" target="_blank" rel="noopener noreferrer">Folding@Home</a></li>
+          <li><a href="https://stats.foldingathome.org/team/240890" target="_blank" rel="noopener noreferrer">Team Stats</a></li>
+          <li><a href="https://fof1.de" target="_blank" rel="noopener noreferrer">fof1.de</a></li>
+        </ul>
+        <p class="footer-credit">
+          FreilaufendeOnlineFuzzies | Team #240890 | Data: api.foldingathome.org<br>
+          Uptime: <span id="uptime">0:00:00</span> | PID: <span id="process-pid">$$</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/utils.js" defer></script>
+  <script src="/js/charts.js" defer></script>
+  <script src="/js/feature-milestone.js" defer></script>
+  <script src="/js/feature-heatmap.js" defer></script>
+  <script src="/js/feature-social.js" defer></script>
+  <script src="/js/feature-profile.js" defer></script>
+  <script src="/js/feature-extras.js" defer></script>
+  <script src="/js/feature-ppd.js" defer></script>
+  <script src="/js/feature-rivals.js" defer></script>
+  <script src="/js/feature-monthly.js" defer></script>
+  <script src="/js/feature-certificate.js" defer></script>
+  <script src="/js/feature-export.js" defer></script>
+  <script src="/js/app.js" defer></script>
+
+  <!-- Inline: Nav toggle for mobile -->
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', function () {
+      var links = document.getElementById('nav-links');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+
+    // Close mobile nav on link click
+    document.querySelectorAll('.nav-links a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('nav-links').classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

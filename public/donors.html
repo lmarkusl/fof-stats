@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2c2c2c">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <title>Alle Mitglieder | FOF Stats</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/donor.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">&#x1F9EC;</span>
+        FOF Stats
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Navigation umschalten" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="/donors" class="active">Alle Mitglieder</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+  <header class="hero" style="min-height:200px; padding:80px 20px 40px;">
+    <div class="hero-content">
+      <div class="terminal-prefix">C:\FOF\MEMBERS></div>
+      <h1 class="hero-title">DIR MEMBERS /S</h1>
+      <p class="hero-subtitle">Alle Team-Mitglieder | Klicke auf ein Mitglied fuer Details</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="search-box" style="margin-bottom:20px; max-width:400px;">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="member-search" placeholder="Mitglied suchen..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="donors-grid" id="donors-grid">
+        <div class="forecast-loading">Lade Mitglieder...</div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <ul class="footer-links">
+          <li><a href="/">Dashboard</a></li>
+        </ul>
+        <p class="footer-credit">FreilaufendeOnlineFuzzies | Team #240890</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    // escapeHtml, formatScore, getTier provided by utils.js
+
+    let allMembers = [];
+
+    async function loadMembers() {
+      try {
+        const res = await fetch('/api/members');
+        if (!res.ok) throw new Error('API error');
+        allMembers = await res.json();
+        allMembers.sort((a, b) => b.score - a.score);
+        renderMembers(allMembers);
+      } catch (err) {
+        document.getElementById('donors-grid').innerHTML = '<div class="forecast-loading">Fehler beim Laden.</div>';
+      }
+    }
+
+    function renderMembers(members) {
+      const grid = document.getElementById('donors-grid');
+      grid.innerHTML = members.map((m, i) => {
+        const tier = getTier(m.score);
+        return '<a href="/donor/' + encodeURIComponent(m.name) + '" class="donor-card card">' +
+          '<div class="donor-card-rank">#' + (i + 1) + '</div>' +
+          '<div class="donor-card-tier"><span class="tier-badge ' + tier.name.toLowerCase() + '">' + tier.icon + ' ' + tier.name + '</span></div>' +
+          '<div class="donor-card-name">' + escapeHtml(m.name) + '</div>' +
+          '<div class="donor-card-score">' + formatScoreShort(m.score) + '</div>' +
+          '<div class="donor-card-wus">' + Number(m.wus).toLocaleString('de-DE') + ' WUs</div>' +
+          '</a>';
+      }).join('');
+    }
+
+    document.getElementById('member-search').addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase();
+      renderMembers(allMembers.filter(m => m.name.toLowerCase().includes(q)));
+    });
+
+    loadMembers();
+
+    document.getElementById('nav-toggle').addEventListener('click', function () {
+      var links = document.getElementById('nav-links');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+    document.querySelectorAll('.nav-links a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('nav-links').classList.remove('open');
+        document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>

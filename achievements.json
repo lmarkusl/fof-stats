@@ -1,0 +1,4201 @@
+[
+  {
+    "id": "score_10k",
+    "name": "First Blood",
+    "description": "Earn your first 10,000 points",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "🩸",
+    "condition": {
+      "type": "score_gte",
+      "value": 10000
+    },
+    "hint": "Erreiche 10K Score Punkte",
+    "points": 10
+  },
+  {
+    "id": "score_25k",
+    "name": "Einstieg",
+    "description": "Reach 25,000 points",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "📊",
+    "condition": {
+      "type": "score_gte",
+      "value": 25000
+    },
+    "hint": "Erreiche 25K Score Punkte",
+    "points": 10
+  },
+  {
+    "id": "score_50k",
+    "name": "Warming Up",
+    "description": "Reach 50,000 points",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "🔥",
+    "condition": {
+      "type": "score_gte",
+      "value": 50000
+    },
+    "hint": "Erreiche 50K Score Punkte",
+    "points": 10
+  },
+  {
+    "id": "score_100k",
+    "name": "Sechsstellig",
+    "description": "Reach 100,000 points",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "💯",
+    "condition": {
+      "type": "score_gte",
+      "value": 100000
+    },
+    "hint": "Erreiche 100K Score Punkte",
+    "points": 15
+  },
+  {
+    "id": "score_250k",
+    "name": "Quarter Pounder",
+    "description": "Reach 250,000 points",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "🍔",
+    "condition": {
+      "type": "score_gte",
+      "value": 250000
+    },
+    "hint": "Erreiche 250K Score Punkte",
+    "points": 15
+  },
+  {
+    "id": "score_500k",
+    "name": "Halbzeit",
+    "description": "Halfway to a million points",
+    "category": "score",
+    "tier": "silver",
+    "icon": "⏳",
+    "condition": {
+      "type": "score_gte",
+      "value": 500000
+    },
+    "hint": "Erreiche 500K Score Punkte",
+    "points": 20
+  },
+  {
+    "id": "score_750k",
+    "name": "Almost There",
+    "description": "Reach 750,000 points",
+    "category": "score",
+    "tier": "silver",
+    "icon": "🏃",
+    "condition": {
+      "type": "score_gte",
+      "value": 750000
+    },
+    "hint": "Erreiche 750K Score Punkte",
+    "points": 20
+  },
+  {
+    "id": "score_1m",
+    "name": "Millionär",
+    "description": "Reach 1 million points",
+    "category": "score",
+    "tier": "silver",
+    "icon": "💰",
+    "condition": {
+      "type": "score_gte",
+      "value": 1000000
+    },
+    "hint": "Erreiche 1M Score Punkte",
+    "points": 25
+  },
+  {
+    "id": "score_2m",
+    "name": "Double or Nothing",
+    "description": "Reach 2 million points",
+    "category": "score",
+    "tier": "silver",
+    "icon": "🎰",
+    "condition": {
+      "type": "score_gte",
+      "value": 2000000
+    },
+    "hint": "Erreiche 2M Score Punkte",
+    "points": 25
+  },
+  {
+    "id": "score_5m",
+    "name": "High Roller",
+    "description": "Reach 5 million points",
+    "category": "score",
+    "tier": "silver",
+    "icon": "🎲",
+    "condition": {
+      "type": "score_gte",
+      "value": 5000000
+    },
+    "hint": "Erreiche 5M Score Punkte",
+    "points": 30
+  },
+  {
+    "id": "score_10m",
+    "name": "Zehn Millionen",
+    "description": "Reach 10 million points",
+    "category": "score",
+    "tier": "gold",
+    "icon": "⭐",
+    "condition": {
+      "type": "score_gte",
+      "value": 10000000
+    },
+    "hint": "Erreiche 10M Score Punkte",
+    "points": 35
+  },
+  {
+    "id": "score_25m",
+    "name": "Powerhouse",
+    "description": "Reach 25 million points",
+    "category": "score",
+    "tier": "gold",
+    "icon": "⚡",
+    "condition": {
+      "type": "score_gte",
+      "value": 25000000
+    },
+    "hint": "Erreiche 25M Score Punkte",
+    "points": 35
+  },
+  {
+    "id": "score_50m",
+    "name": "Fünfzig Millionen",
+    "description": "Reach 50 million points",
+    "category": "score",
+    "tier": "gold",
+    "icon": "🌟",
+    "condition": {
+      "type": "score_gte",
+      "value": 50000000
+    },
+    "hint": "Erreiche 50M Score Punkte",
+    "points": 40
+  },
+  {
+    "id": "score_75m",
+    "name": "Three Quarters",
+    "description": "Reach 75 million points",
+    "category": "score",
+    "tier": "gold",
+    "icon": "🔶",
+    "condition": {
+      "type": "score_gte",
+      "value": 75000000
+    },
+    "hint": "Erreiche 75M Score Punkte",
+    "points": 40
+  },
+  {
+    "id": "score_100m",
+    "name": "Hundert Millionen",
+    "description": "Reach 100 million points",
+    "category": "score",
+    "tier": "gold",
+    "icon": "💎",
+    "condition": {
+      "type": "score_gte",
+      "value": 100000000
+    },
+    "hint": "Erreiche 100M Score Punkte",
+    "points": 45
+  },
+  {
+    "id": "score_250m",
+    "name": "Colossus",
+    "description": "Reach 250 million points",
+    "category": "score",
+    "tier": "platinum",
+    "icon": "🗿",
+    "condition": {
+      "type": "score_gte",
+      "value": 250000000
+    },
+    "hint": "Erreiche 250M Score Punkte",
+    "points": 50
+  },
+  {
+    "id": "score_500m",
+    "name": "Halbe Milliarde",
+    "description": "Reach 500 million points",
+    "category": "score",
+    "tier": "platinum",
+    "icon": "🏔️",
+    "condition": {
+      "type": "score_gte",
+      "value": 500000000
+    },
+    "hint": "Erreiche 500M Score Punkte",
+    "points": 55
+  },
+  {
+    "id": "score_750m",
+    "name": "Summit Push",
+    "description": "Reach 750 million points",
+    "category": "score",
+    "tier": "platinum",
+    "icon": "🧗",
+    "condition": {
+      "type": "score_gte",
+      "value": 750000000
+    },
+    "hint": "Erreiche 750M Score Punkte",
+    "points": 55
+  },
+  {
+    "id": "score_1b",
+    "name": "Milliardär",
+    "description": "Reach 1 billion points",
+    "category": "score",
+    "tier": "platinum",
+    "icon": "👑",
+    "condition": {
+      "type": "score_gte",
+      "value": 1000000000
+    },
+    "hint": "Erreiche 1 Milliarde Score Punkte",
+    "points": 60
+  },
+  {
+    "id": "score_2b",
+    "name": "Double Billion",
+    "description": "Reach 2 billion points",
+    "category": "score",
+    "tier": "platinum",
+    "icon": "🏦",
+    "condition": {
+      "type": "score_gte",
+      "value": 2000000000
+    },
+    "hint": "Erreiche 2 Milliarden Score Punkte",
+    "points": 60
+  },
+  {
+    "id": "score_5b",
+    "name": "Datenkönig",
+    "description": "Reach 5 billion points",
+    "category": "score",
+    "tier": "diamond",
+    "icon": "🤴",
+    "condition": {
+      "type": "score_gte",
+      "value": 5000000000
+    },
+    "hint": "Erreiche 5 Milliarden Score Punkte",
+    "points": 70
+  },
+  {
+    "id": "score_10b",
+    "name": "Zehn Milliarden",
+    "description": "Reach 10 billion points",
+    "category": "score",
+    "tier": "diamond",
+    "icon": "🌌",
+    "condition": {
+      "type": "score_gte",
+      "value": 10000000000
+    },
+    "hint": "Erreiche 10 Milliarden Score Punkte",
+    "points": 75
+  },
+  {
+    "id": "score_25b",
+    "name": "Unstoppable Force",
+    "description": "Reach 25 billion points",
+    "category": "score",
+    "tier": "diamond",
+    "icon": "🌊",
+    "condition": {
+      "type": "score_gte",
+      "value": 25000000000
+    },
+    "hint": "Erreiche 25 Milliarden Score Punkte",
+    "points": 80
+  },
+  {
+    "id": "score_50b",
+    "name": "Titan",
+    "description": "Reach 50 billion points",
+    "category": "score",
+    "tier": "diamond",
+    "icon": "⚔️",
+    "condition": {
+      "type": "score_gte",
+      "value": 50000000000
+    },
+    "hint": "Erreiche 50 Milliarden Score Punkte",
+    "points": 85
+  },
+  {
+    "id": "score_100b",
+    "name": "Hundert Milliarden",
+    "description": "Reach 100 billion points",
+    "category": "score",
+    "tier": "diamond",
+    "icon": "🔮",
+    "condition": {
+      "type": "score_gte",
+      "value": 100000000000
+    },
+    "hint": "Erreiche 100 Milliarden Score Punkte",
+    "points": 90
+  },
+  {
+    "id": "score_250b",
+    "name": "Supernova",
+    "description": "Reach 250 billion points",
+    "category": "score",
+    "tier": "legendary",
+    "icon": "💥",
+    "condition": {
+      "type": "score_gte",
+      "value": 250000000000
+    },
+    "hint": "Erreiche 250 Milliarden Score Punkte",
+    "points": 90
+  },
+  {
+    "id": "score_500b",
+    "name": "Halbe Billion",
+    "description": "Reach 500 billion points",
+    "category": "score",
+    "tier": "legendary",
+    "icon": "🌠",
+    "condition": {
+      "type": "score_gte",
+      "value": 500000000000
+    },
+    "hint": "Erreiche 500 Milliarden Score Punkte",
+    "points": 95
+  },
+  {
+    "id": "score_1t",
+    "name": "Billionär",
+    "description": "Reach 1 trillion points",
+    "category": "score",
+    "tier": "legendary",
+    "icon": "🏆",
+    "condition": {
+      "type": "score_gte",
+      "value": 1000000000000
+    },
+    "hint": "Erreiche 1 Billion Score Punkte",
+    "points": 100
+  },
+  {
+    "id": "score_5t",
+    "name": "Galactic Emperor",
+    "description": "Reach 5 trillion points",
+    "category": "score",
+    "tier": "legendary",
+    "icon": "🪐",
+    "condition": {
+      "type": "score_gte",
+      "value": 5000000000000
+    },
+    "hint": "Erreiche 5 Billionen Score Punkte",
+    "points": 100
+  },
+  {
+    "id": "score_10t",
+    "name": "Unendlichkeit",
+    "description": "Reach 10 trillion points",
+    "category": "score",
+    "tier": "legendary",
+    "icon": "♾️",
+    "condition": {
+      "type": "score_gte",
+      "value": 10000000000000
+    },
+    "hint": "Erreiche 10 Billionen Score Punkte",
+    "points": 100
+  },
+  {
+    "id": "score_odd_million",
+    "name": "Ungerade Million",
+    "description": "Score passes through an odd million milestone",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "🔢",
+    "condition": {
+      "type": "special",
+      "check": "score_odd_million"
+    },
+    "hint": "Dein Score muss eine ungerade Millionenzahl passieren",
+    "points": 10
+  },
+  {
+    "id": "score_exact_pi",
+    "name": "Pi Day",
+    "description": "Score contains 314159 somewhere",
+    "category": "score",
+    "tier": "silver",
+    "icon": "🥧",
+    "condition": {
+      "type": "special",
+      "check": "score_contains_314159"
+    },
+    "hint": "Dein Score muss 314159 enthalten",
+    "points": 25
+  },
+  {
+    "id": "score_repeating",
+    "name": "Zahlenecho",
+    "description": "Score has repeating digits like 111,222,333",
+    "category": "score",
+    "tier": "silver",
+    "icon": "🔁",
+    "condition": {
+      "type": "special",
+      "check": "score_repeating_digits"
+    },
+    "hint": "Score mit sich wiederholenden Ziffern",
+    "points": 20
+  },
+  {
+    "id": "score_lucky_7s",
+    "name": "Lucky Sevens",
+    "description": "Score contains 777",
+    "category": "score",
+    "tier": "bronze",
+    "icon": "🍀",
+    "condition": {
+      "type": "special",
+      "check": "score_contains_777"
+    },
+    "hint": "Dein Score muss 777 enthalten",
+    "points": 15
+  },
+  {
+    "id": "score_42",
+    "name": "Answer to Everything",
+    "description": "Score contains 42424242",
+    "category": "score",
+    "tier": "gold",
+    "icon": "📖",
+    "condition": {
+      "type": "special",
+      "check": "score_contains_42424242"
+    },
+    "hint": "Die Antwort auf alles im Score finden",
+    "points": 35
+  },
+  {
+    "id": "score_fibonacci",
+    "name": "Fibonacci Folding",
+    "description": "Score passes a Fibonacci number milestone",
+    "category": "score",
+    "tier": "gold",
+    "icon": "🐚",
+    "condition": {
+      "type": "special",
+      "check": "score_fibonacci"
+    },
+    "hint": "Score erreicht eine Fibonacci-Zahl",
+    "points": 30
+  },
+  {
+    "id": "score_power_of_2",
+    "name": "Binary Beast",
+    "description": "Score passes a power of 2 milestone",
+    "category": "score",
+    "tier": "silver",
+    "icon": "🖥️",
+    "condition": {
+      "type": "special",
+      "check": "score_power_of_2"
+    },
+    "hint": "Score erreicht eine Zweierpotenz",
+    "points": 25
+  },
+  {
+    "id": "score_round_million",
+    "name": "Glatte Million",
+    "description": "Score is within 1000 of a round million",
+    "category": "score",
+    "tier": "gold",
+    "icon": "🎯",
+    "condition": {
+      "type": "special",
+      "check": "score_round_million"
+    },
+    "hint": "Score nahe an einer glatten Million",
+    "points": 30
+  },
+  {
+    "id": "score_speed_1m_day",
+    "name": "Blitzkrieg",
+    "description": "Gain 1 million points in a single day",
+    "category": "score",
+    "tier": "gold",
+    "icon": "⚡",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 1000000
+    },
+    "hint": "1 Million Punkte an einem Tag",
+    "points": 40
+  },
+  {
+    "id": "score_speed_10m_day",
+    "name": "Lichtgeschwindigkeit",
+    "description": "Gain 10 million points in a single day",
+    "category": "score",
+    "tier": "platinum",
+    "icon": "💫",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 10000000
+    },
+    "hint": "10 Millionen Punkte an einem Tag",
+    "points": 55
+  },
+  {
+    "id": "wus_1",
+    "name": "Erster Fold",
+    "description": "Complete your first work unit",
+    "category": "wus",
+    "tier": "bronze",
+    "icon": "🧬",
+    "condition": {
+      "type": "wus_gte",
+      "value": 1
+    },
+    "hint": "Schliesse deine erste Work Unit ab",
+    "points": 10
+  },
+  {
+    "id": "wus_5",
+    "name": "Getting Hooked",
+    "description": "Complete 5 work units",
+    "category": "wus",
+    "tier": "bronze",
+    "icon": "🎣",
+    "condition": {
+      "type": "wus_gte",
+      "value": 5
+    },
+    "hint": "5 Work Units abschliessen",
+    "points": 10
+  },
+  {
+    "id": "wus_10",
+    "name": "Zehn Stück",
+    "description": "Complete 10 work units",
+    "category": "wus",
+    "tier": "bronze",
+    "icon": "🔟",
+    "condition": {
+      "type": "wus_gte",
+      "value": 10
+    },
+    "hint": "10 Work Units abschliessen",
+    "points": 10
+  },
+  {
+    "id": "wus_25",
+    "name": "Assembly Line",
+    "description": "Complete 25 work units",
+    "category": "wus",
+    "tier": "bronze",
+    "icon": "🏭",
+    "condition": {
+      "type": "wus_gte",
+      "value": 25
+    },
+    "hint": "25 Work Units abschliessen",
+    "points": 15
+  },
+  {
+    "id": "wus_50",
+    "name": "Half Century",
+    "description": "Complete 50 work units",
+    "category": "wus",
+    "tier": "bronze",
+    "icon": "5️⃣",
+    "condition": {
+      "type": "wus_gte",
+      "value": 50
+    },
+    "hint": "50 Work Units abschliessen",
+    "points": 15
+  },
+  {
+    "id": "wus_100",
+    "name": "Hundert",
+    "description": "Complete 100 work units",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "💯",
+    "condition": {
+      "type": "wus_gte",
+      "value": 100
+    },
+    "hint": "100 Work Units abschliessen",
+    "points": 20
+  },
+  {
+    "id": "wus_200",
+    "name": "Double Century",
+    "description": "Complete 200 work units",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "🎯",
+    "condition": {
+      "type": "wus_gte",
+      "value": 200
+    },
+    "hint": "200 Work Units abschliessen",
+    "points": 20
+  },
+  {
+    "id": "wus_350",
+    "name": "Fliessband",
+    "description": "Complete 350 work units",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "🔧",
+    "condition": {
+      "type": "wus_gte",
+      "value": 350
+    },
+    "hint": "350 Work Units abschliessen",
+    "points": 25
+  },
+  {
+    "id": "wus_500",
+    "name": "Fünfhundert",
+    "description": "Complete 500 work units",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "🏅",
+    "condition": {
+      "type": "wus_gte",
+      "value": 500
+    },
+    "hint": "500 Work Units abschliessen",
+    "points": 25
+  },
+  {
+    "id": "wus_750",
+    "name": "Factory Floor",
+    "description": "Complete 750 work units",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "⚙️",
+    "condition": {
+      "type": "wus_gte",
+      "value": 750
+    },
+    "hint": "750 Work Units abschliessen",
+    "points": 30
+  },
+  {
+    "id": "wus_1000",
+    "name": "Tausender",
+    "description": "Complete 1,000 work units",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🏆",
+    "condition": {
+      "type": "wus_gte",
+      "value": 1000
+    },
+    "hint": "1.000 Work Units abschliessen",
+    "points": 35
+  },
+  {
+    "id": "wus_1500",
+    "name": "Production Line",
+    "description": "Complete 1,500 work units",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🔩",
+    "condition": {
+      "type": "wus_gte",
+      "value": 1500
+    },
+    "hint": "1.500 Work Units abschliessen",
+    "points": 35
+  },
+  {
+    "id": "wus_2000",
+    "name": "Zweitausend",
+    "description": "Complete 2,000 work units",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🏗️",
+    "condition": {
+      "type": "wus_gte",
+      "value": 2000
+    },
+    "hint": "2.000 Work Units abschliessen",
+    "points": 40
+  },
+  {
+    "id": "wus_3000",
+    "name": "Workhorse",
+    "description": "Complete 3,000 work units",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🐴",
+    "condition": {
+      "type": "wus_gte",
+      "value": 3000
+    },
+    "hint": "3.000 Work Units abschliessen",
+    "points": 40
+  },
+  {
+    "id": "wus_5000",
+    "name": "Fünftausend",
+    "description": "Complete 5,000 work units",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "⭐",
+    "condition": {
+      "type": "wus_gte",
+      "value": 5000
+    },
+    "hint": "5.000 Work Units abschliessen",
+    "points": 45
+  },
+  {
+    "id": "wus_7500",
+    "name": "Relentless",
+    "description": "Complete 7,500 work units",
+    "category": "wus",
+    "tier": "platinum",
+    "icon": "🔥",
+    "condition": {
+      "type": "wus_gte",
+      "value": 7500
+    },
+    "hint": "7.500 Work Units abschliessen",
+    "points": 50
+  },
+  {
+    "id": "wus_10000",
+    "name": "Zehntausend",
+    "description": "Complete 10,000 work units",
+    "category": "wus",
+    "tier": "platinum",
+    "icon": "💎",
+    "condition": {
+      "type": "wus_gte",
+      "value": 10000
+    },
+    "hint": "10.000 Work Units abschliessen",
+    "points": 55
+  },
+  {
+    "id": "wus_15000",
+    "name": "Industrial Giant",
+    "description": "Complete 15,000 work units",
+    "category": "wus",
+    "tier": "platinum",
+    "icon": "🏭",
+    "condition": {
+      "type": "wus_gte",
+      "value": 15000
+    },
+    "hint": "15.000 Work Units abschliessen",
+    "points": 55
+  },
+  {
+    "id": "wus_25000",
+    "name": "Fünfundzwanzigtausend",
+    "description": "Complete 25,000 work units",
+    "category": "wus",
+    "tier": "platinum",
+    "icon": "🌟",
+    "condition": {
+      "type": "wus_gte",
+      "value": 25000
+    },
+    "hint": "25.000 Work Units abschliessen",
+    "points": 60
+  },
+  {
+    "id": "wus_50000",
+    "name": "Mega Factory",
+    "description": "Complete 50,000 work units",
+    "category": "wus",
+    "tier": "diamond",
+    "icon": "🏛️",
+    "condition": {
+      "type": "wus_gte",
+      "value": 50000
+    },
+    "hint": "50.000 Work Units abschliessen",
+    "points": 70
+  },
+  {
+    "id": "wus_75000",
+    "name": "Unermüdlich",
+    "description": "Complete 75,000 work units",
+    "category": "wus",
+    "tier": "diamond",
+    "icon": "🦾",
+    "condition": {
+      "type": "wus_gte",
+      "value": 75000
+    },
+    "hint": "75.000 Work Units abschliessen",
+    "points": 75
+  },
+  {
+    "id": "wus_100000",
+    "name": "Hunderttausend",
+    "description": "Complete 100,000 work units",
+    "category": "wus",
+    "tier": "diamond",
+    "icon": "👑",
+    "condition": {
+      "type": "wus_gte",
+      "value": 100000
+    },
+    "hint": "100.000 Work Units abschliessen",
+    "points": 80
+  },
+  {
+    "id": "wus_250000",
+    "name": "Quarter Million Folds",
+    "description": "Complete 250,000 work units",
+    "category": "wus",
+    "tier": "diamond",
+    "icon": "🌌",
+    "condition": {
+      "type": "wus_gte",
+      "value": 250000
+    },
+    "hint": "250.000 Work Units abschliessen",
+    "points": 85
+  },
+  {
+    "id": "wus_500000",
+    "name": "Halbe Million",
+    "description": "Complete 500,000 work units",
+    "category": "wus",
+    "tier": "legendary",
+    "icon": "🔮",
+    "condition": {
+      "type": "wus_gte",
+      "value": 500000
+    },
+    "hint": "500.000 Work Units abschliessen",
+    "points": 90
+  },
+  {
+    "id": "wus_750000",
+    "name": "Dreiviertel Million",
+    "description": "Complete 750,000 work units",
+    "category": "wus",
+    "tier": "legendary",
+    "icon": "🌠",
+    "condition": {
+      "type": "wus_gte",
+      "value": 750000
+    },
+    "hint": "750.000 Work Units abschliessen",
+    "points": 95
+  },
+  {
+    "id": "wus_1000000",
+    "name": "Million Folds",
+    "description": "Complete 1,000,000 work units",
+    "category": "wus",
+    "tier": "legendary",
+    "icon": "🏆",
+    "condition": {
+      "type": "wus_gte",
+      "value": 1000000
+    },
+    "hint": "1.000.000 Work Units abschliessen",
+    "points": 100
+  },
+  {
+    "id": "wus_prime_10",
+    "name": "Primzahl-Finder",
+    "description": "WU count is a prime number above 10",
+    "category": "wus",
+    "tier": "bronze",
+    "icon": "🔢",
+    "condition": {
+      "type": "wus_prime",
+      "value": 10
+    },
+    "hint": "Deine WU-Anzahl muss eine Primzahl über 10 sein",
+    "points": 10
+  },
+  {
+    "id": "wus_prime_100",
+    "name": "Prime Hunter",
+    "description": "WU count is a prime number above 100",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "🎯",
+    "condition": {
+      "type": "wus_prime",
+      "value": 100
+    },
+    "hint": "Deine WU-Anzahl muss eine Primzahl über 100 sein",
+    "points": 20
+  },
+  {
+    "id": "wus_prime_1000",
+    "name": "Primzahl-Meister",
+    "description": "WU count is a prime number above 1,000",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🧮",
+    "condition": {
+      "type": "wus_prime",
+      "value": 1000
+    },
+    "hint": "Deine WU-Anzahl muss eine Primzahl über 1.000 sein",
+    "points": 30
+  },
+  {
+    "id": "wus_perfect_square",
+    "name": "Perfektes Quadrat",
+    "description": "WU count is a perfect square above 100",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "⬛",
+    "condition": {
+      "type": "special",
+      "check": "wus_perfect_square_above_100"
+    },
+    "hint": "WU-Anzahl muss eine Quadratzahl über 100 sein",
+    "points": 20
+  },
+  {
+    "id": "wus_power_10",
+    "name": "Zehnerpotenz",
+    "description": "WU count is an exact power of 10",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🔟",
+    "condition": {
+      "type": "special",
+      "check": "wus_power_of_10"
+    },
+    "hint": "WU-Anzahl muss eine Zehnerpotenz sein",
+    "points": 35
+  },
+  {
+    "id": "wus_daily_10",
+    "name": "Tagesfolder",
+    "description": "Complete 10 WUs in a single day",
+    "category": "wus",
+    "tier": "silver",
+    "icon": "📅",
+    "condition": {
+      "type": "special",
+      "check": "wus_daily_gte_10"
+    },
+    "hint": "10 WUs an einem Tag abschliessen",
+    "points": 20
+  },
+  {
+    "id": "wus_daily_50",
+    "name": "Batch Processor",
+    "description": "Complete 50 WUs in a single day",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "📦",
+    "condition": {
+      "type": "special",
+      "check": "wus_daily_gte_50"
+    },
+    "hint": "50 WUs an einem Tag abschliessen",
+    "points": 35
+  },
+  {
+    "id": "wus_daily_100",
+    "name": "Hundert am Tag",
+    "description": "Complete 100 WUs in a single day",
+    "category": "wus",
+    "tier": "platinum",
+    "icon": "💪",
+    "condition": {
+      "type": "special",
+      "check": "wus_daily_gte_100"
+    },
+    "hint": "100 WUs an einem Tag abschliessen",
+    "points": 50
+  },
+  {
+    "id": "wus_2500",
+    "name": "Zweieinhalbtausend",
+    "description": "Complete 2,500 work units",
+    "category": "wus",
+    "tier": "gold",
+    "icon": "🔨",
+    "condition": {
+      "type": "wus_gte",
+      "value": 2500
+    },
+    "hint": "2.500 Work Units abschliessen",
+    "points": 38
+  },
+  {
+    "id": "wus_150000",
+    "name": "Mass Production",
+    "description": "Complete 150,000 work units",
+    "category": "wus",
+    "tier": "diamond",
+    "icon": "🏭",
+    "condition": {
+      "type": "wus_gte",
+      "value": 150000
+    },
+    "hint": "150.000 Work Units abschliessen",
+    "points": 82
+  },
+  {
+    "id": "wus_2000000",
+    "name": "Zwei Millionen Folds",
+    "description": "Complete 2,000,000 work units",
+    "category": "wus",
+    "tier": "legendary",
+    "icon": "♾️",
+    "condition": {
+      "type": "wus_gte",
+      "value": 2000000
+    },
+    "hint": "2.000.000 Work Units abschliessen",
+    "points": 100
+  },
+  {
+    "id": "streak_2",
+    "name": "Doppeltag",
+    "description": "Fold for 2 consecutive days",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "2️⃣",
+    "condition": {
+      "type": "streak_gte",
+      "value": 2
+    },
+    "hint": "2 Tage in Folge falten",
+    "points": 10
+  },
+  {
+    "id": "streak_3",
+    "name": "Hat-trick",
+    "description": "Fold for 3 consecutive days",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "🎩",
+    "condition": {
+      "type": "streak_gte",
+      "value": 3
+    },
+    "hint": "3 Tage in Folge falten",
+    "points": 10
+  },
+  {
+    "id": "streak_5",
+    "name": "Fünf-Tage-Lauf",
+    "description": "Fold for 5 consecutive days",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "🏃",
+    "condition": {
+      "type": "streak_gte",
+      "value": 5
+    },
+    "hint": "5 Tage in Folge falten",
+    "points": 10
+  },
+  {
+    "id": "streak_7",
+    "name": "Week Warrior",
+    "description": "Fold for 7 consecutive days",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "📅",
+    "condition": {
+      "type": "streak_gte",
+      "value": 7
+    },
+    "hint": "7 Tage in Folge falten",
+    "points": 15
+  },
+  {
+    "id": "streak_10",
+    "name": "Zehn Tage",
+    "description": "Fold for 10 consecutive days",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "🔟",
+    "condition": {
+      "type": "streak_gte",
+      "value": 10
+    },
+    "hint": "10 Tage in Folge falten",
+    "points": 15
+  },
+  {
+    "id": "streak_14",
+    "name": "Fortnight Folder",
+    "description": "Fold for 14 consecutive days",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "🌙",
+    "condition": {
+      "type": "streak_gte",
+      "value": 14
+    },
+    "hint": "14 Tage in Folge falten",
+    "points": 20
+  },
+  {
+    "id": "streak_21",
+    "name": "Drei Wochen",
+    "description": "Fold for 21 consecutive days",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "📆",
+    "condition": {
+      "type": "streak_gte",
+      "value": 21
+    },
+    "hint": "21 Tage in Folge falten",
+    "points": 20
+  },
+  {
+    "id": "streak_30",
+    "name": "Month Master",
+    "description": "Fold for 30 consecutive days",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "🗓️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 30
+    },
+    "hint": "30 Tage in Folge falten",
+    "points": 25
+  },
+  {
+    "id": "streak_45",
+    "name": "Sechs Wochen",
+    "description": "Fold for 45 consecutive days",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "💪",
+    "condition": {
+      "type": "streak_gte",
+      "value": 45
+    },
+    "hint": "45 Tage in Folge falten",
+    "points": 25
+  },
+  {
+    "id": "streak_60",
+    "name": "Zwei Monate",
+    "description": "Fold for 60 consecutive days",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "🏋️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 60
+    },
+    "hint": "60 Tage in Folge falten",
+    "points": 30
+  },
+  {
+    "id": "streak_75",
+    "name": "Ausdauer",
+    "description": "Fold for 75 consecutive days",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "🦿",
+    "condition": {
+      "type": "streak_gte",
+      "value": 75
+    },
+    "hint": "75 Tage in Folge falten",
+    "points": 35
+  },
+  {
+    "id": "streak_90",
+    "name": "Quarter Year",
+    "description": "Fold for 90 consecutive days",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "🌤️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 90
+    },
+    "hint": "90 Tage in Folge falten",
+    "points": 35
+  },
+  {
+    "id": "streak_120",
+    "name": "Vier Monate",
+    "description": "Fold for 120 consecutive days",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "🌿",
+    "condition": {
+      "type": "streak_gte",
+      "value": 120
+    },
+    "hint": "120 Tage in Folge falten",
+    "points": 40
+  },
+  {
+    "id": "streak_150",
+    "name": "Five Months Strong",
+    "description": "Fold for 150 consecutive days",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "🌳",
+    "condition": {
+      "type": "streak_gte",
+      "value": 150
+    },
+    "hint": "150 Tage in Folge falten",
+    "points": 40
+  },
+  {
+    "id": "streak_180",
+    "name": "Halbjahr",
+    "description": "Fold for 180 consecutive days",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "☀️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 180
+    },
+    "hint": "180 Tage in Folge falten",
+    "points": 45
+  },
+  {
+    "id": "streak_200",
+    "name": "Zweihundert Tage",
+    "description": "Fold for 200 consecutive days",
+    "category": "streak",
+    "tier": "platinum",
+    "icon": "🔥",
+    "condition": {
+      "type": "streak_gte",
+      "value": 200
+    },
+    "hint": "200 Tage in Folge falten",
+    "points": 50
+  },
+  {
+    "id": "streak_250",
+    "name": "Iron Will",
+    "description": "Fold for 250 consecutive days",
+    "category": "streak",
+    "tier": "platinum",
+    "icon": "🦾",
+    "condition": {
+      "type": "streak_gte",
+      "value": 250
+    },
+    "hint": "250 Tage in Folge falten",
+    "points": 55
+  },
+  {
+    "id": "streak_300",
+    "name": "Dreihundert",
+    "description": "Fold for 300 consecutive days",
+    "category": "streak",
+    "tier": "platinum",
+    "icon": "🛡️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 300
+    },
+    "hint": "300 Tage in Folge falten",
+    "points": 60
+  },
+  {
+    "id": "streak_330",
+    "name": "Elf Monate",
+    "description": "Fold for 330 consecutive days",
+    "category": "streak",
+    "tier": "diamond",
+    "icon": "🌍",
+    "condition": {
+      "type": "streak_gte",
+      "value": 330
+    },
+    "hint": "330 Tage in Folge falten",
+    "points": 70
+  },
+  {
+    "id": "streak_365",
+    "name": "Year Beast",
+    "description": "Fold for 365 consecutive days",
+    "category": "streak",
+    "tier": "diamond",
+    "icon": "🐉",
+    "condition": {
+      "type": "streak_gte",
+      "value": 365
+    },
+    "hint": "365 Tage in Folge falten",
+    "points": 80
+  },
+  {
+    "id": "streak_500",
+    "name": "Fünfhundert Tage",
+    "description": "Fold for 500 consecutive days",
+    "category": "streak",
+    "tier": "diamond",
+    "icon": "🏔️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 500
+    },
+    "hint": "500 Tage in Folge falten",
+    "points": 85
+  },
+  {
+    "id": "streak_730",
+    "name": "Zwei Jahre",
+    "description": "Fold for 730 consecutive days",
+    "category": "streak",
+    "tier": "legendary",
+    "icon": "👑",
+    "condition": {
+      "type": "streak_gte",
+      "value": 730
+    },
+    "hint": "730 Tage in Folge (2 Jahre) falten",
+    "points": 95
+  },
+  {
+    "id": "streak_1000",
+    "name": "Tausend Tage",
+    "description": "Fold for 1,000 consecutive days",
+    "category": "streak",
+    "tier": "legendary",
+    "icon": "🏆",
+    "condition": {
+      "type": "streak_gte",
+      "value": 1000
+    },
+    "hint": "1.000 Tage in Folge falten",
+    "points": 100
+  },
+  {
+    "id": "streak_1095",
+    "name": "Three Year Titan",
+    "description": "Fold for 1,095 consecutive days",
+    "category": "streak",
+    "tier": "legendary",
+    "icon": "♾️",
+    "condition": {
+      "type": "streak_gte",
+      "value": 1095
+    },
+    "hint": "1.095 Tage (3 Jahre) in Folge falten",
+    "points": 100
+  },
+  {
+    "id": "streak_comeback_3",
+    "name": "Comeback Kid",
+    "description": "Start a new streak of 3 after losing one of 7+",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "🔄",
+    "condition": {
+      "type": "special",
+      "check": "streak_comeback_3_after_7"
+    },
+    "hint": "Nach einem verlorenen 7+ Tage Streak wieder 3 Tage schaffen",
+    "points": 15
+  },
+  {
+    "id": "streak_comeback_7",
+    "name": "Unverwüstlich",
+    "description": "Start a new streak of 7 after losing one of 30+",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "🔁",
+    "condition": {
+      "type": "special",
+      "check": "streak_comeback_7_after_30"
+    },
+    "hint": "Nach einem verlorenen 30+ Tage Streak wieder 7 Tage schaffen",
+    "points": 25
+  },
+  {
+    "id": "streak_weekend",
+    "name": "Wochenend-Krieger",
+    "description": "Fold on 4 consecutive weekends",
+    "category": "streak",
+    "tier": "bronze",
+    "icon": "🎮",
+    "condition": {
+      "type": "special",
+      "check": "streak_4_weekends"
+    },
+    "hint": "4 Wochenenden in Folge falten",
+    "points": 15
+  },
+  {
+    "id": "streak_no_break",
+    "name": "Kein Ruhetag",
+    "description": "Never miss a day in first 30 days after joining",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "🎖️",
+    "condition": {
+      "type": "special",
+      "check": "streak_perfect_first_30"
+    },
+    "hint": "In den ersten 30 Tagen keinen Tag verpassen",
+    "points": 40
+  },
+  {
+    "id": "streak_holiday",
+    "name": "Holiday Hero",
+    "description": "Maintain streak through an entire holiday season",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "🎄",
+    "condition": {
+      "type": "special",
+      "check": "streak_through_holidays"
+    },
+    "hint": "Streak über die gesamte Feiertagszeit halten",
+    "points": 35
+  },
+  {
+    "id": "streak_birthday",
+    "name": "Geburtstagsfalter",
+    "description": "Fold on your team anniversary date",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "🎂",
+    "condition": {
+      "type": "special",
+      "check": "streak_on_anniversary"
+    },
+    "hint": "Am Jahrestag deines Teambeitritts falten",
+    "points": 20
+  },
+  {
+    "id": "streak_40",
+    "name": "Vierzig Tage",
+    "description": "Fold for 40 consecutive days",
+    "category": "streak",
+    "tier": "silver",
+    "icon": "🌊",
+    "condition": {
+      "type": "streak_gte",
+      "value": 40
+    },
+    "hint": "40 Tage in Folge falten",
+    "points": 22
+  },
+  {
+    "id": "streak_100",
+    "name": "Hundert Tage Streak",
+    "description": "Fold for 100 consecutive days",
+    "category": "streak",
+    "tier": "gold",
+    "icon": "💎",
+    "condition": {
+      "type": "streak_gte",
+      "value": 100
+    },
+    "hint": "100 Tage in Folge falten",
+    "points": 38
+  },
+  {
+    "id": "streak_400",
+    "name": "Vierhundert",
+    "description": "Fold for 400 consecutive days",
+    "category": "streak",
+    "tier": "diamond",
+    "icon": "🗻",
+    "condition": {
+      "type": "streak_gte",
+      "value": 400
+    },
+    "hint": "400 Tage in Folge falten",
+    "points": 72
+  },
+  {
+    "id": "streak_600",
+    "name": "Sechshundert Tage",
+    "description": "Fold for 600 consecutive days",
+    "category": "streak",
+    "tier": "diamond",
+    "icon": "🌋",
+    "condition": {
+      "type": "streak_gte",
+      "value": 600
+    },
+    "hint": "600 Tage in Folge falten",
+    "points": 88
+  },
+  {
+    "id": "rank_global_500k",
+    "name": "Top 500K",
+    "description": "Reach global rank 500,000 or better",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "📊",
+    "condition": {
+      "type": "rank_lte",
+      "value": 500000
+    },
+    "hint": "Globalen Rang 500.000 oder besser erreichen",
+    "points": 10
+  },
+  {
+    "id": "rank_global_250k",
+    "name": "Top 250K",
+    "description": "Reach global rank 250,000 or better",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "📈",
+    "condition": {
+      "type": "rank_lte",
+      "value": 250000
+    },
+    "hint": "Globalen Rang 250.000 oder besser erreichen",
+    "points": 10
+  },
+  {
+    "id": "rank_global_100k",
+    "name": "Top Hunderttausend",
+    "description": "Reach global rank 100,000 or better",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "🌐",
+    "condition": {
+      "type": "rank_lte",
+      "value": 100000
+    },
+    "hint": "Globalen Rang 100.000 oder besser erreichen",
+    "points": 15
+  },
+  {
+    "id": "rank_global_75k",
+    "name": "Top 75K",
+    "description": "Reach global rank 75,000 or better",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "📉",
+    "condition": {
+      "type": "rank_lte",
+      "value": 75000
+    },
+    "hint": "Globalen Rang 75.000 oder besser erreichen",
+    "points": 15
+  },
+  {
+    "id": "rank_global_50k",
+    "name": "Top Fünfzigtausend",
+    "description": "Reach global rank 50,000 or better",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🥉",
+    "condition": {
+      "type": "rank_lte",
+      "value": 50000
+    },
+    "hint": "Globalen Rang 50.000 oder besser erreichen",
+    "points": 20
+  },
+  {
+    "id": "rank_global_25k",
+    "name": "Top 25K",
+    "description": "Reach global rank 25,000 or better",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🎖️",
+    "condition": {
+      "type": "rank_lte",
+      "value": 25000
+    },
+    "hint": "Globalen Rang 25.000 oder besser erreichen",
+    "points": 25
+  },
+  {
+    "id": "rank_global_10k",
+    "name": "Top Zehntausend",
+    "description": "Reach global rank 10,000 or better",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🏅",
+    "condition": {
+      "type": "rank_lte",
+      "value": 10000
+    },
+    "hint": "Globalen Rang 10.000 oder besser erreichen",
+    "points": 30
+  },
+  {
+    "id": "rank_global_7500",
+    "name": "Elite 7500",
+    "description": "Reach global rank 7,500 or better",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "⚔️",
+    "condition": {
+      "type": "rank_lte",
+      "value": 7500
+    },
+    "hint": "Globalen Rang 7.500 oder besser erreichen",
+    "points": 30
+  },
+  {
+    "id": "rank_global_5000",
+    "name": "Top Fünftausend",
+    "description": "Reach global rank 5,000 or better",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "🗡️",
+    "condition": {
+      "type": "rank_lte",
+      "value": 5000
+    },
+    "hint": "Globalen Rang 5.000 oder besser erreichen",
+    "points": 35
+  },
+  {
+    "id": "rank_global_2500",
+    "name": "Elite 2500",
+    "description": "Reach global rank 2,500 or better",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "🛡️",
+    "condition": {
+      "type": "rank_lte",
+      "value": 2500
+    },
+    "hint": "Globalen Rang 2.500 oder besser erreichen",
+    "points": 40
+  },
+  {
+    "id": "rank_global_1000",
+    "name": "Top Tausend",
+    "description": "Reach global rank 1,000 or better",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "⭐",
+    "condition": {
+      "type": "rank_lte",
+      "value": 1000
+    },
+    "hint": "Globalen Rang 1.000 oder besser erreichen",
+    "points": 45
+  },
+  {
+    "id": "rank_global_500",
+    "name": "Top 500",
+    "description": "Reach global rank 500 or better",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "🌟",
+    "condition": {
+      "type": "rank_lte",
+      "value": 500
+    },
+    "hint": "Globalen Rang 500 oder besser erreichen",
+    "points": 50
+  },
+  {
+    "id": "rank_global_250",
+    "name": "Elite 250",
+    "description": "Reach global rank 250 or better",
+    "category": "rank",
+    "tier": "platinum",
+    "icon": "💎",
+    "condition": {
+      "type": "rank_lte",
+      "value": 250
+    },
+    "hint": "Globalen Rang 250 oder besser erreichen",
+    "points": 55
+  },
+  {
+    "id": "rank_global_100",
+    "name": "Top Hundert",
+    "description": "Reach global rank 100 or better",
+    "category": "rank",
+    "tier": "platinum",
+    "icon": "🏆",
+    "condition": {
+      "type": "rank_lte",
+      "value": 100
+    },
+    "hint": "Globalen Rang 100 oder besser erreichen",
+    "points": 60
+  },
+  {
+    "id": "rank_global_50",
+    "name": "Top 50",
+    "description": "Reach global rank 50 or better",
+    "category": "rank",
+    "tier": "platinum",
+    "icon": "👑",
+    "condition": {
+      "type": "rank_lte",
+      "value": 50
+    },
+    "hint": "Globalen Rang 50 oder besser erreichen",
+    "points": 70
+  },
+  {
+    "id": "rank_global_25",
+    "name": "Elite Fünfundzwanzig",
+    "description": "Reach global rank 25 or better",
+    "category": "rank",
+    "tier": "diamond",
+    "icon": "💠",
+    "condition": {
+      "type": "rank_lte",
+      "value": 25
+    },
+    "hint": "Globalen Rang 25 oder besser erreichen",
+    "points": 80
+  },
+  {
+    "id": "rank_global_10",
+    "name": "Top Ten",
+    "description": "Reach global rank 10 or better",
+    "category": "rank",
+    "tier": "diamond",
+    "icon": "🔱",
+    "condition": {
+      "type": "rank_lte",
+      "value": 10
+    },
+    "hint": "Globalen Rang 10 oder besser erreichen",
+    "points": 90
+  },
+  {
+    "id": "rank_global_5",
+    "name": "Top Five",
+    "description": "Reach global rank 5 or better",
+    "category": "rank",
+    "tier": "diamond",
+    "icon": "🌠",
+    "condition": {
+      "type": "rank_lte",
+      "value": 5
+    },
+    "hint": "Globalen Rang 5 oder besser erreichen",
+    "points": 95
+  },
+  {
+    "id": "rank_global_3",
+    "name": "Podium",
+    "description": "Reach global rank 3 or better",
+    "category": "rank",
+    "tier": "legendary",
+    "icon": "🥉",
+    "condition": {
+      "type": "rank_lte",
+      "value": 3
+    },
+    "hint": "Auf dem globalen Podium stehen",
+    "points": 95
+  },
+  {
+    "id": "rank_global_2",
+    "name": "Silbermedaille",
+    "description": "Reach global rank 2",
+    "category": "rank",
+    "tier": "legendary",
+    "icon": "🥈",
+    "condition": {
+      "type": "rank_lte",
+      "value": 2
+    },
+    "hint": "Globaler Rang 2 erreichen",
+    "points": 100
+  },
+  {
+    "id": "rank_global_1",
+    "name": "Nummer Eins",
+    "description": "Reach global rank 1",
+    "category": "rank",
+    "tier": "legendary",
+    "icon": "🥇",
+    "condition": {
+      "type": "rank_lte",
+      "value": 1
+    },
+    "hint": "Globaler Rang 1 erreichen",
+    "points": 100
+  },
+  {
+    "id": "rank_climb_100",
+    "name": "Aufsteiger",
+    "description": "Climb 100 global ranks",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "📈",
+    "condition": {
+      "type": "special",
+      "check": "rank_climb_100"
+    },
+    "hint": "100 globale Ränge aufsteigen",
+    "points": 15
+  },
+  {
+    "id": "rank_climb_1000",
+    "name": "Rocket Rise",
+    "description": "Climb 1,000 global ranks",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🚀",
+    "condition": {
+      "type": "special",
+      "check": "rank_climb_1000"
+    },
+    "hint": "1.000 globale Ränge aufsteigen",
+    "points": 25
+  },
+  {
+    "id": "rank_climb_5000",
+    "name": "Kometenhafter Aufstieg",
+    "description": "Climb 5,000 global ranks",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "☄️",
+    "condition": {
+      "type": "special",
+      "check": "rank_climb_5000"
+    },
+    "hint": "5.000 globale Ränge aufsteigen",
+    "points": 35
+  },
+  {
+    "id": "rank_climb_10000",
+    "name": "Stratospheric",
+    "description": "Climb 10,000 global ranks",
+    "category": "rank",
+    "tier": "platinum",
+    "icon": "🌍",
+    "condition": {
+      "type": "special",
+      "check": "rank_climb_10000"
+    },
+    "hint": "10.000 globale Ränge aufsteigen",
+    "points": 50
+  },
+  {
+    "id": "rank_climb_50000",
+    "name": "Höhenflug",
+    "description": "Climb 50,000 global ranks",
+    "category": "rank",
+    "tier": "diamond",
+    "icon": "🛸",
+    "condition": {
+      "type": "special",
+      "check": "rank_climb_50000"
+    },
+    "hint": "50.000 globale Ränge aufsteigen",
+    "points": 70
+  },
+  {
+    "id": "rank_climb_100000",
+    "name": "Orbital",
+    "description": "Climb 100,000 global ranks",
+    "category": "rank",
+    "tier": "legendary",
+    "icon": "🌌",
+    "condition": {
+      "type": "special",
+      "check": "rank_climb_100000"
+    },
+    "hint": "100.000 globale Ränge aufsteigen",
+    "points": 85
+  },
+  {
+    "id": "rank_overtake_5",
+    "name": "Überholer",
+    "description": "Overtake 5 donors in one day",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "🏎️",
+    "condition": {
+      "type": "special",
+      "check": "rank_overtake_5_daily"
+    },
+    "hint": "5 Spender an einem Tag überholen",
+    "points": 15
+  },
+  {
+    "id": "rank_overtake_20",
+    "name": "Speed Racer",
+    "description": "Overtake 20 donors in one day",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🏁",
+    "condition": {
+      "type": "special",
+      "check": "rank_overtake_20_daily"
+    },
+    "hint": "20 Spender an einem Tag überholen",
+    "points": 25
+  },
+  {
+    "id": "rank_overtake_100",
+    "name": "Blitzüberholer",
+    "description": "Overtake 100 donors in one day",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "⚡",
+    "condition": {
+      "type": "special",
+      "check": "rank_overtake_100_daily"
+    },
+    "hint": "100 Spender an einem Tag überholen",
+    "points": 40
+  },
+  {
+    "id": "rank_defend_7",
+    "name": "Verteidiger",
+    "description": "Maintain your rank for 7 days straight",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🛡️",
+    "condition": {
+      "type": "special",
+      "check": "rank_defend_7_days"
+    },
+    "hint": "Deinen Rang 7 Tage lang halten",
+    "points": 20
+  },
+  {
+    "id": "rank_defend_30",
+    "name": "Fortress",
+    "description": "Maintain your rank for 30 days straight",
+    "category": "rank",
+    "tier": "gold",
+    "icon": "🏰",
+    "condition": {
+      "type": "special",
+      "check": "rank_defend_30_days"
+    },
+    "hint": "Deinen Rang 30 Tage lang halten",
+    "points": 40
+  },
+  {
+    "id": "rank_palindrome",
+    "name": "Rang-Palindrom",
+    "description": "Reach a palindrome rank number",
+    "category": "rank",
+    "tier": "bronze",
+    "icon": "🪞",
+    "condition": {
+      "type": "special",
+      "check": "rank_is_palindrome"
+    },
+    "hint": "Einen Palindrom-Rang erreichen",
+    "points": 15
+  },
+  {
+    "id": "rank_round_number",
+    "name": "Runder Rang",
+    "description": "Reach an exact round rank (1000, 2000, etc.)",
+    "category": "rank",
+    "tier": "silver",
+    "icon": "🎯",
+    "condition": {
+      "type": "special",
+      "check": "rank_round_thousand"
+    },
+    "hint": "Einen glatten Tausender-Rang erreichen",
+    "points": 20
+  },
+  {
+    "id": "speed_eff_1000",
+    "name": "Efficient Machine",
+    "description": "Achieve a score/WU ratio of 1,000+",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "⚙️",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 1000
+    },
+    "hint": "Score/WU Verhältnis von 1.000+ erreichen",
+    "points": 10
+  },
+  {
+    "id": "speed_eff_2500",
+    "name": "Gut Geölt",
+    "description": "Achieve a score/WU ratio of 2,500+",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "🛢️",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 2500
+    },
+    "hint": "Score/WU Verhältnis von 2.500+ erreichen",
+    "points": 15
+  },
+  {
+    "id": "speed_eff_5000",
+    "name": "High Performance",
+    "description": "Achieve a score/WU ratio of 5,000+",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "🏎️",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 5000
+    },
+    "hint": "Score/WU Verhältnis von 5.000+ erreichen",
+    "points": 15
+  },
+  {
+    "id": "speed_eff_7500",
+    "name": "Turbo Mode",
+    "description": "Achieve a score/WU ratio of 7,500+",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "🚀",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 7500
+    },
+    "hint": "Score/WU Verhältnis von 7.500+ erreichen",
+    "points": 20
+  },
+  {
+    "id": "speed_eff_10000",
+    "name": "Zehntausend pro WU",
+    "description": "Achieve a score/WU ratio of 10,000+",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "📊",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 10000
+    },
+    "hint": "Score/WU Verhältnis von 10.000+ erreichen",
+    "points": 25
+  },
+  {
+    "id": "speed_eff_15000",
+    "name": "Power User",
+    "description": "Achieve a score/WU ratio of 15,000+",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "💻",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 15000
+    },
+    "hint": "Score/WU Verhältnis von 15.000+ erreichen",
+    "points": 25
+  },
+  {
+    "id": "speed_eff_25000",
+    "name": "Fünfundzwanzigtausend Ratio",
+    "description": "Achieve a score/WU ratio of 25,000+",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "🔧",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 25000
+    },
+    "hint": "Score/WU Verhältnis von 25.000+ erreichen",
+    "points": 30
+  },
+  {
+    "id": "speed_eff_50000",
+    "name": "Overclocked",
+    "description": "Achieve a score/WU ratio of 50,000+",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "🔥",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 50000
+    },
+    "hint": "Score/WU Verhältnis von 50.000+ erreichen",
+    "points": 35
+  },
+  {
+    "id": "speed_eff_75000",
+    "name": "Hochleistung",
+    "description": "Achieve a score/WU ratio of 75,000+",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "⚡",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 75000
+    },
+    "hint": "Score/WU Verhältnis von 75.000+ erreichen",
+    "points": 40
+  },
+  {
+    "id": "speed_eff_100000",
+    "name": "Maximum Overdrive",
+    "description": "Achieve a score/WU ratio of 100,000+",
+    "category": "speed",
+    "tier": "platinum",
+    "icon": "💎",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 100000
+    },
+    "hint": "Score/WU Verhältnis von 100.000+ erreichen",
+    "points": 50
+  },
+  {
+    "id": "speed_eff_250000",
+    "name": "Quantenrechner",
+    "description": "Achieve a score/WU ratio of 250,000+",
+    "category": "speed",
+    "tier": "diamond",
+    "icon": "🔮",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 250000
+    },
+    "hint": "Score/WU Verhältnis von 250.000+ erreichen",
+    "points": 70
+  },
+  {
+    "id": "speed_eff_500000",
+    "name": "Unfathomable",
+    "description": "Achieve a score/WU ratio of 500,000+",
+    "category": "speed",
+    "tier": "legendary",
+    "icon": "🌌",
+    "condition": {
+      "type": "efficiency_gte",
+      "value": 500000
+    },
+    "hint": "Score/WU Verhältnis von 500.000+ erreichen",
+    "points": 90
+  },
+  {
+    "id": "speed_daily_100k",
+    "name": "Tagesleistung",
+    "description": "Gain 100,000 points in a single day",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "📈",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 100000
+    },
+    "hint": "100.000 Punkte an einem Tag gewinnen",
+    "points": 10
+  },
+  {
+    "id": "speed_daily_250k",
+    "name": "Daily Grinder",
+    "description": "Gain 250,000 points in a single day",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "🏋️",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 250000
+    },
+    "hint": "250.000 Punkte an einem Tag gewinnen",
+    "points": 15
+  },
+  {
+    "id": "speed_daily_500k",
+    "name": "Halbe Million am Tag",
+    "description": "Gain 500,000 points in a single day",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "🌅",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 500000
+    },
+    "hint": "500.000 Punkte an einem Tag gewinnen",
+    "points": 20
+  },
+  {
+    "id": "speed_daily_2m",
+    "name": "Zwei Millionen Tag",
+    "description": "Gain 2,000,000 points in a single day",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "🔥",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 2000000
+    },
+    "hint": "2.000.000 Punkte an einem Tag gewinnen",
+    "points": 35
+  },
+  {
+    "id": "speed_daily_5m",
+    "name": "Five Mill Day",
+    "description": "Gain 5,000,000 points in a single day",
+    "category": "speed",
+    "tier": "platinum",
+    "icon": "💰",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 5000000
+    },
+    "hint": "5.000.000 Punkte an einem Tag gewinnen",
+    "points": 50
+  },
+  {
+    "id": "speed_daily_25m",
+    "name": "Tagesrekord",
+    "description": "Gain 25,000,000 points in a single day",
+    "category": "speed",
+    "tier": "diamond",
+    "icon": "🏆",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 25000000
+    },
+    "hint": "25.000.000 Punkte an einem Tag gewinnen",
+    "points": 75
+  },
+  {
+    "id": "speed_daily_50m",
+    "name": "Impossible Day",
+    "description": "Gain 50,000,000 points in a single day",
+    "category": "speed",
+    "tier": "legendary",
+    "icon": "🌠",
+    "condition": {
+      "type": "daily_gain_gte",
+      "value": 50000000
+    },
+    "hint": "50.000.000 Punkte an einem Tag gewinnen",
+    "points": 90
+  },
+  {
+    "id": "speed_weekly_500k",
+    "name": "Wochenleistung",
+    "description": "Gain 500,000 points in a single week",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "📅",
+    "condition": {
+      "type": "weekly_gain_gte",
+      "value": 500000
+    },
+    "hint": "500.000 Punkte in einer Woche gewinnen",
+    "points": 15
+  },
+  {
+    "id": "speed_weekly_1m",
+    "name": "Weekly Million",
+    "description": "Gain 1,000,000 points in a single week",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "📆",
+    "condition": {
+      "type": "weekly_gain_gte",
+      "value": 1000000
+    },
+    "hint": "1.000.000 Punkte in einer Woche gewinnen",
+    "points": 20
+  },
+  {
+    "id": "speed_weekly_5m",
+    "name": "Fünf Millionen Woche",
+    "description": "Gain 5,000,000 points in a single week",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "🗓️",
+    "condition": {
+      "type": "weekly_gain_gte",
+      "value": 5000000
+    },
+    "hint": "5.000.000 Punkte in einer Woche gewinnen",
+    "points": 35
+  },
+  {
+    "id": "speed_weekly_10m",
+    "name": "Mega Week",
+    "description": "Gain 10,000,000 points in a single week",
+    "category": "speed",
+    "tier": "platinum",
+    "icon": "💎",
+    "condition": {
+      "type": "weekly_gain_gte",
+      "value": 10000000
+    },
+    "hint": "10.000.000 Punkte in einer Woche gewinnen",
+    "points": 50
+  },
+  {
+    "id": "speed_weekly_50m",
+    "name": "Rekordwoche",
+    "description": "Gain 50,000,000 points in a single week",
+    "category": "speed",
+    "tier": "diamond",
+    "icon": "🌟",
+    "condition": {
+      "type": "weekly_gain_gte",
+      "value": 50000000
+    },
+    "hint": "50.000.000 Punkte in einer Woche gewinnen",
+    "points": 70
+  },
+  {
+    "id": "speed_weekly_100m",
+    "name": "Legendary Week",
+    "description": "Gain 100,000,000 points in a single week",
+    "category": "speed",
+    "tier": "legendary",
+    "icon": "👑",
+    "condition": {
+      "type": "weekly_gain_gte",
+      "value": 100000000
+    },
+    "hint": "100.000.000 Punkte in einer Woche gewinnen",
+    "points": 90
+  },
+  {
+    "id": "speed_improvement_10pct",
+    "name": "Steigerung",
+    "description": "Improve daily output by 10% week over week",
+    "category": "speed",
+    "tier": "bronze",
+    "icon": "📈",
+    "condition": {
+      "type": "special",
+      "check": "weekly_improvement_10pct"
+    },
+    "hint": "Tägliche Leistung um 10% steigern",
+    "points": 15
+  },
+  {
+    "id": "speed_improvement_50pct",
+    "name": "Turbo Boost",
+    "description": "Improve daily output by 50% week over week",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "🚀",
+    "condition": {
+      "type": "special",
+      "check": "weekly_improvement_50pct"
+    },
+    "hint": "Tägliche Leistung um 50% steigern",
+    "points": 25
+  },
+  {
+    "id": "speed_improvement_100pct",
+    "name": "Verdopplung",
+    "description": "Double your daily output week over week",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "✖️",
+    "condition": {
+      "type": "special",
+      "check": "weekly_improvement_100pct"
+    },
+    "hint": "Tägliche Leistung verdoppeln",
+    "points": 35
+  },
+  {
+    "id": "speed_consistent_7",
+    "name": "Gleichmässig",
+    "description": "Maintain consistent daily output for 7 days (within 20%)",
+    "category": "speed",
+    "tier": "silver",
+    "icon": "📏",
+    "condition": {
+      "type": "special",
+      "check": "consistent_output_7_days"
+    },
+    "hint": "7 Tage gleichmässige Leistung (innerhalb 20%)",
+    "points": 25
+  },
+  {
+    "id": "speed_consistent_30",
+    "name": "Steady Eddie",
+    "description": "Maintain consistent daily output for 30 days",
+    "category": "speed",
+    "tier": "gold",
+    "icon": "⚖️",
+    "condition": {
+      "type": "special",
+      "check": "consistent_output_30_days"
+    },
+    "hint": "30 Tage gleichmässige Leistung",
+    "points": 40
+  },
+  {
+    "id": "team_pct_01",
+    "name": "Team Player",
+    "description": "Contribute 0.1% of team score",
+    "category": "team",
+    "tier": "bronze",
+    "icon": "🤝",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 0.1
+    },
+    "hint": "0,1% des Team-Scores beitragen",
+    "points": 10
+  },
+  {
+    "id": "team_pct_05",
+    "name": "Mannschaftsspieler",
+    "description": "Contribute 0.5% of team score",
+    "category": "team",
+    "tier": "bronze",
+    "icon": "⚽",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 0.5
+    },
+    "hint": "0,5% des Team-Scores beitragen",
+    "points": 15
+  },
+  {
+    "id": "team_pct_1",
+    "name": "One Percenter",
+    "description": "Contribute 1% of team score",
+    "category": "team",
+    "tier": "bronze",
+    "icon": "📊",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 1
+    },
+    "hint": "1% des Team-Scores beitragen",
+    "points": 15
+  },
+  {
+    "id": "team_pct_2",
+    "name": "Zwei Prozent",
+    "description": "Contribute 2% of team score",
+    "category": "team",
+    "tier": "silver",
+    "icon": "📈",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 2
+    },
+    "hint": "2% des Team-Scores beitragen",
+    "points": 20
+  },
+  {
+    "id": "team_pct_5",
+    "name": "Heavy Lifter",
+    "description": "Contribute 5% of team score",
+    "category": "team",
+    "tier": "silver",
+    "icon": "🏋️",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 5
+    },
+    "hint": "5% des Team-Scores beitragen",
+    "points": 25
+  },
+  {
+    "id": "team_pct_10",
+    "name": "Zehn Prozent",
+    "description": "Contribute 10% of team score",
+    "category": "team",
+    "tier": "gold",
+    "icon": "💪",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 10
+    },
+    "hint": "10% des Team-Scores beitragen",
+    "points": 35
+  },
+  {
+    "id": "team_pct_15",
+    "name": "Backbone",
+    "description": "Contribute 15% of team score",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🦴",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 15
+    },
+    "hint": "15% des Team-Scores beitragen",
+    "points": 40
+  },
+  {
+    "id": "team_pct_20",
+    "name": "Zwanzig Prozent",
+    "description": "Contribute 20% of team score",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🔥",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 20
+    },
+    "hint": "20% des Team-Scores beitragen",
+    "points": 45
+  },
+  {
+    "id": "team_pct_25",
+    "name": "Quarter Carry",
+    "description": "Contribute 25% of team score",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🎒",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 25
+    },
+    "hint": "25% des Team-Scores beitragen",
+    "points": 55
+  },
+  {
+    "id": "team_pct_33",
+    "name": "Drittel-Kraft",
+    "description": "Contribute 33% of team score",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🏗️",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 33
+    },
+    "hint": "33% des Team-Scores beitragen",
+    "points": 60
+  },
+  {
+    "id": "team_pct_50",
+    "name": "Half the Team",
+    "description": "Contribute 50% of team score",
+    "category": "team",
+    "tier": "diamond",
+    "icon": "⚔️",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 50
+    },
+    "hint": "50% des Team-Scores beitragen",
+    "points": 80
+  },
+  {
+    "id": "team_pct_75",
+    "name": "Atlas",
+    "description": "Contribute 75% of team score",
+    "category": "team",
+    "tier": "legendary",
+    "icon": "🌍",
+    "condition": {
+      "type": "team_pct_gte",
+      "value": 75
+    },
+    "hint": "75% des Team-Scores beitragen",
+    "points": 95
+  },
+  {
+    "id": "team_rank_10",
+    "name": "Team Top 10",
+    "description": "Reach top 10 within the team",
+    "category": "team",
+    "tier": "bronze",
+    "icon": "🔟",
+    "condition": {
+      "type": "team_rank_lte",
+      "value": 10
+    },
+    "hint": "Top 10 im Team erreichen",
+    "points": 15
+  },
+  {
+    "id": "team_rank_5",
+    "name": "Team Top 5",
+    "description": "Reach top 5 within the team",
+    "category": "team",
+    "tier": "silver",
+    "icon": "🖐️",
+    "condition": {
+      "type": "team_rank_lte",
+      "value": 5
+    },
+    "hint": "Top 5 im Team erreichen",
+    "points": 25
+  },
+  {
+    "id": "team_rank_3",
+    "name": "Team Podium",
+    "description": "Reach top 3 within the team",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🥉",
+    "condition": {
+      "type": "team_rank_lte",
+      "value": 3
+    },
+    "hint": "Auf dem Team-Podium stehen",
+    "points": 35
+  },
+  {
+    "id": "team_rank_2",
+    "name": "Vize",
+    "description": "Reach rank 2 within the team",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🥈",
+    "condition": {
+      "type": "team_rank_lte",
+      "value": 2
+    },
+    "hint": "Rang 2 im Team erreichen",
+    "points": 50
+  },
+  {
+    "id": "team_rank_1",
+    "name": "Team MVP",
+    "description": "Reach rank 1 within the team",
+    "category": "team",
+    "tier": "diamond",
+    "icon": "🥇",
+    "condition": {
+      "type": "team_rank_lte",
+      "value": 1
+    },
+    "hint": "Rang 1 im Team erreichen",
+    "points": 70
+  },
+  {
+    "id": "team_daily_leader",
+    "name": "Tagessieger",
+    "description": "Be the top daily scorer in the team",
+    "category": "team",
+    "tier": "silver",
+    "icon": "🏅",
+    "condition": {
+      "type": "special",
+      "check": "team_daily_top_scorer"
+    },
+    "hint": "Tagesbester im Team sein",
+    "points": 20
+  },
+  {
+    "id": "team_weekly_leader",
+    "name": "Weekly King",
+    "description": "Be the top weekly scorer in the team",
+    "category": "team",
+    "tier": "gold",
+    "icon": "👑",
+    "condition": {
+      "type": "special",
+      "check": "team_weekly_top_scorer"
+    },
+    "hint": "Wochenbester im Team sein",
+    "points": 35
+  },
+  {
+    "id": "team_daily_leader_7",
+    "name": "Sieben Tage König",
+    "description": "Be daily leader 7 times",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🎖️",
+    "condition": {
+      "type": "special",
+      "check": "team_daily_leader_7_times"
+    },
+    "hint": "7 Mal Tagesbester im Team sein",
+    "points": 40
+  },
+  {
+    "id": "team_daily_leader_30",
+    "name": "Monthly Dominance",
+    "description": "Be daily leader 30 times",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🏆",
+    "condition": {
+      "type": "special",
+      "check": "team_daily_leader_30_times"
+    },
+    "hint": "30 Mal Tagesbester im Team sein",
+    "points": 55
+  },
+  {
+    "id": "team_newcomer_welcome",
+    "name": "Willkommen",
+    "description": "Be active when a new member joins the team",
+    "category": "team",
+    "tier": "bronze",
+    "icon": "👋",
+    "condition": {
+      "type": "special",
+      "check": "active_when_new_member_joins"
+    },
+    "hint": "Aktiv sein wenn ein neues Mitglied beitritt",
+    "points": 10
+  },
+  {
+    "id": "team_all_active",
+    "name": "Volle Kraft",
+    "description": "All team members active on the same day",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🎊",
+    "condition": {
+      "type": "special",
+      "check": "all_members_active_same_day"
+    },
+    "hint": "Alle Teammitglieder am gleichen Tag aktiv",
+    "points": 40
+  },
+  {
+    "id": "team_score_milestone_1b",
+    "name": "Team Milliarde",
+    "description": "Help team reach 1 billion total score",
+    "category": "team",
+    "tier": "silver",
+    "icon": "🏦",
+    "condition": {
+      "type": "special",
+      "check": "team_total_score_gte_1b"
+    },
+    "hint": "Dem Team helfen 1 Milliarde Score zu erreichen",
+    "points": 25
+  },
+  {
+    "id": "team_score_milestone_10b",
+    "name": "Team 10 Milliarden",
+    "description": "Help team reach 10 billion total score",
+    "category": "team",
+    "tier": "gold",
+    "icon": "💎",
+    "condition": {
+      "type": "special",
+      "check": "team_total_score_gte_10b"
+    },
+    "hint": "Dem Team helfen 10 Milliarden Score zu erreichen",
+    "points": 40
+  },
+  {
+    "id": "team_score_milestone_100b",
+    "name": "Team 100 Billion",
+    "description": "Help team reach 100 billion total score",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🌟",
+    "condition": {
+      "type": "special",
+      "check": "team_total_score_gte_100b"
+    },
+    "hint": "Dem Team helfen 100 Milliarden Score zu erreichen",
+    "points": 55
+  },
+  {
+    "id": "team_score_milestone_1t",
+    "name": "Team Billion",
+    "description": "Help team reach 1 trillion total score",
+    "category": "team",
+    "tier": "diamond",
+    "icon": "🏆",
+    "condition": {
+      "type": "special",
+      "check": "team_total_score_gte_1t"
+    },
+    "hint": "Dem Team helfen 1 Billion Score zu erreichen",
+    "points": 75
+  },
+  {
+    "id": "team_founding",
+    "name": "Gründungsmitglied",
+    "description": "Be one of the first 5 members of the team",
+    "category": "team",
+    "tier": "legendary",
+    "icon": "📜",
+    "condition": {
+      "type": "special",
+      "check": "founding_member_top_5"
+    },
+    "hint": "Eines der ersten 5 Teammitglieder sein",
+    "points": 90
+  },
+  {
+    "id": "team_consistent_contributor",
+    "name": "Zuverlässig",
+    "description": "Contribute points every day for 30 days",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🔄",
+    "condition": {
+      "type": "special",
+      "check": "team_daily_contribution_30_days"
+    },
+    "hint": "30 Tage lang jeden Tag Punkte beitragen",
+    "points": 40
+  },
+  {
+    "id": "team_surge",
+    "name": "Team Surge",
+    "description": "Team gains 100M+ in a single day with your help",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🌊",
+    "condition": {
+      "type": "special",
+      "check": "team_daily_gain_100m_contributor"
+    },
+    "hint": "Team gewinnt 100M+ an einem Tag",
+    "points": 50
+  },
+  {
+    "id": "team_duo",
+    "name": "Dynamic Duo",
+    "description": "You and another member both set personal bests same day",
+    "category": "team",
+    "tier": "gold",
+    "icon": "🦸",
+    "condition": {
+      "type": "special",
+      "check": "duo_personal_bests_same_day"
+    },
+    "hint": "Du und ein anderes Mitglied stellen am gleichen Tag Rekorde auf",
+    "points": 35
+  },
+  {
+    "id": "team_recruit_effect",
+    "name": "Rekrutierer-Effekt",
+    "description": "Team gains a new member and total daily output increases by 10%+",
+    "category": "team",
+    "tier": "silver",
+    "icon": "📢",
+    "condition": {
+      "type": "special",
+      "check": "new_member_boosts_output_10pct"
+    },
+    "hint": "Neues Mitglied steigert Team-Leistung um 10%+",
+    "points": 25
+  },
+  {
+    "id": "team_members_10",
+    "name": "Zehn Fuzzy",
+    "description": "Team has 10 or more active members",
+    "category": "team",
+    "tier": "silver",
+    "icon": "👥",
+    "condition": {
+      "type": "special",
+      "check": "team_active_members_gte_10"
+    },
+    "hint": "Team hat 10+ aktive Mitglieder",
+    "points": 20
+  },
+  {
+    "id": "team_members_25",
+    "name": "Wachstumsschub",
+    "description": "Team has 25 or more active members",
+    "category": "team",
+    "tier": "gold",
+    "icon": "👨‍👩‍👧‍👦",
+    "condition": {
+      "type": "special",
+      "check": "team_active_members_gte_25"
+    },
+    "hint": "Team hat 25+ aktive Mitglieder",
+    "points": 35
+  },
+  {
+    "id": "team_members_50",
+    "name": "Full House",
+    "description": "Team has 50 or more active members",
+    "category": "team",
+    "tier": "platinum",
+    "icon": "🏠",
+    "condition": {
+      "type": "special",
+      "check": "team_active_members_gte_50"
+    },
+    "hint": "Team hat 50+ aktive Mitglieder",
+    "points": 50
+  },
+  {
+    "id": "time_join",
+    "name": "Newcomer",
+    "description": "Create your first record with the team",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "🌱",
+    "condition": {
+      "type": "member_since_days",
+      "value": 0
+    },
+    "hint": "Deinen ersten Eintrag beim Team erstellen",
+    "points": 10
+  },
+  {
+    "id": "time_1w",
+    "name": "Eine Woche",
+    "description": "Be a member for 1 week",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "📅",
+    "condition": {
+      "type": "member_since_days",
+      "value": 7
+    },
+    "hint": "1 Woche Mitglied sein",
+    "points": 10
+  },
+  {
+    "id": "time_2w",
+    "name": "Two Weeks In",
+    "description": "Be a member for 2 weeks",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "📆",
+    "condition": {
+      "type": "member_since_days",
+      "value": 14
+    },
+    "hint": "2 Wochen Mitglied sein",
+    "points": 10
+  },
+  {
+    "id": "time_1m",
+    "name": "Ein Monat",
+    "description": "Be a member for 1 month",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "🗓️",
+    "condition": {
+      "type": "member_since_days",
+      "value": 30
+    },
+    "hint": "1 Monat Mitglied sein",
+    "points": 15
+  },
+  {
+    "id": "time_2m",
+    "name": "Two Months",
+    "description": "Be a member for 2 months",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "🌙",
+    "condition": {
+      "type": "member_since_days",
+      "value": 60
+    },
+    "hint": "2 Monate Mitglied sein",
+    "points": 15
+  },
+  {
+    "id": "time_3m",
+    "name": "Quartal",
+    "description": "Be a member for 3 months",
+    "category": "time",
+    "tier": "silver",
+    "icon": "🌤️",
+    "condition": {
+      "type": "member_since_days",
+      "value": 90
+    },
+    "hint": "3 Monate (ein Quartal) Mitglied sein",
+    "points": 20
+  },
+  {
+    "id": "time_6m",
+    "name": "Halbjährling",
+    "description": "Be a member for 6 months",
+    "category": "time",
+    "tier": "silver",
+    "icon": "☀️",
+    "condition": {
+      "type": "member_since_days",
+      "value": 180
+    },
+    "hint": "6 Monate Mitglied sein",
+    "points": 25
+  },
+  {
+    "id": "time_9m",
+    "name": "Nine Months",
+    "description": "Be a member for 9 months",
+    "category": "time",
+    "tier": "silver",
+    "icon": "🍂",
+    "condition": {
+      "type": "member_since_days",
+      "value": 270
+    },
+    "hint": "9 Monate Mitglied sein",
+    "points": 25
+  },
+  {
+    "id": "time_1y",
+    "name": "Jahrestag",
+    "description": "Be a member for 1 year",
+    "category": "time",
+    "tier": "gold",
+    "icon": "🎂",
+    "condition": {
+      "type": "member_since_days",
+      "value": 365
+    },
+    "hint": "1 Jahr Mitglied sein",
+    "points": 35
+  },
+  {
+    "id": "time_18m",
+    "name": "Eighteen Months",
+    "description": "Be a member for 18 months",
+    "category": "time",
+    "tier": "gold",
+    "icon": "🌿",
+    "condition": {
+      "type": "member_since_days",
+      "value": 548
+    },
+    "hint": "18 Monate Mitglied sein",
+    "points": 35
+  },
+  {
+    "id": "time_2y",
+    "name": "Zwei Jahre",
+    "description": "Be a member for 2 years",
+    "category": "time",
+    "tier": "gold",
+    "icon": "🌳",
+    "condition": {
+      "type": "member_since_days",
+      "value": 730
+    },
+    "hint": "2 Jahre Mitglied sein",
+    "points": 40
+  },
+  {
+    "id": "time_3y",
+    "name": "Drei Jahre",
+    "description": "Be a member for 3 years",
+    "category": "time",
+    "tier": "gold",
+    "icon": "🏔️",
+    "condition": {
+      "type": "member_since_days",
+      "value": 1095
+    },
+    "hint": "3 Jahre Mitglied sein",
+    "points": 45
+  },
+  {
+    "id": "time_4y",
+    "name": "Four Year Veteran",
+    "description": "Be a member for 4 years",
+    "category": "time",
+    "tier": "platinum",
+    "icon": "⭐",
+    "condition": {
+      "type": "member_since_days",
+      "value": 1460
+    },
+    "hint": "4 Jahre Mitglied sein",
+    "points": 50
+  },
+  {
+    "id": "time_5y",
+    "name": "Fünf Jahre",
+    "description": "Be a member for 5 years",
+    "category": "time",
+    "tier": "platinum",
+    "icon": "🌟",
+    "condition": {
+      "type": "member_since_days",
+      "value": 1825
+    },
+    "hint": "5 Jahre Mitglied sein",
+    "points": 55
+  },
+  {
+    "id": "time_7y",
+    "name": "Seven Year Itch",
+    "description": "Be a member for 7 years",
+    "category": "time",
+    "tier": "platinum",
+    "icon": "💎",
+    "condition": {
+      "type": "member_since_days",
+      "value": 2555
+    },
+    "hint": "7 Jahre Mitglied sein",
+    "points": 60
+  },
+  {
+    "id": "time_10y",
+    "name": "Dekade",
+    "description": "Be a member for 10 years",
+    "category": "time",
+    "tier": "diamond",
+    "icon": "🏆",
+    "condition": {
+      "type": "member_since_days",
+      "value": 3650
+    },
+    "hint": "10 Jahre Mitglied sein",
+    "points": 75
+  },
+  {
+    "id": "time_15y",
+    "name": "Fifteen Years",
+    "description": "Be a member for 15 years",
+    "category": "time",
+    "tier": "diamond",
+    "icon": "🗿",
+    "condition": {
+      "type": "member_since_days",
+      "value": 5475
+    },
+    "hint": "15 Jahre Mitglied sein",
+    "points": 85
+  },
+  {
+    "id": "time_20y",
+    "name": "Zwanzig Jahre",
+    "description": "Be a member for 20 years",
+    "category": "time",
+    "tier": "legendary",
+    "icon": "👑",
+    "condition": {
+      "type": "member_since_days",
+      "value": 7300
+    },
+    "hint": "20 Jahre Mitglied sein",
+    "points": 100
+  },
+  {
+    "id": "time_active_7",
+    "name": "Sieben Aktive Tage",
+    "description": "Have 7 total days with activity",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "📊",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 7
+    },
+    "hint": "7 Tage mit Aktivität haben",
+    "points": 10
+  },
+  {
+    "id": "time_active_14",
+    "name": "Active Fortnight",
+    "description": "Have 14 total days with activity",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "📈",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 14
+    },
+    "hint": "14 Tage mit Aktivität haben",
+    "points": 15
+  },
+  {
+    "id": "time_active_30",
+    "name": "Dreissig Aktive Tage",
+    "description": "Have 30 total days with activity",
+    "category": "time",
+    "tier": "silver",
+    "icon": "📅",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 30
+    },
+    "hint": "30 Tage mit Aktivität haben",
+    "points": 20
+  },
+  {
+    "id": "time_active_60",
+    "name": "Two Active Months",
+    "description": "Have 60 total days with activity",
+    "category": "time",
+    "tier": "silver",
+    "icon": "🗓️",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 60
+    },
+    "hint": "60 Tage mit Aktivität haben",
+    "points": 25
+  },
+  {
+    "id": "time_active_90",
+    "name": "Neunzig Aktive",
+    "description": "Have 90 total days with activity",
+    "category": "time",
+    "tier": "gold",
+    "icon": "🌤️",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 90
+    },
+    "hint": "90 Tage mit Aktivität haben",
+    "points": 30
+  },
+  {
+    "id": "time_active_180",
+    "name": "Half Year Active",
+    "description": "Have 180 total days with activity",
+    "category": "time",
+    "tier": "gold",
+    "icon": "☀️",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 180
+    },
+    "hint": "180 Tage mit Aktivität haben",
+    "points": 35
+  },
+  {
+    "id": "time_active_365",
+    "name": "Dreihundertfünfundsechzig",
+    "description": "Have 365 total days with activity",
+    "category": "time",
+    "tier": "platinum",
+    "icon": "🎯",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 365
+    },
+    "hint": "365 Tage mit Aktivität haben",
+    "points": 50
+  },
+  {
+    "id": "time_active_500",
+    "name": "500 Active Days",
+    "description": "Have 500 total days with activity",
+    "category": "time",
+    "tier": "platinum",
+    "icon": "🔥",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 500
+    },
+    "hint": "500 Tage mit Aktivität haben",
+    "points": 55
+  },
+  {
+    "id": "time_active_730",
+    "name": "Zweijahre Aktiv",
+    "description": "Have 730 total days with activity",
+    "category": "time",
+    "tier": "diamond",
+    "icon": "🌟",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 730
+    },
+    "hint": "730 aktive Tage haben",
+    "points": 70
+  },
+  {
+    "id": "time_active_1000",
+    "name": "Thousand Days",
+    "description": "Have 1,000 total days with activity",
+    "category": "time",
+    "tier": "diamond",
+    "icon": "💎",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 1000
+    },
+    "hint": "1.000 aktive Tage haben",
+    "points": 80
+  },
+  {
+    "id": "time_active_1500",
+    "name": "Tausendfünfhundert Aktiv",
+    "description": "Have 1,500 total days with activity",
+    "category": "time",
+    "tier": "legendary",
+    "icon": "🏆",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 1500
+    },
+    "hint": "1.500 aktive Tage haben",
+    "points": 90
+  },
+  {
+    "id": "time_active_2000",
+    "name": "Two Thousand Active",
+    "description": "Have 2,000 total days with activity",
+    "category": "time",
+    "tier": "legendary",
+    "icon": "♾️",
+    "condition": {
+      "type": "days_active_gte",
+      "value": 2000
+    },
+    "hint": "2.000 aktive Tage haben",
+    "points": 100
+  },
+  {
+    "id": "time_early_2020",
+    "name": "COVID-Krieger",
+    "description": "Was active during 2020 pandemic peak",
+    "category": "time",
+    "tier": "gold",
+    "icon": "🦠",
+    "condition": {
+      "type": "special",
+      "check": "active_during_2020"
+    },
+    "hint": "Während des COVID-Peaks 2020 aktiv gewesen",
+    "points": 40
+  },
+  {
+    "id": "time_newyear",
+    "name": "Neujahrs-Folder",
+    "description": "Fold on New Year's Day",
+    "category": "time",
+    "tier": "silver",
+    "icon": "🎆",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_jan_1"
+    },
+    "hint": "Am Neujahrstag falten",
+    "points": 20
+  },
+  {
+    "id": "time_leap_year",
+    "name": "Schaltjahr-Falter",
+    "description": "Fold on February 29th",
+    "category": "time",
+    "tier": "gold",
+    "icon": "📅",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_feb_29"
+    },
+    "hint": "Am 29. Februar falten",
+    "points": 35
+  },
+  {
+    "id": "time_midnight",
+    "name": "Midnight Folder",
+    "description": "Have activity recorded at midnight",
+    "category": "time",
+    "tier": "bronze",
+    "icon": "🌙",
+    "condition": {
+      "type": "special",
+      "check": "activity_at_midnight"
+    },
+    "hint": "Aktivität um Mitternacht haben",
+    "points": 10
+  },
+  {
+    "id": "time_longest_member",
+    "name": "Ältestes Mitglied",
+    "description": "Be the longest-serving team member",
+    "category": "time",
+    "tier": "legendary",
+    "icon": "📜",
+    "condition": {
+      "type": "special",
+      "check": "longest_serving_member"
+    },
+    "hint": "Das älteste Teammitglied sein",
+    "points": 90
+  },
+  {
+    "id": "time_same_day_join",
+    "name": "Zwilling",
+    "description": "Join the team on the same day as another member",
+    "category": "time",
+    "tier": "silver",
+    "icon": "👯",
+    "condition": {
+      "type": "special",
+      "check": "joined_same_day_as_another"
+    },
+    "hint": "Am gleichen Tag wie ein anderes Mitglied beitreten",
+    "points": 20
+  },
+  {
+    "id": "time_active_pct_50",
+    "name": "Halbzeit-Spieler",
+    "description": "Be active on 50%+ of days since joining",
+    "category": "time",
+    "tier": "gold",
+    "icon": "⏱️",
+    "condition": {
+      "type": "special",
+      "check": "active_pct_gte_50"
+    },
+    "hint": "An 50%+ der Tage seit Beitritt aktiv sein",
+    "points": 40
+  },
+  {
+    "id": "time_active_pct_75",
+    "name": "Dedicated",
+    "description": "Be active on 75%+ of days since joining",
+    "category": "time",
+    "tier": "platinum",
+    "icon": "🎯",
+    "condition": {
+      "type": "special",
+      "check": "active_pct_gte_75"
+    },
+    "hint": "An 75%+ der Tage seit Beitritt aktiv sein",
+    "points": 55
+  },
+  {
+    "id": "time_active_pct_90",
+    "name": "Unaufhaltsam",
+    "description": "Be active on 90%+ of days since joining",
+    "category": "time",
+    "tier": "diamond",
+    "icon": "🔥",
+    "condition": {
+      "type": "special",
+      "check": "active_pct_gte_90"
+    },
+    "hint": "An 90%+ der Tage seit Beitritt aktiv sein",
+    "points": 75
+  },
+  {
+    "id": "time_active_pct_99",
+    "name": "Near Perfect",
+    "description": "Be active on 99%+ of days since joining",
+    "category": "time",
+    "tier": "legendary",
+    "icon": "💯",
+    "condition": {
+      "type": "special",
+      "check": "active_pct_gte_99"
+    },
+    "hint": "An 99%+ der Tage seit Beitritt aktiv sein",
+    "points": 95
+  },
+  {
+    "id": "special_christmas",
+    "name": "Weihnachtsfalter",
+    "description": "Fold on December 25th",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🎄",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_dec_25"
+    },
+    "hint": "Am 25. Dezember falten",
+    "points": 20
+  },
+  {
+    "id": "special_halloween",
+    "name": "Spooky Folder",
+    "description": "Fold on October 31st",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🎃",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_oct_31"
+    },
+    "hint": "Am 31. Oktober falten",
+    "points": 20
+  },
+  {
+    "id": "special_valentine",
+    "name": "Liebhaber",
+    "description": "Fold on February 14th",
+    "category": "special",
+    "tier": "silver",
+    "icon": "❤️",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_feb_14"
+    },
+    "hint": "Am 14. Februar falten",
+    "points": 20
+  },
+  {
+    "id": "special_pi_day",
+    "name": "Pi-Tag",
+    "description": "Fold on March 14th",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🥧",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_mar_14"
+    },
+    "hint": "Am 14. März (Pi-Tag) falten",
+    "points": 20
+  },
+  {
+    "id": "special_star_wars",
+    "name": "May the Fold",
+    "description": "Fold on May 4th",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🌌",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_may_4"
+    },
+    "hint": "Am 4. Mai falten",
+    "points": 20
+  },
+  {
+    "id": "special_friday_13",
+    "name": "Freitag der 13te",
+    "description": "Fold on a Friday the 13th",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🔮",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_friday_13"
+    },
+    "hint": "An einem Freitag den 13. falten",
+    "points": 20
+  },
+  {
+    "id": "special_easter",
+    "name": "Osterfalter",
+    "description": "Fold on Easter Sunday",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🐣",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_easter"
+    },
+    "hint": "Am Ostersonntag falten",
+    "points": 20
+  },
+  {
+    "id": "special_palindrome_score",
+    "name": "Palindrom-Score",
+    "description": "Have a palindrome score (reads same forwards and backwards)",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🪞",
+    "condition": {
+      "type": "score_palindrome"
+    },
+    "hint": "Einen Palindrom-Score haben",
+    "points": 30
+  },
+  {
+    "id": "special_palindrome_wus",
+    "name": "Palindrom-WUs",
+    "description": "Have a palindrome WU count",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🔄",
+    "condition": {
+      "type": "special",
+      "check": "wus_palindrome"
+    },
+    "hint": "Palindrom WU-Anzahl haben",
+    "points": 30
+  },
+  {
+    "id": "special_all_same_digits",
+    "name": "Schnapszahl",
+    "description": "Score or WU count has all same digits (111, 2222, etc.)",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🍸",
+    "condition": {
+      "type": "special",
+      "check": "score_or_wus_all_same_digits"
+    },
+    "hint": "Score oder WUs mit gleichen Ziffern",
+    "points": 35
+  },
+  {
+    "id": "special_42",
+    "name": "Die Antwort",
+    "description": "Have exactly 42 work units at some point",
+    "category": "special",
+    "tier": "bronze",
+    "icon": "📖",
+    "condition": {
+      "type": "special",
+      "check": "wus_exact_42"
+    },
+    "hint": "Genau 42 Work Units haben",
+    "points": 15
+  },
+  {
+    "id": "special_69",
+    "name": "Nice",
+    "description": "Have exactly 69 work units at some point",
+    "category": "special",
+    "tier": "bronze",
+    "icon": "😏",
+    "condition": {
+      "type": "special",
+      "check": "wus_exact_69"
+    },
+    "hint": "Genau 69 Work Units haben",
+    "points": 15
+  },
+  {
+    "id": "special_404",
+    "name": "Not Found",
+    "description": "Have exactly 404 work units at some point",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🔍",
+    "condition": {
+      "type": "special",
+      "check": "wus_exact_404"
+    },
+    "hint": "Genau 404 Work Units haben",
+    "points": 20
+  },
+  {
+    "id": "special_1337",
+    "name": "Leet",
+    "description": "Have exactly 1337 work units at some point",
+    "category": "special",
+    "tier": "gold",
+    "icon": "💻",
+    "condition": {
+      "type": "special",
+      "check": "wus_exact_1337"
+    },
+    "hint": "Genau 1337 Work Units haben",
+    "points": 30
+  },
+  {
+    "id": "special_2048",
+    "name": "Power of Two",
+    "description": "Have exactly 2048 work units at some point",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🎮",
+    "condition": {
+      "type": "special",
+      "check": "wus_exact_2048"
+    },
+    "hint": "Genau 2048 Work Units haben",
+    "points": 30
+  },
+  {
+    "id": "special_9001",
+    "name": "Over 9000!",
+    "description": "Have over 9001 work units",
+    "category": "special",
+    "tier": "gold",
+    "icon": "💥",
+    "condition": {
+      "type": "wus_gte",
+      "value": 9001
+    },
+    "hint": "Über 9000 Work Units haben",
+    "points": 30
+  },
+  {
+    "id": "special_protein",
+    "name": "Proteinforscher",
+    "description": "Complete your first work unit and contribute to science",
+    "category": "special",
+    "tier": "bronze",
+    "icon": "🧪",
+    "condition": {
+      "type": "wus_gte",
+      "value": 1
+    },
+    "hint": "Deine erste WU abschliessen und zur Wissenschaft beitragen",
+    "points": 10
+  },
+  {
+    "id": "special_double_trouble",
+    "name": "Double Trouble",
+    "description": "Score and WU count both end in same 2 digits",
+    "category": "special",
+    "tier": "gold",
+    "icon": "👯",
+    "condition": {
+      "type": "special",
+      "check": "score_wus_same_last_2_digits"
+    },
+    "hint": "Score und WUs enden mit den gleichen 2 Ziffern",
+    "points": 30
+  },
+  {
+    "id": "special_ascending",
+    "name": "Aufsteigend",
+    "description": "Score digits are in ascending order",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "📈",
+    "condition": {
+      "type": "special",
+      "check": "score_digits_ascending"
+    },
+    "hint": "Score-Ziffern in aufsteigender Reihenfolge",
+    "points": 50
+  },
+  {
+    "id": "special_binary",
+    "name": "Binär",
+    "description": "Score consists only of 1s and 0s",
+    "category": "special",
+    "tier": "diamond",
+    "icon": "🖥️",
+    "condition": {
+      "type": "special",
+      "check": "score_only_binary_digits"
+    },
+    "hint": "Score besteht nur aus 1en und 0en",
+    "points": 70
+  },
+  {
+    "id": "special_all_holidays",
+    "name": "Feiertagssammler",
+    "description": "Fold on 5 different holidays in one year",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🗓️",
+    "condition": {
+      "type": "special",
+      "check": "fold_5_holidays_one_year"
+    },
+    "hint": "An 5 verschiedenen Feiertagen in einem Jahr falten",
+    "points": 35
+  },
+  {
+    "id": "special_night_shift",
+    "name": "Nachtschicht",
+    "description": "Have activity recorded between midnight and 5am",
+    "category": "special",
+    "tier": "bronze",
+    "icon": "🌃",
+    "condition": {
+      "type": "special",
+      "check": "activity_between_midnight_and_5am"
+    },
+    "hint": "Aktivität zwischen Mitternacht und 5 Uhr morgens",
+    "points": 10
+  },
+  {
+    "id": "special_weekend_warrior",
+    "name": "Wochenend-Held",
+    "description": "Score more on weekends than weekdays for a month",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🎮",
+    "condition": {
+      "type": "special",
+      "check": "weekend_score_gt_weekday_for_month"
+    },
+    "hint": "Einen Monat lang am Wochenende mehr Punkte als unter der Woche",
+    "points": 35
+  },
+  {
+    "id": "special_silent_achiever",
+    "name": "Stiller Held",
+    "description": "Have 10+ achievements without being in top 3 of team",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🥷",
+    "condition": {
+      "type": "special",
+      "check": "10_achievements_not_top_3"
+    },
+    "hint": "10+ Erfolge ohne in den Top 3 des Teams zu sein",
+    "points": 25
+  },
+  {
+    "id": "special_comeback",
+    "name": "Comeback-König",
+    "description": "Return to activity after 30+ days of inactivity",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🔄",
+    "condition": {
+      "type": "special",
+      "check": "return_after_30_days_inactive"
+    },
+    "hint": "Nach 30+ Tagen Inaktivität zurückkehren",
+    "points": 20
+  },
+  {
+    "id": "special_first_day_million",
+    "name": "Day One Legend",
+    "description": "Score 1M+ on your first day",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "🌟",
+    "condition": {
+      "type": "special",
+      "check": "first_day_score_gte_1m"
+    },
+    "hint": "Am ersten Tag 1M+ Punkte erzielen",
+    "points": 55
+  },
+  {
+    "id": "special_score_wus_match",
+    "name": "Gleichgewicht",
+    "description": "Score and WU count share the same first 3 digits",
+    "category": "special",
+    "tier": "gold",
+    "icon": "⚖️",
+    "condition": {
+      "type": "special",
+      "check": "score_wus_same_first_3_digits"
+    },
+    "hint": "Score und WUs beginnen mit den gleichen 3 Ziffern",
+    "points": 30
+  },
+  {
+    "id": "special_summer_fold",
+    "name": "Sommerfalter",
+    "description": "Fold every day during July",
+    "category": "special",
+    "tier": "gold",
+    "icon": "☀️",
+    "condition": {
+      "type": "special",
+      "check": "fold_every_day_july"
+    },
+    "hint": "Jeden Tag im Juli falten",
+    "points": 35
+  },
+  {
+    "id": "special_winter_fold",
+    "name": "Winterfalter",
+    "description": "Fold every day during December",
+    "category": "special",
+    "tier": "gold",
+    "icon": "❄️",
+    "condition": {
+      "type": "special",
+      "check": "fold_every_day_december"
+    },
+    "hint": "Jeden Tag im Dezember falten",
+    "points": 35
+  },
+  {
+    "id": "special_perfect_month",
+    "name": "Perfekter Monat",
+    "description": "Fold every single day of any month",
+    "category": "special",
+    "tier": "gold",
+    "icon": "✅",
+    "condition": {
+      "type": "special",
+      "check": "fold_every_day_any_month"
+    },
+    "hint": "Jeden Tag eines Monats falten",
+    "points": 35
+  },
+  {
+    "id": "special_half_achievements",
+    "name": "Halbzeit",
+    "description": "Unlock 50% of all achievements",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "🏅",
+    "condition": {
+      "type": "special",
+      "check": "achievements_unlocked_pct_50"
+    },
+    "hint": "50% aller Erfolge freischalten",
+    "points": 55
+  },
+  {
+    "id": "special_90pct_achievements",
+    "name": "Completionist",
+    "description": "Unlock 90% of all achievements",
+    "category": "special",
+    "tier": "diamond",
+    "icon": "🏆",
+    "condition": {
+      "type": "special",
+      "check": "achievements_unlocked_pct_90"
+    },
+    "hint": "90% aller Erfolge freischalten",
+    "points": 80
+  },
+  {
+    "id": "special_all_achievements",
+    "name": "Hundertprozent",
+    "description": "Unlock every single achievement",
+    "category": "special",
+    "tier": "legendary",
+    "icon": "👑",
+    "condition": {
+      "type": "special",
+      "check": "achievements_unlocked_pct_100"
+    },
+    "hint": "Alle Erfolge freischalten",
+    "points": 100
+  },
+  {
+    "id": "special_10_legendary",
+    "name": "Zehn Legenden",
+    "description": "Unlock 10 legendary achievements",
+    "category": "special",
+    "tier": "legendary",
+    "icon": "🌠",
+    "condition": {
+      "type": "special",
+      "check": "legendary_unlocked_gte_10"
+    },
+    "hint": "10 legendäre Erfolge freischalten",
+    "points": 90
+  },
+  {
+    "id": "special_diversity",
+    "name": "Vielfalt",
+    "description": "Unlock at least one achievement in every category",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🌈",
+    "condition": {
+      "type": "special",
+      "check": "achievement_in_every_category"
+    },
+    "hint": "Mindestens einen Erfolg in jeder Kategorie",
+    "points": 25
+  },
+  {
+    "id": "special_speed_run",
+    "name": "Speed Runner",
+    "description": "Unlock 10 achievements in a single day",
+    "category": "special",
+    "tier": "gold",
+    "icon": "⚡",
+    "condition": {
+      "type": "special",
+      "check": "10_achievements_in_one_day"
+    },
+    "hint": "10 Erfolge an einem einzigen Tag freischalten",
+    "points": 35
+  },
+  {
+    "id": "special_marathon",
+    "name": "Marathon-Falter",
+    "description": "Fold for exactly 42 consecutive days (marathon distance in km)",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🏃",
+    "condition": {
+      "type": "streak_gte",
+      "value": 42
+    },
+    "hint": "Genau 42 Tage in Folge falten (Marathondistanz in km)",
+    "points": 30
+  },
+  {
+    "id": "special_euler",
+    "name": "Euler's Number",
+    "description": "Score passes through 2718281 (e constant)",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🔬",
+    "condition": {
+      "type": "special",
+      "check": "score_contains_2718281"
+    },
+    "hint": "Score enthält 2718281 (Eulersche Zahl)",
+    "points": 35
+  },
+  {
+    "id": "special_golden_ratio",
+    "name": "Goldener Schnitt",
+    "description": "Score/WU ratio is close to 1.618 (within 0.01)",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "🌀",
+    "condition": {
+      "type": "special",
+      "check": "efficiency_near_golden_ratio"
+    },
+    "hint": "Score/WU Verhältnis nahe am Goldenen Schnitt",
+    "points": 50
+  },
+  {
+    "id": "special_lucky_number",
+    "name": "Glückszahl",
+    "description": "Score contains 888888",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🍀",
+    "condition": {
+      "type": "special",
+      "check": "score_contains_888888"
+    },
+    "hint": "Score enthält 888888",
+    "points": 35
+  },
+  {
+    "id": "special_countdown",
+    "name": "Countdown",
+    "description": "Score contains 54321",
+    "category": "special",
+    "tier": "silver",
+    "icon": "⏬",
+    "condition": {
+      "type": "special",
+      "check": "score_contains_54321"
+    },
+    "hint": "Score enthält 54321",
+    "points": 20
+  },
+  {
+    "id": "special_fah_birthday",
+    "name": "FAH-Geburtstag",
+    "description": "Fold on October 1st (Folding@Home anniversary)",
+    "category": "special",
+    "tier": "silver",
+    "icon": "🎂",
+    "condition": {
+      "type": "special",
+      "check": "fold_on_oct_1"
+    },
+    "hint": "Am 1. Oktober (FAH-Jahrestag) falten",
+    "points": 20
+  },
+  {
+    "id": "special_seven_categories",
+    "name": "Sieben auf einen Streich",
+    "description": "Unlock achievements in 7 categories in one week",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "⚔️",
+    "condition": {
+      "type": "special",
+      "check": "7_categories_in_one_week"
+    },
+    "hint": "In einer Woche Erfolge in 7 Kategorien freischalten",
+    "points": 50
+  },
+  {
+    "id": "special_triple_digit",
+    "name": "Dreifach",
+    "description": "Score, WUs, and rank all contain the same digit 3+ times",
+    "category": "special",
+    "tier": "diamond",
+    "icon": "3️⃣",
+    "condition": {
+      "type": "special",
+      "check": "score_wus_rank_same_digit_3_times"
+    },
+    "hint": "Score, WUs und Rang enthalten alle die gleiche Ziffer 3+ Mal",
+    "points": 70
+  },
+  {
+    "id": "special_underdog",
+    "name": "Underdog",
+    "description": "Outperform a higher-ranked team member for 7 days",
+    "category": "special",
+    "tier": "gold",
+    "icon": "🐕",
+    "condition": {
+      "type": "special",
+      "check": "outperform_higher_ranked_7_days"
+    },
+    "hint": "7 Tage lang ein höher platziertes Teammitglied übertreffen",
+    "points": 35
+  },
+  {
+    "id": "special_first_of_month",
+    "name": "Monatsanfang",
+    "description": "Fold on the 1st of every month for 6 months",
+    "category": "special",
+    "tier": "gold",
+    "icon": "📅",
+    "condition": {
+      "type": "special",
+      "check": "fold_first_of_month_6_months"
+    },
+    "hint": "6 Monate lang am 1. jeden Monats falten",
+    "points": 35
+  },
+  {
+    "id": "special_no_zero_day",
+    "name": "Kein Null-Tag",
+    "description": "Never have a zero-point day for 60 days after starting",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "🚫",
+    "condition": {
+      "type": "special",
+      "check": "no_zero_day_first_60"
+    },
+    "hint": "60 Tage lang keinen Tag ohne Punkte",
+    "points": 50
+  },
+  {
+    "id": "special_1000_points_achievement",
+    "name": "Tausend Punkte",
+    "description": "Reach 1,000 total achievement points",
+    "category": "special",
+    "tier": "platinum",
+    "icon": "🏅",
+    "condition": {
+      "type": "special",
+      "check": "achievement_points_gte_1000"
+    },
+    "hint": "1.000 Achievement-Punkte sammeln",
+    "points": 50
+  },
+  {
+    "id": "special_5000_points_achievement",
+    "name": "Meister der Erfolge",
+    "description": "Reach 5,000 total achievement points",
+    "category": "special",
+    "tier": "diamond",
+    "icon": "💎",
+    "condition": {
+      "type": "special",
+      "check": "achievement_points_gte_5000"
+    },
+    "hint": "5.000 Achievement-Punkte sammeln",
+    "points": 75
+  },
+  {
+    "id": "special_max_achievement",
+    "name": "Endgame",
+    "description": "Reach maximum possible achievement points",
+    "category": "special",
+    "tier": "legendary",
+    "icon": "♾️",
+    "condition": {
+      "type": "special",
+      "check": "achievement_points_maximum"
+    },
+    "hint": "Maximale Achievement-Punkte erreichen",
+    "points": 100
+  }
+]

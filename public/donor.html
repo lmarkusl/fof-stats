@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2c2c2c">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <title>Donor Profile | FOF Stats</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/donor.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">&#x1F9EC;</span>
+        FOF Stats
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Navigation umschalten" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="/donors">Alle Mitglieder</a></li>
+        <li><a href="#" class="active" id="nav-donor-name">Donor</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+  <!-- Hero with donor name -->
+  <header class="hero donor-hero">
+    <div class="hero-content">
+      <div class="terminal-prefix">C:\FOF\DONOR></div>
+      <h1 class="hero-title" id="donor-name">Loading...</h1>
+      <p class="hero-subtitle" id="donor-subtitle">Lade Profil...</p>
+    </div>
+  </header>
+
+  <!-- KPI Cards -->
+  <section class="section" id="donor-kpis">
+    <div class="container">
+      <div class="kpi-grid donor-kpi-grid">
+        <div class="card kpi-card">
+          <span class="kpi-icon">&#x1F4CA;</span>
+          <div class="kpi-value" id="donor-score">---</div>
+          <div class="kpi-label">Score</div>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon">&#x2699;&#xFE0F;</span>
+          <div class="kpi-value" id="donor-wus">---</div>
+          <div class="kpi-label">Work Units</div>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon">&#127942;</span>
+          <div class="kpi-value" id="donor-rank">---</div>
+          <div class="kpi-label">Global Rank</div>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon">&#x1F465;</span>
+          <div class="kpi-value" id="donor-team-rank">---</div>
+          <div class="kpi-label">Team Rank</div>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon">&#x26A1;</span>
+          <div class="kpi-value" id="donor-efficiency">---</div>
+          <div class="kpi-label">Effizienz (Pts/WU)</div>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon">&#x1F4C8;</span>
+          <div class="kpi-value" id="donor-contribution">---</div>
+          <div class="kpi-label">Team-Anteil</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7-Day Gains -->
+  <section class="section" id="donor-gains">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon">&#x1F4C8;</span>
+          DELTA.EXE /DAYS:7
+        </h2>
+        <p class="section-subtitle">Zuwachs in den letzten 7 Tagen</p>
+      </div>
+      <div class="gains-grid">
+        <div class="card gain-card">
+          <div class="gain-label">Score Zuwachs (7d)</div>
+          <div class="gain-value" id="donor-score-gain">---</div>
+        </div>
+        <div class="card gain-card">
+          <div class="gain-label">WU Zuwachs (7d)</div>
+          <div class="gain-value" id="donor-wus-gain">---</div>
+        </div>
+        <div class="card gain-card">
+          <div class="gain-label">Score vs. Durchschnitt</div>
+          <div class="gain-value" id="donor-vs-avg">---</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Score History Chart -->
+  <section class="section" id="donor-history">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon">&#x1F4C8;</span>
+          HISTORY.LOG
+        </h2>
+        <p class="section-subtitle">Score-Verlauf der letzten 90 Tage</p>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-container" id="donor-chart-container">
+          <canvas id="donor-history-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Activity Heatmap -->
+  <section class="section" id="donor-heatmap">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon">&#x1F5D3;</span>
+          HEATMAP.EXE
+        </h2>
+        <p class="section-subtitle">Aktivitaetsmuster (Wochentag x Uhrzeit)</p>
+      </div>
+      <div class="card">
+        <div id="donor-heatmap-container" class="heatmap-container" style="padding:16px;">
+          <div class="skeleton" style="width:100%;height:160px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements -->
+  <section class="section" id="donor-achievements">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon">&#x1F3C6;</span>
+          TROPHY.EXE /USER
+        </h2>
+        <p class="section-subtitle">Persoenliche Achievements und Meilensteine</p>
+      </div>
+
+      <!-- Achievement Summary Bar -->
+      <div class="ach-summary card" id="ach-summary">
+        <div class="ach-summary-stats">
+          <span class="ach-summary-count" id="ach-summary-count">---/--- Achievements</span>
+          <span class="ach-summary-sep">|</span>
+          <span class="ach-summary-points" id="ach-summary-points">--- Points</span>
+          <span class="ach-summary-sep">|</span>
+          <span class="ach-summary-pct" id="ach-summary-pct">--% Complete</span>
+        </div>
+        <div class="ach-progress-bar">
+          <div class="ach-progress-fill" id="ach-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Search + Filter Tabs -->
+      <div class="ach-controls">
+        <div class="ach-search">
+          <span class="search-icon">&#x1F50D;</span>
+          <input type="text" id="ach-search-input" placeholder="Achievement suchen..." />
+        </div>
+        <div class="ach-tabs" id="ach-tabs">
+          <button class="ach-tab active" data-category="all">All</button>
+          <button class="ach-tab" data-category="score">Score</button>
+          <button class="ach-tab" data-category="wus">WUs</button>
+          <button class="ach-tab" data-category="streak">Streak</button>
+          <button class="ach-tab" data-category="rank">Rank</button>
+          <button class="ach-tab" data-category="speed">Speed</button>
+          <button class="ach-tab" data-category="team">Team</button>
+          <button class="ach-tab" data-category="time">Time</button>
+          <button class="ach-tab" data-category="special">Special</button>
+        </div>
+      </div>
+
+      <!-- Achievement Grid -->
+      <div class="ach-grid" id="ach-grid">
+        <div class="forecast-loading">Lade Achievements...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievement Detail Modal -->
+  <div class="ach-modal-overlay" id="ach-modal-overlay">
+    <div class="ach-modal card">
+      <div class="ach-modal-header">
+        <span class="ach-modal-title" id="ach-modal-title">Achievement</span>
+        <button class="ach-modal-close" id="ach-modal-close">X</button>
+      </div>
+      <div class="ach-modal-body" id="ach-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Team Comparison -->
+  <section class="section" id="donor-comparison">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon">&#x1F4CA;</span>
+          COMPARE.EXE
+        </h2>
+        <p class="section-subtitle">Vergleich mit Team-Durchschnitt</p>
+      </div>
+      <div class="card" style="padding:16px;">
+        <div id="donor-comparison-bars">
+          <div class="forecast-loading">Lade Vergleichsdaten...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <ul class="footer-links">
+          <li><a href="/">Dashboard</a></li>
+          <li><a href="/donors">Alle Mitglieder</a></li>
+          <li><a id="fah-profile-link" href="#" target="_blank" rel="noopener noreferrer">F@H Profil</a></li>
+        </ul>
+        <p class="footer-credit">
+          FreilaufendeOnlineFuzzies | Team #240890<br>
+          Donor Profile Page
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js" defer></script>
+  <script src="/js/donor-page.js" defer></script>
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', function () {
+      var links = document.getElementById('nav-links');
+      links.classList.toggle('open');
+      this.setAttribute('aria-expanded', links.classList.contains('open'));
+    });
+    document.querySelectorAll('.nav-links a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('nav-links').classList.remove('open');
+        document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>
