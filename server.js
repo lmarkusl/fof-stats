@@ -1,8 +1,29 @@
+/**
+ * @file server.js - Folding@Home Team Statistics Dashboard
+ *
+ * Express server that proxies the Folding@Home API, stores periodic snapshots
+ * in SQLite for historical tracking, and provides analytics endpoints including
+ * milestones, achievements, PPD calculations, and member profiles.
+ *
+ * Architecture overview:
+ *  1. Security & rate-limiting middleware
+ *  2. SQLite database setup (snapshots, achievements, milestones)
+ *  3. Achievement engine (300 achievements with condition evaluator)
+ *  4. In-memory API cache with TTL
+ *  5. Periodic snapshot scheduler
+ *  6. REST API routes (live proxy, historical, analytics, donor profiles)
+ *  7. Graceful shutdown handling
+ */
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
 const { parseMembers } = require('./lib');
+
+// ============================================================
+// App initialization & constants
+// ============================================================
 
 const app = express();
 app.disable('x-powered-by');
@@ -41,7 +62,12 @@ app.use((req, res, next) => {
 // ============================================================
 const RATE_LIMIT_MAX_ENTRIES = 50000; // SECURITY: bound map size against IP flooding
 
-// SECURITY: Normalize IPv6 to /64 prefix to prevent bypass via address rotation
+/**
+ * Normalize an IP address for rate-limiting purposes.
+ * IPv6 addresses are truncated to /64 prefix to prevent bypass via address rotation.
+ * @param {string} ip - Raw IP address from the request
+ * @returns {string} Normalized IP string
+ */
 function normalizeIP(ip) {
   if (!ip) return 'unknown';
   if (ip.includes(':')) {
@@ -81,6 +107,13 @@ const heavyRateLimitMap = new Map();
 const HEAVY_RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const HEAVY_RATE_LIMIT_MAX = 10; // max 10 expensive requests per minute per IP
 
+/**
+ * Express middleware enforcing a stricter rate limit for CPU-intensive routes
+ * such as achievement evaluation and donor summaries.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 function heavyRateLimit(req, res, next) {
   const ip = normalizeIP(req.ip || req.connection.remoteAddress);
   if (heavyRateLimitMap.size >= RATE_LIMIT_MAX_ENTRIES) {
@@ -141,17 +174,35 @@ const PERIOD_TO_GROUP_BY = Object.freeze({
   yearly:  "strftime('%Y', timestamp)",
 });
 
+/**
+ * Validate a time period string against the allowed whitelist.
+ * @param {string} period - User-supplied period value
+ * @returns {string} A safe period string, defaults to 'daily'
+ */
 function validatePeriod(period) {
   if (!period || !ALLOWED_PERIODS.has(period)) return 'daily';
   return period;
 }
 
+/**
+ * Parse and clamp a positive integer from user input.
+ * @param {*} value - Raw input value (typically from query string)
+ * @param {number} defaultVal - Fallback if parsing fails
+ * @param {number} max - Upper bound to prevent abuse
+ * @returns {number} Validated integer in range [1, max]
+ */
 function validatePositiveInt(value, defaultVal, max) {
   const parsed = parseInt(value, 10);
   if (isNaN(parsed) || parsed < 1) return defaultVal;
   return Math.min(parsed, max);
 }
 
+/**
+ * Validate a donor/member name parameter. Rejects control characters,
+ * path traversal attempts, and URL-encoded sequences.
+ * @param {string} name - User-supplied name
+ * @returns {string|null} Sanitized name, or null if invalid
+ */
 function validateName(name) {
   if (typeof name !== 'string' || name.length === 0 || name.length > 200) return null;
   // SECURITY: Block control characters (including null bytes)
@@ -164,6 +215,11 @@ function validateName(name) {
   return name;
 }
 
+/**
+ * Validate an achievement ID. Only allows alphanumeric, underscores, and hyphens.
+ * @param {string} id - Achievement identifier to validate
+ * @returns {boolean} True if the ID is safe and well-formed
+ */
 function validateAchievementId(id) {
   if (typeof id !== 'string' || id.length === 0 || id.length > 100) return false;
   // Achievement IDs should be alphanumeric with underscores/hyphens only
@@ -171,7 +227,7 @@ function validateAchievementId(id) {
 }
 
 // ============================================================
-// SQLite Database for historical data
+// SQLite Database setup
 // ============================================================
 const db = new Database(path.join(__dirname, 'fah-stats.db'));
 db.pragma('journal_mode = WAL');
@@ -221,7 +277,10 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_milestone_events_date ON milestone_events(detected_at);
 `);
 
-// Prepared statements
+// ============================================================
+// Prepared statements for snapshot & milestone insertion
+// ============================================================
+
 const insertTeamSnapshot = db.prepare(`
   INSERT INTO team_snapshots (score, wus, rank, member_count)
   VALUES (@score, @wus, @rank, @member_count)
@@ -232,6 +291,7 @@ const insertMemberSnapshot = db.prepare(`
   VALUES (@name, @fah_id, @score, @wus, @rank)
 `);
 
+/** Batch-insert member snapshots inside a single transaction for performance. */
 const insertManyMembers = db.transaction((members) => {
   for (const m of members) insertMemberSnapshot.run(m);
 });
@@ -240,14 +300,19 @@ const insertMilestone = db.prepare(
   'INSERT OR IGNORE INTO milestone_events (name, milestone, score_at_time) VALUES (?, ?, ?)'
 );
 
+/** Score thresholds that trigger milestone events (1M, 10M, ... 1T). */
 const MILESTONE_THRESHOLDS = [1e6, 10e6, 100e6, 1e9, 10e9, 100e9, 1e12];
 
 // ============================================================
-// Achievements system
+// Achievements system - definition loading & DB access
 // ============================================================
+
+/** @type {Array<Object>} All achievement definitions loaded from achievements.json */
 const ALL_ACHIEVEMENTS = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'achievements.json'), 'utf8')
 );
+
+/** Sum of all achievement points (used for completion percentage). */
 const TOTAL_ACHIEVEMENT_POINTS = ALL_ACHIEVEMENTS.reduce((s, a) => s + (a.points || 0), 0);
 
 const getUnlockedAchievements = db.prepare(
@@ -256,6 +321,8 @@ const getUnlockedAchievements = db.prepare(
 const insertAchievement = db.prepare(
   'INSERT OR IGNORE INTO donor_achievements (donor_name, achievement_id) VALUES (?, ?)'
 );
+
+/** Batch-insert newly unlocked achievement IDs for a donor (with validation). */
 const insertManyAchievements = db.transaction((donorName, ids) => {
   for (const id of ids) {
     if (validateAchievementId(id)) {
@@ -265,9 +332,14 @@ const insertManyAchievements = db.transaction((donorName, ids) => {
 });
 
 // ============================================================
-// Achievement helper functions
+// Achievement helper functions - number theory & pattern checks
 // ============================================================
 
+/**
+ * Test if a number is prime using trial division (6k +/- 1 optimization).
+ * @param {number} n
+ * @returns {boolean}
+ */
 function isPrime(n) {
   if (n < 2) return false;
   if (n < 4) return true;
@@ -278,14 +350,24 @@ function isPrime(n) {
   return true;
 }
 
+/**
+ * Test if a number reads the same forwards and backwards (min 2 digits).
+ * @param {number} n
+ * @returns {boolean}
+ */
 function isPalindrome(n) {
   const s = String(n);
   return s.length > 1 && s === s.split('').reverse().join('');
 }
 
+/**
+ * Test if a number belongs to the Fibonacci sequence using the
+ * property that n is Fibonacci iff 5n^2+4 or 5n^2-4 is a perfect square.
+ * @param {number} n
+ * @returns {boolean}
+ */
 function isFibonacci(n) {
   if (n <= 0) return false;
-  // A number is Fibonacci if (5*n^2 + 4) or (5*n^2 - 4) is a perfect square
   const a = 5 * n * n + 4;
   const b = 5 * n * n - 4;
   const sqrtA = Math.round(Math.sqrt(a));
@@ -293,17 +375,30 @@ function isFibonacci(n) {
   return sqrtA * sqrtA === a || sqrtB * sqrtB === b;
 }
 
+/**
+ * @param {number} n
+ * @returns {boolean} True if n is a power of 2
+ */
 function isPowerOf2(n) {
   return n > 0 && (n & (n - 1)) === 0;
 }
 
+/**
+ * Check if all digits in n are the same (e.g. 111, 9999). Requires 3+ digits.
+ * @param {number} n
+ * @returns {boolean}
+ */
 function hasRepeatingDigits(n) {
   const s = String(n);
   if (s.length < 3) return false;
-  // Check if all digits are the same
   return /^(\d)\1{2,}$/.test(s);
 }
 
+/**
+ * Check if digits are strictly ascending (e.g. 1234, 258).
+ * @param {number} n
+ * @returns {boolean}
+ */
 function isAscendingDigits(n) {
   const s = String(n);
   if (s.length < 2) return false;
@@ -313,16 +408,29 @@ function isAscendingDigits(n) {
   return true;
 }
 
+/**
+ * Check if a number consists only of 0s and 1s (binary-looking in decimal).
+ * @param {number} n
+ * @returns {boolean}
+ */
 function isOnlyBinaryDigits(n) {
   return /^[01]+$/.test(String(n)) && n > 0;
 }
 
+/**
+ * @param {number} n
+ * @returns {boolean} True if n is a perfect square
+ */
 function isPerfectSquare(n) {
   if (n < 0) return false;
   const s = Math.round(Math.sqrt(n));
   return s * s === n;
 }
 
+/**
+ * @param {number} n
+ * @returns {boolean} True if n is an exact power of 10 (10, 100, 1000, ...)
+ */
 function isPowerOf10(n) {
   if (n < 1) return false;
   while (n >= 10) {
@@ -332,9 +440,19 @@ function isPowerOf10(n) {
   return n === 1;
 }
 
+// ============================================================
+// Achievement engine - stat computation
+// ============================================================
+
 /**
- * Compute donor stats needed for achievement evaluation.
- * Returns an object with all the stats needed by conditions.
+ * Compute all donor statistics needed for achievement evaluation.
+ * Derives team rank, contribution percentage, efficiency, streaks,
+ * daily/weekly gains, and activity metrics from current + historical data.
+ *
+ * @param {Object} member - Current member data (name, score, wus, rank)
+ * @param {Array<Object>} members - All current team members
+ * @param {Array<Object>} memberHistory - Daily snapshots sorted ascending by date
+ * @returns {Object} Stats object consumed by checkCondition()
  */
 function computeDonorStats(member, members, memberHistory) {
   const sorted = [...members].sort((a, b) => b.score - a.score);
@@ -358,7 +476,7 @@ function computeDonorStats(member, members, memberHistory) {
       }
     }
     if (streak > maxStreak) maxStreak = streak;
-    // Current streak: count backwards from end
+    // Current streak: count backwards from most recent snapshot
     for (let i = memberHistory.length - 1; i >= 1; i--) {
       if (memberHistory[i].wus > memberHistory[i - 1].wus) {
         currentStreak++;
@@ -368,7 +486,7 @@ function computeDonorStats(member, members, memberHistory) {
     }
   }
 
-  // days_active: days with any WU gain
+  // days_active: count of days where WU count increased
   let daysActive = 0;
   if (memberHistory.length >= 2) {
     for (let i = 1; i < memberHistory.length; i++) {
@@ -376,13 +494,13 @@ function computeDonorStats(member, members, memberHistory) {
     }
   }
 
-  // member_since_days: days since first snapshot
+  // member_since_days: elapsed days since first recorded snapshot
   const firstSnapshot = memberHistory.length > 0 ? memberHistory[0] : null;
   const memberSinceDays = firstSnapshot
     ? Math.floor((Date.now() - new Date(firstSnapshot.date).getTime()) / 86400000)
     : 0;
 
-  // Daily gain: latest day score delta
+  // Daily gain: score delta for the most recent day
   let dailyGain = 0;
   if (memberHistory.length >= 2) {
     const last = memberHistory[memberHistory.length - 1];
@@ -390,7 +508,7 @@ function computeDonorStats(member, members, memberHistory) {
     dailyGain = last.score - prev.score;
   }
 
-  // Weekly gain: last 7 days score delta
+  // Weekly gain: score delta over last 7 snapshots (or all available)
   let weeklyGain = 0;
   if (memberHistory.length >= 8) {
     const last = memberHistory[memberHistory.length - 1];
@@ -419,9 +537,17 @@ function computeDonorStats(member, members, memberHistory) {
   };
 }
 
+// ============================================================
+// Achievement engine - condition evaluation
+// ============================================================
+
 /**
- * Check a single achievement condition against donor stats.
- * Returns { met: boolean, progress: number (0-1), current: number, target: number }
+ * Evaluate a single achievement's condition against computed donor stats.
+ * Each condition type maps to a threshold comparison or special check.
+ *
+ * @param {Object} achievement - Achievement definition with .condition
+ * @param {Object} stats - Donor stats from computeDonorStats()
+ * @returns {{ met: boolean, progress: number, current: number|null, target: number|null }}
  */
 function checkCondition(achievement, stats) {
   const cond = achievement.condition;
@@ -436,7 +562,7 @@ function checkCondition(achievement, stats) {
     case 'streak_gte':
       return { met: stats.streak >= value, progress: Math.min(1, stats.streak / value), current: stats.streak, target: value };
     case 'rank_lte':
-      // Lower rank is better; progress = how close to target
+      // Lower rank is better; progress inverts the distance-to-target ratio
       return {
         met: stats.rank <= value,
         progress: stats.rank <= value ? 1 : Math.min(1, Math.max(0, 1 - (stats.rank - value) / Math.max(stats.rank, 1))),
@@ -480,9 +606,16 @@ function checkCondition(achievement, stats) {
 }
 
 /**
- * Handle special condition checks that don't fit the simple pattern.
- * Many of these are snapshot-dependent and require historical data;
- * we do best-effort with available data.
+ * Handle special condition checks that don't fit the simple threshold pattern.
+ * These cover number patterns, date-based activity, rank climbs, streaks,
+ * team milestones, and meta-achievement conditions.
+ *
+ * Many checks are best-effort with available snapshot data; some are deferred
+ * to a post-evaluation pass (meta-achievements) and always return false here.
+ *
+ * @param {string} check - The special condition identifier
+ * @param {Object} stats - Donor stats from computeDonorStats()
+ * @returns {{ met: boolean, progress: number, current: number|null, target: number|null }}
  */
 function checkSpecialCondition(check, stats) {
   const score = stats.score;
@@ -492,7 +625,7 @@ function checkSpecialCondition(check, stats) {
   const members = stats.members || [];
 
   switch (check) {
-    // Score-based specials
+    // --- Score-based pattern checks ---
     case 'score_odd_million':
       return boolResult(score >= 1e6 && Math.floor(score / 1e6) % 2 === 1);
     case 'score_contains_314159':
@@ -520,7 +653,7 @@ function checkSpecialCondition(check, stats) {
     case 'score_only_binary_digits':
       return boolResult(isOnlyBinaryDigits(score));
 
-    // WU-based specials
+    // --- WU-based pattern checks ---
     case 'wus_perfect_square_above_100':
       return boolResult(wus > 100 && isPerfectSquare(wus));
     case 'wus_power_of_10':
@@ -548,7 +681,7 @@ function checkSpecialCondition(check, stats) {
       return boolResult(String(wus).includes(d) && String(rank).includes(d));
     }
 
-    // WU daily specials
+    // --- Daily WU gain thresholds ---
     case 'wus_daily_gte_10':
       return boolResult(getDailyWuGain(history) >= 10);
     case 'wus_daily_gte_50':
@@ -556,7 +689,7 @@ function checkSpecialCondition(check, stats) {
     case 'wus_daily_gte_100':
       return boolResult(getDailyWuGain(history) >= 100);
 
-    // Rank climb specials
+    // --- Rank climb achievements (total positions gained since first snapshot) ---
     case 'rank_climb_100':
       return boolResult(getRankClimb(history) >= 100);
     case 'rank_climb_1000':
@@ -584,7 +717,7 @@ function checkSpecialCondition(check, stats) {
     case 'rank_defend_30_days':
       return boolResult(hasDefendedRank(history, 30));
 
-    // Streak specials
+    // --- Streak-based achievements ---
     case 'streak_comeback_3_after_7':
       return boolResult(hasComeback(history, 7, 3));
     case 'streak_comeback_7_after_30':
@@ -598,7 +731,7 @@ function checkSpecialCondition(check, stats) {
     case 'streak_on_anniversary':
       return boolResult(stats.streak > 0 && stats.member_since_days >= 365);
 
-    // Weekly improvement specials
+    // --- Weekly improvement checks ---
     case 'weekly_improvement_10pct':
       return boolResult(getWeeklyImprovement(history) >= 10);
     case 'weekly_improvement_50pct':
@@ -610,7 +743,7 @@ function checkSpecialCondition(check, stats) {
     case 'consistent_output_30_days':
       return boolResult(hasConsistentOutput(history, 30));
 
-    // Team specials
+    // --- Team-based achievements ---
     case 'team_daily_top_scorer':
       return boolResult(isTopDailyScorer(stats));
     case 'team_weekly_top_scorer':
@@ -648,7 +781,7 @@ function checkSpecialCondition(check, stats) {
     case 'team_active_members_gte_50':
       return boolResult(members.length >= 50);
 
-    // Date/time specials
+    // --- Date/time-based activity achievements ---
     case 'active_during_2020':
       return boolResult(wasActiveDuringYear(history, 2020));
     case 'fold_on_jan_1':
@@ -680,7 +813,7 @@ function checkSpecialCondition(check, stats) {
     case 'joined_same_day_as_another':
       return boolResult(false); // Requires cross-member join date analysis
 
-    // Activity percentage specials
+    // --- Activity percentage thresholds ---
     case 'active_pct_gte_50':
       return boolResult(getActivityPct(stats) >= 50);
     case 'active_pct_gte_75':
@@ -690,7 +823,7 @@ function checkSpecialCondition(check, stats) {
     case 'active_pct_gte_99':
       return boolResult(getActivityPct(stats) >= 99);
 
-    // Special month/pattern specials
+    // --- Special month/pattern achievements ---
     case 'fold_5_holidays_one_year':
       return boolResult(false); // Requires holiday date tracking
     case 'weekend_score_gt_weekday_for_month':
@@ -706,30 +839,30 @@ function checkSpecialCondition(check, stats) {
     case 'no_zero_day_first_60':
       return boolResult(hasPerfectStart(history, 60));
 
-    // Efficiency special
+    // --- Efficiency special: golden ratio pattern ---
     case 'efficiency_near_golden_ratio': {
       const ratio = stats.efficiency;
-      // Golden ratio ~= 1.618 * some power of 10
+      // Normalize to check if leading digits match 1.618 (golden ratio)
       const digits = Math.floor(Math.log10(Math.max(ratio, 1)));
       const normalized = ratio / Math.pow(10, digits);
       return boolResult(Math.abs(normalized - 1.618) < 0.01);
     }
 
-    // Meta-achievement specials (require checking unlocked achievements)
+    // --- Meta-achievements (evaluated in second pass after main loop) ---
     case '10_achievements_not_top_3':
-      return boolResult(false); // Evaluated after main loop
+      return boolResult(false);
     case 'return_after_30_days_inactive':
       return boolResult(hasReturnedAfterInactivity(history, 30));
     case 'first_day_score_gte_1m':
       return boolResult(history.length >= 2 && (history[1].score - history[0].score) >= 1e6);
     case '10_achievements_in_one_day':
-      return boolResult(false); // Meta: evaluated after
+      return boolResult(false);
     case '7_categories_in_one_week':
-      return boolResult(false); // Meta: evaluated after
+      return boolResult(false);
     case 'outperform_higher_ranked_7_days':
       return boolResult(false); // Requires cross-member analysis
 
-    // Achievement-based meta specials
+    // --- Achievement-based meta specials (resolved in post-pass) ---
     case 'achievements_unlocked_pct_50':
     case 'achievements_unlocked_pct_90':
     case 'achievements_unlocked_pct_100':
@@ -738,28 +871,51 @@ function checkSpecialCondition(check, stats) {
     case 'achievement_points_gte_1000':
     case 'achievement_points_gte_5000':
     case 'achievement_points_maximum':
-      return boolResult(false); // Meta: evaluated in post-pass
+      return boolResult(false);
 
     default:
       return boolResult(false);
   }
 }
 
-// Helper: wrap boolean into result object
+/**
+ * Wrap a boolean into the standard achievement result shape.
+ * @param {boolean} met - Whether the condition is satisfied
+ * @returns {{ met: boolean, progress: number, current: null, target: null }}
+ */
 function boolResult(met) {
   return { met: !!met, progress: met ? 1 : 0, current: null, target: null };
 }
 
+// ============================================================
+// Achievement helper functions - history analysis
+// ============================================================
+
+/**
+ * Check if all digits in a number are identical (e.g. 11, 333, 9999).
+ * @param {number} n
+ * @returns {boolean}
+ */
 function allSameDigits(n) {
   const s = String(n);
   return s.length >= 2 && /^(\d)\1+$/.test(s);
 }
 
+/**
+ * Get the WU gain between the two most recent snapshots.
+ * @param {Array<Object>} history - Ascending-sorted daily snapshots
+ * @returns {number} WU gain (0 if insufficient data)
+ */
 function getDailyWuGain(history) {
   if (history.length < 2) return 0;
   return Math.max(0, history[history.length - 1].wus - history[history.length - 2].wus);
 }
 
+/**
+ * Calculate total rank positions climbed from first to latest snapshot.
+ * @param {Array<Object>} history
+ * @returns {number} Positive number of positions gained (higher = better)
+ */
 function getRankClimb(history) {
   if (history.length < 2) return 0;
   const first = history[0].best_rank || history[0].rank || 999999;
@@ -767,6 +923,11 @@ function getRankClimb(history) {
   return Math.max(0, first - last);
 }
 
+/**
+ * Calculate rank positions gained in the most recent day.
+ * @param {Array<Object>} history
+ * @returns {number}
+ */
 function getDailyRankGain(history) {
   if (history.length < 2) return 0;
   const prev = history[history.length - 2].best_rank || history[history.length - 2].rank || 999999;
@@ -774,6 +935,12 @@ function getDailyRankGain(history) {
   return Math.max(0, prev - last);
 }
 
+/**
+ * Check if the donor held or improved their rank for N consecutive days.
+ * @param {Array<Object>} history
+ * @param {number} days - Minimum consecutive days to defend
+ * @returns {boolean}
+ */
 function hasDefendedRank(history, days) {
   if (history.length < days) return false;
   const tail = history.slice(-days);
@@ -781,8 +948,14 @@ function hasDefendedRank(history, days) {
   return tail.every(h => (h.best_rank || h.rank) <= baseRank);
 }
 
+/**
+ * Detect a comeback: inactiveDays of no WU gain followed by activeDays of consecutive gains.
+ * @param {Array<Object>} history
+ * @param {number} inactiveDays - Minimum gap length (no WU change)
+ * @param {number} activeDays - Minimum active streak after the gap
+ * @returns {boolean}
+ */
 function hasComeback(history, inactiveDays, activeDays) {
-  // Look for a gap of inactiveDays followed by activeDays of activity
   if (history.length < inactiveDays + activeDays) return false;
   for (let i = 1; i < history.length - activeDays; i++) {
     const gapStart = i;
@@ -803,6 +976,12 @@ function hasComeback(history, inactiveDays, activeDays) {
   return false;
 }
 
+/**
+ * Check if a donor was active on at least N*2 weekend days (Sat/Sun).
+ * @param {Array<Object>} history
+ * @param {number} weekends - Required number of weekends
+ * @returns {boolean}
+ */
 function hasWeekendStreaks(history, weekends) {
   let count = 0;
   for (const h of history) {
@@ -813,6 +992,12 @@ function hasWeekendStreaks(history, weekends) {
   return count >= weekends * 2; // 2 weekend days per weekend
 }
 
+/**
+ * Check if the donor had WU gains every day for the first N days of history.
+ * @param {Array<Object>} history
+ * @param {number} days - Number of consecutive days from start
+ * @returns {boolean}
+ */
 function hasPerfectStart(history, days) {
   if (history.length < days + 1) return false;
   for (let i = 1; i <= days && i < history.length; i++) {
@@ -821,6 +1006,12 @@ function hasPerfectStart(history, days) {
   return true;
 }
 
+/**
+ * Calculate the week-over-week score improvement as a percentage.
+ * Compares the most recent 7-day gain to the previous 7-day gain.
+ * @param {Array<Object>} history - Needs at least 15 entries
+ * @returns {number} Improvement percentage (0 if insufficient data or no previous gain)
+ */
 function getWeeklyImprovement(history) {
   if (history.length < 15) return 0;
   const recentWeek = history.slice(-7);
@@ -831,6 +1022,12 @@ function getWeeklyImprovement(history) {
   return ((recentGain - prevGain) / prevGain) * 100;
 }
 
+/**
+ * Check if daily score gains were consistent (within +/-50% of average) over N days.
+ * @param {Array<Object>} history
+ * @param {number} days - Window size for consistency check
+ * @returns {boolean}
+ */
 function hasConsistentOutput(history, days) {
   if (history.length < days + 1) return false;
   const tail = history.slice(-days - 1);
@@ -840,22 +1037,42 @@ function hasConsistentOutput(history, days) {
   }
   if (gains.length === 0 || gains.some(g => g <= 0)) return false;
   const avg = gains.reduce((a, b) => a + b, 0) / gains.length;
-  // Consistent if all gains within 50% of average
   return gains.every(g => g >= avg * 0.5 && g <= avg * 1.5);
 }
 
+/**
+ * @param {Object} stats - Donor stats
+ * @returns {boolean} True if the donor is #1 on the team with a positive daily gain
+ */
 function isTopDailyScorer(stats) {
   return stats.team_rank === 1 && stats.daily_gain > 0;
 }
 
+/**
+ * @param {Array<Object>} members - All team members
+ * @returns {number} Sum of all member scores
+ */
 function getTeamTotalScore(members) {
   return members.reduce((s, m) => s + m.score, 0);
 }
 
+/**
+ * Check if any snapshot falls within a given calendar year.
+ * @param {Array<Object>} history
+ * @param {number} year
+ * @returns {boolean}
+ */
 function wasActiveDuringYear(history, year) {
   return history.some(h => h.date && h.date.startsWith(String(year)));
 }
 
+/**
+ * Check if the donor had a WU gain on a specific month/day (any year).
+ * @param {Array<Object>} history
+ * @param {number} month - 1-12
+ * @param {number} day - 1-31
+ * @returns {boolean}
+ */
 function wasActiveOnDate(history, month, day) {
   const mm = String(month).padStart(2, '0');
   const dd = String(day).padStart(2, '0');
@@ -867,6 +1084,11 @@ function wasActiveOnDate(history, month, day) {
   return false;
 }
 
+/**
+ * Check if the donor was active on any Friday the 13th.
+ * @param {Array<Object>} history
+ * @returns {boolean}
+ */
 function wasActiveOnFriday13(history) {
   for (let i = 1; i < history.length; i++) {
     const d = new Date(history[i].date);
@@ -877,19 +1099,30 @@ function wasActiveOnFriday13(history) {
   return false;
 }
 
+/**
+ * Calculate the percentage of days the donor was active (had WU gains).
+ * @param {Object} stats
+ * @returns {number} Activity percentage (0-100)
+ */
 function getActivityPct(stats) {
   if (stats.member_since_days <= 0) return 100;
   return Math.min(100, (stats.days_active / stats.member_since_days) * 100);
 }
 
+/**
+ * Check if the donor folded every day in a specific month (any year).
+ * Groups history by year-month and checks if all calendar days were active.
+ * @param {Array<Object>} history
+ * @param {number} month - 1-12
+ * @returns {boolean}
+ */
 function hasFoldedEveryDayInMonth(history, month) {
-  // Check if any year has all days active in given month
   const mm = String(month).padStart(2, '0');
   const byYearMonth = {};
   for (let i = 1; i < history.length; i++) {
     const d = history[i].date;
     if (!d) continue;
-    const ym = d.slice(0, 7);
+    const ym = d.slice(0, 7); // "YYYY-MM"
     if (ym.endsWith(`-${mm}`)) {
       if (history[i].wus > history[i - 1].wus) {
         if (!byYearMonth[ym]) byYearMonth[ym] = new Set();
@@ -905,6 +1138,11 @@ function hasFoldedEveryDayInMonth(history, month) {
   return false;
 }
 
+/**
+ * Check if the donor folded every day of any single calendar month.
+ * @param {Array<Object>} history
+ * @returns {boolean}
+ */
 function hasFoldedEveryDayAnyMonth(history) {
   for (let m = 1; m <= 12; m++) {
     if (hasFoldedEveryDayInMonth(history, m)) return true;
@@ -912,6 +1150,12 @@ function hasFoldedEveryDayAnyMonth(history) {
   return false;
 }
 
+/**
+ * Check if the donor was active on the 1st of the month for N distinct months.
+ * @param {Array<Object>} history
+ * @param {number} months - Minimum number of distinct year-months
+ * @returns {boolean}
+ */
 function hasFoldedFirstOfMonth(history, months) {
   let count = 0;
   const seen = new Set();
@@ -929,6 +1173,13 @@ function hasFoldedFirstOfMonth(history, months) {
   return count >= months;
 }
 
+/**
+ * Check if the donor returned to activity after a period of inactivity.
+ * Scans history for a gap of N+ days with no WU change, followed by a gain.
+ * @param {Array<Object>} history
+ * @param {number} inactiveDays - Minimum inactive gap length
+ * @returns {boolean}
+ */
 function hasReturnedAfterInactivity(history, inactiveDays) {
   if (history.length < inactiveDays + 2) return false;
   let inactiveCount = 0;
@@ -943,17 +1194,32 @@ function hasReturnedAfterInactivity(history, inactiveDays) {
   return false;
 }
 
+// ============================================================
+// Achievement engine - main evaluation
+// ============================================================
+
 /**
- * Main evaluation function: evaluate all achievements for a donor.
+ * Evaluate all achievements for a given donor. This is the main entry point
+ * for the achievement system, performing two passes:
+ *
+ *  1. First pass: evaluate all standard achievement conditions against donor stats.
+ *  2. Second pass: evaluate meta-achievements that depend on the count/composition
+ *     of already-unlocked achievements (e.g. "unlock 50% of all achievements").
+ *
+ * Newly unlocked achievements are persisted to the database.
+ *
+ * @param {string} donorName - The donor's F@H display name
+ * @returns {Promise<Object|null>} Achievement summary with unlocked/locked arrays,
+ *   counts, points, and completion percentage. Null if member not found.
  */
 async function evaluateDonorAchievements(donorName) {
-  // Fetch current member data
+  // Fetch current member data from F@H API (cached)
   const raw = await fahFetch('/team/' + TEAM_ID + '/members');
   const members = parseMembers(raw);
   const member = members.find(m => m.name === donorName);
   if (!member) return null;
 
-  // Get member history from DB (ascending by date)
+  // Get member history from DB (ascending by date, max 1000 days)
   const memberHistory = db.prepare(
     "SELECT strftime('%Y-%m-%d', timestamp) as date, MAX(score) as score, MAX(wus) as wus, MIN(rank) as best_rank FROM member_snapshots WHERE name = ? GROUP BY date ORDER BY date ASC LIMIT 1000"
   ).all(donorName);
@@ -994,13 +1260,12 @@ async function evaluateDonorAchievements(donorName) {
     }
   }
 
-  // Second pass: evaluate meta-achievements that depend on unlocked count
+  // Second pass: evaluate meta-achievements that depend on unlocked count/points
   const unlockedCount = unlocked.length;
   const pointsEarned = unlocked.reduce((s, a) => s + (a.points || 0), 0);
   const categories = new Set(unlocked.map(a => a.category));
   const legendaryCount = unlocked.filter(a => a.tier === 'legendary').length;
 
-  // Re-check meta achievements that were locked
   const metaChecks = {
     'achievements_unlocked_pct_50': unlockedCount >= ALL_ACHIEVEMENTS.length * 0.5,
     'achievements_unlocked_pct_90': unlockedCount >= ALL_ACHIEVEMENTS.length * 0.9,
@@ -1013,6 +1278,7 @@ async function evaluateDonorAchievements(donorName) {
     '10_achievements_not_top_3': unlockedCount >= 10 && stats.team_rank > 3,
   };
 
+  // Move matching locked meta-achievements to unlocked (iterate backwards for safe splice)
   for (let i = locked.length - 1; i >= 0; i--) {
     const a = locked[i];
     if (a.condition && a.condition.type === 'special' && metaChecks[a.condition.check] === true) {
@@ -1032,7 +1298,7 @@ async function evaluateDonorAchievements(donorName) {
     }
   }
 
-  // Persist newly unlocked achievements
+  // Persist newly unlocked achievements to DB
   if (newlyUnlocked.length > 0) {
     insertManyAchievements(donorName, newlyUnlocked);
   }
@@ -1051,10 +1317,15 @@ async function evaluateDonorAchievements(donorName) {
 }
 
 // ============================================================
-// In-memory API cache
+// In-memory API cache (TTL-based with LRU eviction)
 // ============================================================
 const cache = new Map();
 
+/**
+ * Retrieve a cached value if it exists and hasn't expired.
+ * @param {string} key - Cache key (typically an API endpoint path)
+ * @returns {*} Cached data, or null if miss/expired
+ */
 function getCached(key) {
   const entry = cache.get(key);
   if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
@@ -1063,6 +1334,11 @@ function getCached(key) {
   return null;
 }
 
+/**
+ * Store a value in the cache. If the cache is full, evicts the oldest entry.
+ * @param {string} key - Cache key
+ * @param {*} data - Data to cache
+ */
 function setCache(key, data) {
   // SECURITY: Evict oldest entries if cache exceeds max size to prevent memory exhaustion.
   // The cache is keyed by API endpoint paths which are bounded, but defend in depth.
@@ -1080,6 +1356,14 @@ function setCache(key, data) {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
+/**
+ * Fetch data from the Folding@Home API with caching and a 15-second timeout.
+ * Results are cached for CACHE_TTL (1 hour) to reduce upstream load.
+ *
+ * @param {string} endpoint - API path (e.g. '/team/240890/members')
+ * @returns {Promise<*>} Parsed JSON response
+ * @throws {Error} On non-OK status or network failure
+ */
 async function fahFetch(endpoint) {
   const cached = getCached(endpoint);
   if (cached) return cached;
@@ -1100,8 +1384,16 @@ async function fahFetch(endpoint) {
 }
 
 // ============================================================
-// Periodic snapshot collection
+// Periodic snapshot scheduler
 // ============================================================
+
+/**
+ * Take a point-in-time snapshot of team and member data from the F@H API.
+ * Stores results in SQLite, detects milestone crossings, and re-evaluates
+ * achievements for all active members.
+ *
+ * Called once on startup and then every SNAPSHOT_INTERVAL (1 hour).
+ */
 async function takeSnapshot() {
   try {
     const [teamData, rawMembers] = await Promise.all([
@@ -1126,7 +1418,7 @@ async function takeSnapshot() {
       rank: m.rank,
     })));
 
-    // Detect milestone crossings
+    // Detect milestone crossings for each member
     for (const m of members) {
       for (const threshold of MILESTONE_THRESHOLDS) {
         if (m.score >= threshold) {
@@ -1162,7 +1454,7 @@ takeSnapshot();
 const snapshotInterval = setInterval(takeSnapshot, SNAPSHOT_INTERVAL);
 
 // ============================================================
-// Static files
+// Static file serving
 // ============================================================
 // SECURITY: dotfiles denied prevents serving .env, .git, etc. if they somehow
 // end up in public/. extensions is false to prevent extension guessing.
@@ -1179,8 +1471,10 @@ app.use(express.static(path.join(__dirname, 'public'), {
 }));
 
 // ============================================================
-// Live API proxy routes
+// API routes - live proxy to F@H API
 // ============================================================
+
+/** GET /api/team - Proxy team summary from F@H API */
 app.get('/api/team', async (req, res) => {
   try {
     const data = await fahFetch(`/team/${TEAM_ID}`);
@@ -1191,6 +1485,7 @@ app.get('/api/team', async (req, res) => {
   }
 });
 
+/** GET /api/members - Proxy and parse team member list from F@H API */
 app.get('/api/members', async (req, res) => {
   try {
     const raw = await fahFetch(`/team/${TEAM_ID}/members`);
@@ -1201,6 +1496,7 @@ app.get('/api/members', async (req, res) => {
   }
 });
 
+/** GET /api/member/:name/stats - Proxy individual member stats */
 app.get('/api/member/:name/stats', async (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid member name.' });
@@ -1214,6 +1510,7 @@ app.get('/api/member/:name/stats', async (req, res) => {
   }
 });
 
+/** GET /api/member/:name/projects - Proxy member's project list */
 app.get('/api/member/:name/projects', async (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid member name.' });
@@ -1227,6 +1524,7 @@ app.get('/api/member/:name/projects', async (req, res) => {
   }
 });
 
+/** GET /api/leaderboard - Proxy global team leaderboard */
 app.get('/api/leaderboard', async (req, res) => {
   try {
     const data = await fahFetch('/team');
@@ -1238,11 +1536,13 @@ app.get('/api/leaderboard', async (req, res) => {
 });
 
 // ============================================================
-// Historical data API routes
+// API routes - historical data from SQLite
 // ============================================================
 
-// Team history - aggregated by period
-// GET /api/history/team?period=hourly|daily|weekly|monthly|yearly&limit=100
+/**
+ * GET /api/history/team - Team score/WU history aggregated by time period.
+ * Query params: period (hourly|daily|weekly|monthly|yearly), limit (max 5000)
+ */
 app.get('/api/history/team', (req, res) => {
   const period = validatePeriod(req.query.period);
   const limit = validatePositiveInt(req.query.limit, 365, 5000);
@@ -1262,7 +1562,7 @@ app.get('/api/history/team', (req, res) => {
     LIMIT ?
   `).all(limit);
 
-  // Compute deltas (score gained per period)
+  // Compute period-over-period deltas after reversing to chronological order
   const result = rows.reverse().map((row, i, arr) => ({
     ...row,
     score_delta: i > 0 ? row.score - arr[i - 1].score : 0,
@@ -1272,8 +1572,10 @@ app.get('/api/history/team', (req, res) => {
   res.json(result);
 });
 
-// Member history for a specific member
-// GET /api/history/member/:name?period=daily&limit=365
+/**
+ * GET /api/history/member/:name - Individual member score/WU history.
+ * Query params: period, limit (same as team history)
+ */
 app.get('/api/history/member/:name', (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid member name.' });
@@ -1304,8 +1606,10 @@ app.get('/api/history/member/:name', (req, res) => {
   res.json(result);
 });
 
-// Top movers: who gained most in last N days
-// GET /api/history/movers?days=7
+/**
+ * GET /api/history/movers - Top members by score gain over N days.
+ * Query params: days (default 7, max 365)
+ */
 app.get('/api/history/movers', (req, res) => {
   const days = validatePositiveInt(req.query.days, 7, 365);
 
@@ -1340,7 +1644,7 @@ app.get('/api/history/movers', (req, res) => {
   res.json(rows);
 });
 
-// Database stats / summary
+/** GET /api/history/summary - Database-level statistics (snapshot counts, date range) */
 app.get('/api/history/summary', (req, res) => {
   const teamCount = db.prepare('SELECT COUNT(*) as count FROM team_snapshots').get();
   const memberCount = db.prepare('SELECT COUNT(DISTINCT name) as count FROM member_snapshots').get();
@@ -1359,10 +1663,10 @@ app.get('/api/history/summary', (req, res) => {
 });
 
 // ============================================================
-// Analytics & prediction endpoints
+// API routes - analytics & predictions
 // ============================================================
 
-// Milestones - calculate next score milestones with ETA
+/** GET /api/milestones - Calculate next score milestones with ETAs based on 7-day rate */
 app.get('/api/milestones', (req, res) => {
   const latest = db.prepare('SELECT score, wus, rank FROM team_snapshots ORDER BY timestamp DESC LIMIT 1').get();
   const weekAgo = db.prepare("SELECT score FROM team_snapshots WHERE timestamp <= datetime('now', '-7 days') ORDER BY timestamp DESC LIMIT 1").get();
@@ -1389,7 +1693,7 @@ app.get('/api/milestones', (req, res) => {
   });
 });
 
-// Rank prediction based on 30-day trend
+/** GET /api/prediction/rank - Predict future team rank based on 30-day linear trend */
 app.get('/api/prediction/rank', (req, res) => {
   const history = db.prepare(`
     SELECT rank, score, timestamp FROM team_snapshots
@@ -1417,7 +1721,7 @@ app.get('/api/prediction/rank', (req, res) => {
   });
 });
 
-// Heatmap - hourly activity data for a member (last 30 days)
+/** GET /api/heatmap/:name - Hourly activity heatmap for a member (last 30 days) */
 app.get('/api/heatmap/:name', (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid member name.' });
@@ -1437,7 +1741,7 @@ app.get('/api/heatmap/:name', (req, res) => {
   res.json(rows);
 });
 
-// Streak - consecutive days with WU gains
+/** GET /api/streak - Team-level consecutive-day activity streak */
 app.get('/api/streak', (req, res) => {
   const dailyWUs = db.prepare(`
     SELECT strftime('%Y-%m-%d', timestamp) as date, MAX(wus) as wus
@@ -1447,8 +1751,8 @@ app.get('/api/streak', (req, res) => {
     LIMIT 365
   `).all();
 
-  // Compute all streaks (consecutive days with WU gains)
-  // Data is DESC so earlier entries have smaller WUs (cumulative)
+  // Walk backwards through daily WU totals to find streaks.
+  // Data is DESC: earlier entries have smaller WUs (cumulative counter).
   let currentStreak = 0;
   let maxStreak = 0;
   let tempStreak = 0;
@@ -1470,7 +1774,7 @@ app.get('/api/streak', (req, res) => {
     }
     lastWUs = day.wus;
   }
-  // Final check
+  // Final check for streak reaching the oldest data
   if (tempStreak > maxStreak) maxStreak = tempStreak;
   if (!currentStreakDone) currentStreak = tempStreak;
 
@@ -1481,7 +1785,7 @@ app.get('/api/streak', (req, res) => {
   });
 });
 
-// Member of the Week - highest score gain in last 7 days
+/** GET /api/motw - Member of the Week (highest score gain in last 7 days) */
 app.get('/api/motw', (req, res) => {
   const rows = db.prepare(`
     WITH latest AS (
@@ -1512,7 +1816,7 @@ app.get('/api/motw', (req, res) => {
   res.json(rows || { name: null, score_gained: 0 });
 });
 
-// Team goals with progress tracking
+/** GET /api/goals - Team goals with progress tracking (score, rank, WUs, members) */
 app.get('/api/goals', (req, res) => {
   const latest = db.prepare('SELECT score, wus, rank, member_count FROM team_snapshots ORDER BY timestamp DESC LIMIT 1').get();
   if (!latest) return res.json([]);
@@ -1524,7 +1828,7 @@ app.get('/api/goals', (req, res) => {
     { id: 'members-100', name: '100 Mitglieder', target: 100, current: latest.member_count || 0, unit: 'Members' },
   ];
 
-  // Get historical starting rank for progress baseline
+  // For inverted goals (rank), calculate progress relative to historical starting point
   const firstSnap = db.prepare('SELECT rank FROM team_snapshots ORDER BY timestamp ASC LIMIT 1').get();
   const startRank = firstSnap ? Math.max(firstSnap.rank, latest.rank + 1) : latest.rank + 10;
 
@@ -1538,25 +1842,28 @@ app.get('/api/goals', (req, res) => {
 });
 
 // ============================================================
-// Donor profile routes
+// API routes - donor profiles
 // ============================================================
 
-// Serve donor listing page
+/** GET /donors - Serve the donor listing page */
 app.get('/donors', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'donors.html'));
 });
 
-// Serve individual donor profile page
+/** GET /donor/:name - Serve the individual donor profile page */
 app.get('/donor/:name', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'donor.html'));
 });
 
-// Comprehensive donor summary combining multiple data sources
+/**
+ * GET /api/donor/:name/summary - Comprehensive donor profile combining live API
+ * data with historical snapshots (7-day gain, team rank, efficiency, etc.).
+ * Rate-limited via heavyRateLimit middleware.
+ */
 app.get('/api/donor/:name/summary', heavyRateLimit, async (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid name parameter.' });
   try {
-    // Get current data from F@H API via members cache
     const raw = await fahFetch('/team/' + TEAM_ID + '/members');
     const members = parseMembers(raw);
     const member = members.find(m => m.name === name);
@@ -1571,12 +1878,12 @@ app.get('/api/donor/:name/summary', heavyRateLimit, async (req, res) => {
     const avgScore = totalScore / members.length;
     const avgWUs = totalWUs / members.length;
 
-    // Historical data from DB
+    // Last 90 days of daily history from DB
     const history = db.prepare(
       "SELECT strftime('%Y-%m-%d', timestamp) as date, MAX(score) as score, MAX(wus) as wus, MIN(rank) as best_rank FROM member_snapshots WHERE name = ? GROUP BY date ORDER BY date DESC LIMIT 90"
     ).all(name);
 
-    // 7-day gain
+    // 7-day gain calculation
     const latestSnap = db.prepare('SELECT MAX(score) as score, MAX(wus) as wus FROM member_snapshots WHERE name = ? AND timestamp >= datetime(\'now\', \'-1 day\')').get(name);
     const weekAgoSnap = db.prepare('SELECT MIN(score) as score, MIN(wus) as wus FROM member_snapshots WHERE name = ? AND timestamp >= datetime(\'now\', \'-8 days\') AND timestamp < datetime(\'now\', \'-6 days\')').get(name);
     const scoreGain7d = latestSnap && weekAgoSnap && weekAgoSnap.score ? latestSnap.score - weekAgoSnap.score : 0;
@@ -1605,23 +1912,31 @@ app.get('/api/donor/:name/summary', heavyRateLimit, async (req, res) => {
   }
 });
 
-// Per-user achievements (powered by achievement engine)
+// ============================================================
+// API routes - achievement endpoints
+// ============================================================
+
 // SECURITY: concurrency limit + result caching for expensive achievement evaluations
 let activeEvaluations = 0;
 const MAX_CONCURRENT_EVALUATIONS = 3;
 const achievementResultCache = new Map();
 const ACHIEVEMENT_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+/**
+ * GET /api/donor/:name/achievements - Evaluate and return all achievements for a donor.
+ * Results are cached for 5 minutes and limited to 3 concurrent evaluations.
+ */
 app.get('/api/donor/:name/achievements', heavyRateLimit, async (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid name parameter.' });
 
-  // Check cache first
+  // Check result cache first
   const cached = achievementResultCache.get(name);
   if (cached && Date.now() - cached.timestamp < ACHIEVEMENT_CACHE_TTL) {
     return res.json(cached.data);
   }
 
+  // Reject if too many concurrent evaluations are in-flight
   if (activeEvaluations >= MAX_CONCURRENT_EVALUATIONS) {
     return res.status(503).json({ error: 'Server busy. Try again shortly.' });
   }
@@ -1639,7 +1954,7 @@ app.get('/api/donor/:name/achievements', heavyRateLimit, async (req, res) => {
   }
 });
 
-// Browse all 300 achievements (catalog view)
+/** GET /api/achievements - Browse all achievement definitions (catalog), with optional category/tier filter */
 app.get('/api/achievements', (req, res) => {
   const category = req.query.category;
   const tier = req.query.tier;
@@ -1661,7 +1976,7 @@ app.get('/api/achievements', (req, res) => {
   });
 });
 
-// Achievement leaderboard - top donors by achievement points
+/** GET /api/achievements/leaderboard - Top donors ranked by achievement unlock count and points */
 app.get('/api/achievements/leaderboard', (req, res) => {
   const limit = validatePositiveInt(req.query.limit, 25, 100);
   const rows = db.prepare(`
@@ -1694,11 +2009,11 @@ app.get('/api/achievements/leaderboard', (req, res) => {
 });
 
 // ============================================================
-// PPD, Monthly Leaderboard, Rivals, Crossings, Milestones Chronology, Export
+// API routes - PPD, monthly leaderboard, rivals, crossings, milestones, export
 // ============================================================
 
+/** GET /api/ppd - Points Per Day for team and all members (24h, 7d, 30d windows) */
 app.get('/api/ppd', (req, res) => {
-  // Team PPD: compare latest vs 24h/7d/30d ago snapshots
   const latest = db.prepare('SELECT score, timestamp FROM team_snapshots ORDER BY timestamp DESC LIMIT 1').get();
   const h24 = db.prepare("SELECT score FROM team_snapshots WHERE timestamp <= datetime('now', '-1 day') ORDER BY timestamp DESC LIMIT 1").get();
   const d7 = db.prepare("SELECT score FROM team_snapshots WHERE timestamp <= datetime('now', '-7 days') ORDER BY timestamp DESC LIMIT 1").get();
@@ -1710,7 +2025,7 @@ app.get('/api/ppd', (req, res) => {
   const team_ppd_7d = d7 ? Math.round((latest.score - d7.score) / 7) : 0;
   const team_ppd_30d = d30 ? Math.round((latest.score - d30.score) / 30) : 0;
 
-  // Per-member PPD
+  // Per-member PPD via CTE joins across time windows
   const members = db.prepare(`
     WITH latest_snap AS (
       SELECT name, MAX(score) as score FROM member_snapshots
@@ -1750,6 +2065,7 @@ app.get('/api/ppd', (req, res) => {
   });
 });
 
+/** GET /api/leaderboard/monthly - Member leaderboard by score gained this calendar month */
 app.get('/api/leaderboard/monthly', (req, res) => {
   const rows = db.prepare(`
     WITH month_start AS (
@@ -1778,22 +2094,26 @@ app.get('/api/leaderboard/monthly', (req, res) => {
   res.json(rows);
 });
 
+/**
+ * GET /api/rivals - Teams ranked near ours for competitive comparison.
+ * Fetches top teams from F@H, sorts by credit, and returns ~5 above / 5 below our rank.
+ */
 app.get('/api/rivals', async (req, res) => {
   try {
     const ourTeam = await fahFetch('/team/' + TEAM_ID);
     if (!ourTeam || !ourTeam.rank) return res.json({ our_team: null, rivals: [] });
 
     const ourRank = ourTeam.rank;
-    // FAH API /team?limit=N returns top teams by credit (name, team, credit, wus - no rank field)
+    // Fetch enough teams to capture those near our rank
     const fetchLimit = Math.min(ourRank + 10, 100);
     const data = await fahFetch('/team?limit=' + fetchLimit);
     const allTeams = Array.isArray(data) ? data : (data.results || []);
 
-    // Sort by credit descending and assign ranks
+    // Sort by credit descending and assign computed ranks
     const sorted = allTeams.sort((a, b) => (b.credit || 0) - (a.credit || 0));
     sorted.forEach((t, i) => { t._rank = i + 1; });
 
-    // Find teams near our rank (5 above, 5 below)
+    // Find our position and extract a window of +/-5 teams
     const ourIdx = sorted.findIndex(t => t.team === TEAM_ID || t.name === ourTeam.name);
     const centerIdx = ourIdx >= 0 ? ourIdx : Math.min(ourRank - 1, sorted.length - 1);
     const startIdx = Math.max(0, centerIdx - 5);
@@ -1818,6 +2138,7 @@ app.get('/api/rivals', async (req, res) => {
   }
 });
 
+/** GET /api/crossings - Daily rank changes (when team rank moved up or down) */
 app.get('/api/crossings', (req, res) => {
   const rows = db.prepare(`
     SELECT
@@ -1844,6 +2165,7 @@ app.get('/api/crossings', (req, res) => {
   res.json(crossings.reverse()); // newest first
 });
 
+/** GET /api/milestones/chronology - Timeline of member milestone achievements */
 app.get('/api/milestones/chronology', (req, res) => {
   const limit = validatePositiveInt(req.query.limit, 100, 500);
 
@@ -1857,6 +2179,10 @@ app.get('/api/milestones/chronology', (req, res) => {
   res.json(rows);
 });
 
+/**
+ * GET /api/export/:format - Export current member list as CSV or JSON download.
+ * @param {string} format - 'csv' or 'json'
+ */
 app.get('/api/export/:format', async (req, res) => {
   const format = req.params.format;
   if (format !== 'csv' && format !== 'json') {
@@ -1887,8 +2213,10 @@ app.get('/api/export/:format', async (req, res) => {
 });
 
 // ============================================================
-// Custom 404 handler (prevent Express default page leaking framework info)
+// Error handling
 // ============================================================
+
+/** Custom 404 handler - prevents Express default page from leaking framework info */
 app.use((req, res) => {
   res.status(404);
   if (req.path.startsWith('/api/')) {
@@ -1898,16 +2226,14 @@ app.use((req, res) => {
   }
 });
 
-// ============================================================
-// Catch-all error handler (prevent stack trace leakage)
-// ============================================================
+/** Catch-all error handler - prevents stack trace leakage to clients */
 app.use((err, req, res, _next) => {
   console.error('[UNHANDLED ERROR]', err.message);
   res.status(500).json({ error: 'An internal server error occurred.' });
 });
 
 // ============================================================
-// Start
+// Server startup
 // ============================================================
 const server = app.listen(PORT, () => {
   console.log(`[FAH-STATS] Dashboard running at http://localhost:${PORT}`);
@@ -1919,7 +2245,15 @@ const server = app.listen(PORT, () => {
 server.keepAliveTimeout = 65 * 1000; // slightly above typical LB idle timeout
 server.headersTimeout = 66 * 1000;   // must be > keepAliveTimeout
 
-// Graceful shutdown: close server, clear intervals, then close DB
+// ============================================================
+// Graceful shutdown
+// ============================================================
+
+/**
+ * Gracefully shut down the server: stop accepting connections, clear scheduled
+ * tasks, and close the database. Forces exit after 10 seconds if connections linger.
+ * @param {string} signal - The OS signal that triggered shutdown (e.g. 'SIGINT')
+ */
 function gracefulShutdown(signal) {
   console.log(`\n[FAH-STATS] Received ${signal}, shutting down gracefully...`);
   clearInterval(snapshotInterval);

@@ -1,9 +1,18 @@
 // ============================================================
-// Donors List Page (extracted from inline script for CSP)
+// Donors List Page
+// Displays all team members as a searchable card grid, sorted
+// by score descending. Each card links to the donor's profile.
+// Extracted from inline script for Content Security Policy.
+// Depends on: utils.js (getTier, escapeHtml, formatScoreShort)
 // ============================================================
 
+/** @type {Array<{name: string, score: number, wus: number}>} All loaded team members. */
 var allMembers = [];
 
+/**
+ * Fetches all team members from the API, sorts them by score
+ * descending, and renders the card grid.
+ */
 async function loadMembers() {
   try {
     var res = await fetch('/api/members');
@@ -16,6 +25,10 @@ async function loadMembers() {
   }
 }
 
+/**
+ * Renders an array of member objects into donor cards inside the grid container.
+ * @param {Array<{name: string, score: number, wus: number}>} members - Members to display.
+ */
 function renderMembers(members) {
   var grid = document.getElementById('donors-grid');
   grid.innerHTML = members.map(function(m, i) {
@@ -30,6 +43,7 @@ function renderMembers(members) {
   }).join('');
 }
 
+// Initialize search filtering and load member data on DOM ready
 document.addEventListener('DOMContentLoaded', function() {
   var searchInput = document.getElementById('member-search');
   if (searchInput) {

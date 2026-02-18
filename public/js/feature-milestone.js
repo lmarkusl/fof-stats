@@ -21,7 +21,7 @@ async function initMilestoneFeatures() {
       renderPredictions(pred);
     }
   } catch (err) {
-    console.warn('[MILESTONES] Load failed:', err);
+    console.error('[MILESTONES] Load failed:', err.message);
     var msEl = document.getElementById('milestone-tracker');
     if (msEl) msEl.innerHTML = '<div class="milestone-empty">Fehler beim Laden der Meilenstein-Daten.</div>';
     var rpEl = document.getElementById('rank-prediction');

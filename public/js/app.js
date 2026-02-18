@@ -1,8 +1,15 @@
 // ============================================================
 // F@H Stats Dashboard - Main Application Logic
 // Team: FreilaufendeOnlineFuzzies (#240890)
+//
+// Core module that orchestrates the dashboard: fetches team/member
+// data, renders KPI cards, builds the sortable/searchable leaderboard,
+// computes fun/statistical insights, and coordinates lazy-loading of
+// feature tabs (Analytics, Rankings, Extras).
+// Depends on: utils.js (must be loaded first)
 // ============================================================
 
+/** @type {{ team: object|null, members: Array, sortColumn: string, sortAsc: boolean, refreshInterval: number|null }} Global application state. */
 const APP = {
   team: null,
   members: [],
@@ -11,10 +18,17 @@ const APP = {
   refreshInterval: null,
 };
 
+/** Prevents duplicate event listener registration on refresh. */
 let listenersInitialized = false;
 
-var tabInitialized = { 'tab-overview': true, 'tab-rankings': false, 'tab-analytics': false, 'tab-extras': false };
+/** Tracks which tabs have already been initialized to enable lazy loading. */
+const tabInitialized = { 'tab-overview': true, 'tab-rankings': false, 'tab-analytics': false, 'tab-extras': false };
 
+/**
+ * Lazily initializes tab content on first activation. Calls the
+ * appropriate init functions for charts, heatmaps, rivals, etc.
+ * @param {string} tabId - The tab panel ID (e.g. 'tab-analytics').
+ */
 function initTabContent(tabId) {
   if (tabInitialized[tabId]) return;
   tabInitialized[tabId] = true;
@@ -26,6 +40,7 @@ function initTabContent(tabId) {
     if (typeof initHeatmapSelector === 'function' && window._dashboardData) {
       initHeatmapSelector(window._dashboardData.members);
     }
+    // Resize charts after they become visible
     setTimeout(function() {
       if (typeof chartInstances !== 'undefined') {
         Object.values(chartInstances).forEach(function(c) { if (c && c.resize) c.resize(); });
@@ -49,6 +64,15 @@ function initTabContent(tabId) {
 
 // ---- Animated Counter ----
 
+/**
+ * Animates a numeric counter from 0 to the target value with easeOutCubic easing.
+ * Large numbers are automatically abbreviated (M, B). Respects prefers-reduced-motion.
+ * @param {HTMLElement} el - The DOM element whose textContent will be updated.
+ * @param {number} target - The final numeric value to count up to.
+ * @param {number} [duration=2000] - Animation duration in milliseconds.
+ * @param {string} [prefix=''] - Text to prepend (e.g. '#').
+ * @param {string} [suffix=''] - Text to append.
+ */
 function animateCounter(el, target, duration = 2000, prefix = '', suffix = '') {
   // Skip animation if user prefers reduced motion
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -89,6 +113,12 @@ function animateCounter(el, target, duration = 2000, prefix = '', suffix = '') {
 
 // ---- KPI Cards ----
 
+/**
+ * Populates the four main KPI cards (score, WUs, member count, rank)
+ * with animated counter values.
+ * @param {{ score: number, wus: number, rank: number }} team - Team summary data.
+ * @param {Array} members - Team members array (used for count).
+ */
 function populateKPIs(team, members) {
   const scoreEl = document.getElementById('kpi-score');
   const wusEl = document.getElementById('kpi-wus');
@@ -103,6 +133,13 @@ function populateKPIs(team, members) {
 
 // ---- Leaderboard ----
 
+/**
+ * Builds the leaderboard table rows from a sorted member list. Each row
+ * shows rank, tier badge, linked name, score, WUs, efficiency, and
+ * a contribution bar relative to the team total.
+ * @param {Array<{ name: string, score: number, wus: number }>} members - Sorted member list to display.
+ * @param {number} teamScore - Total team score (for contribution percentage).
+ */
 function buildLeaderboard(members, teamScore) {
   const tbody = document.getElementById('leaderboard-body');
   if (!tbody) return;
@@ -143,6 +180,11 @@ function buildLeaderboard(members, teamScore) {
   if (totEl) totEl.textContent = APP.members.length;
 }
 
+/**
+ * Sorts the global member list by the given column and re-renders the
+ * leaderboard. Toggles sort direction if the same column is clicked again.
+ * @param {string} column - Column key ('score', 'wus', 'name', 'efficiency', 'contribution').
+ */
 function sortMembers(column) {
   if (APP.sortColumn === column) {
     APP.sortAsc = !APP.sortAsc;
@@ -171,6 +213,10 @@ function sortMembers(column) {
   updateSortIndicators(column);
 }
 
+/**
+ * Updates CSS classes on table headers to reflect the active sort column and direction.
+ * @param {string} active - The currently sorted column key.
+ */
 function updateSortIndicators(active) {
   document.querySelectorAll('#leaderboard-table th[data-sort]').forEach(th => {
     th.classList.remove('sort-asc', 'sort-desc');
@@ -180,6 +226,7 @@ function updateSortIndicators(active) {
   });
 }
 
+/** Attaches click handlers to sortable table headers in the leaderboard. */
 function setupLeaderboardSort() {
   document.querySelectorAll('#leaderboard-table th[data-sort]').forEach(th => {
     th.addEventListener('click', () => sortMembers(th.dataset.sort));
@@ -187,6 +234,7 @@ function setupLeaderboardSort() {
   });
 }
 
+/** Attaches the leaderboard search input handler for real-time name filtering. */
 function setupSearch() {
   const input = document.getElementById('leaderboard-search');
   if (!input) return;
@@ -201,13 +249,21 @@ function setupSearch() {
 
 // ---- Fun Stats & Achievements ----
 
+/**
+ * Computes a set of fun/statistical insights about the team, including
+ * Gini coefficient, 80/20 rule analysis, median vs mean ratio, efficiency
+ * rankings, score spread, tier distribution, and more.
+ * @param {{ score: number, wus: number }} team - Team summary data.
+ * @param {Array<{ name: string, score: number, wus: number }>} members - All team members.
+ * @returns {Array<{ icon: string, title: string, value: string, desc: string }>} Array of stat card objects.
+ */
 function computeFunStats(team, members) {
   const totalScore = team.score;
   const totalWUs = team.wus;
   const topMember = members[0];
   const topContrib = ((topMember.score / totalScore) * 100).toFixed(1);
 
-  // Gini coefficient
+  // Gini coefficient: measures inequality of score distribution (0 = equal, 1 = one person has all)
   const n = members.length;
   const scores = members.map(m => m.score).sort((a, b) => a - b);
   let giniSum = 0;
@@ -256,61 +312,61 @@ function computeFunStats(team, members) {
 
   return [
     {
-      icon: '👑',
+      icon: '\u{1F451}',
       title: 'Top Contributor',
       value: `${escapeHtml(topMember.name)} (${topContrib}%)`,
       desc: `${formatScore(topMember.score)} Punkte beigesteuert`
     },
     {
-      icon: '⚡',
+      icon: '\u26A1',
       title: 'Team-Effizienz',
       value: formatNumber(avgEfficiency) + ' Pts/WU',
       desc: 'Durchschnittliche Punkte pro Work Unit'
     },
     {
-      icon: '📊',
+      icon: '\u{1F4CA}',
       title: 'Gini-Koeffizient',
       value: gini,
       desc: gini > 0.7 ? 'Hohe Konzentration: wenige Top-Folder dominieren' : 'Relativ ausgeglichene Verteilung'
     },
     {
-      icon: '📐',
+      icon: '\u{1F4D0}',
       title: '80/20-Regel',
       value: `${pct80}% erzeugen 80% des Scores`,
       desc: `${count80} von ${n} Mitgliedern reichen fuer 80% der Punkte`
     },
     {
-      icon: '📉',
+      icon: '\u{1F4C9}',
       title: 'Median vs. Mittelwert',
       value: `Ratio: ${medianMeanRatio}`,
       desc: `Median: ${formatScore(median)} | Mean: ${formatScore(Math.round(mean))}`
     },
     {
-      icon: '🎯',
+      icon: '\u{1F3AF}',
       title: 'Effizientester Folder',
       value: bestEff ? escapeHtml(bestEff.name) : '---',
       desc: bestEff ? `${formatScore(Math.round(bestEff.eff))} Pts/WU bei ${formatNumber(bestEff.wus)} WUs` : ''
     },
     {
-      icon: '📏',
+      icon: '\u{1F4CF}',
       title: 'Score-Spreizung',
       value: `${formatNumber(spreadRatio)}:1`,
       desc: `Hoechster: ${formatScore(highScore)} | Niedrigster: ${formatScore(lowScore)}`
     },
     {
-      icon: '⏱️',
+      icon: '\u23F1\uFE0F',
       title: 'Score = Sekunden?',
       value: formatNumber(yearsEquiv) + ' Jahre',
       desc: `${formatScore(totalScore)} Sekunden waeren ${formatNumber(yearsEquiv)} Jahre`
     },
     {
-      icon: '🏆',
+      icon: '\u{1F3C6}',
       title: 'Tier-Verteilung',
       value: `${tiers['Diamond'] || 0} Diamond, ${tiers['Platinum'] || 0} Platinum`,
       desc: `${tiers['Gold'] || 0} Gold, ${tiers['Silver'] || 0} Silver, ${tiers['Bronze'] || 0} Bronze, ${tiers['Copper'] || 0} Copper`
     },
     {
-      icon: '🔬',
+      icon: '\u{1F52C}',
       title: 'Forschungs-Impact',
       value: formatNumber(totalWUs) + ' Simulationen',
       desc: 'Beitrag zu Alzheimer-, Krebs- und COVID-Forschung'
@@ -318,6 +374,10 @@ function computeFunStats(team, members) {
   ];
 }
 
+/**
+ * Renders the fun stats / achievements grid into the DOM.
+ * @param {Array<{ icon: string, title: string, value: string, desc: string }>} stats - Stat card data from computeFunStats.
+ */
 function renderAchievements(stats) {
   const grid = document.getElementById('achievements-grid');
   if (!grid) return;
@@ -336,6 +396,7 @@ function renderAchievements(stats) {
 
 // ---- Loading States ----
 
+/** Shows skeleton loading placeholders on KPI cards and the leaderboard table. */
 function showLoading() {
   document.querySelectorAll('.kpi-value').forEach(el => el.classList.add('skeleton'));
   const tbody = document.getElementById('leaderboard-body');
@@ -354,12 +415,18 @@ function showLoading() {
   }
 }
 
+/** Removes all skeleton loading placeholders from the page. */
 function hideLoading() {
   document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
 }
 
 // ---- Data Fetching ----
 
+/**
+ * Fetches team summary and member list from the API in parallel.
+ * @returns {Promise<{ team: object, members: Array }>} The team and members data.
+ * @throws {Error} If either API call fails.
+ */
 async function fetchData() {
   const [teamRes, membersRes] = await Promise.all([
     fetch('/api/team'),
@@ -378,6 +445,7 @@ async function fetchData() {
 
 // ---- Auto Refresh ----
 
+/** Sets up the auto-refresh toggle that reloads dashboard data every 5 minutes when enabled. */
 function setupAutoRefresh() {
   const toggle = document.getElementById('auto-refresh');
   if (!toggle) return;
@@ -393,8 +461,8 @@ function setupAutoRefresh() {
 
 // ---- Smooth Scroll Navigation ----
 
+/** Attaches smooth-scroll behavior to all in-page anchor links. */
 function setupNavigation() {
-  // Smooth scroll for anchor links (inline script handles active highlighting)
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
@@ -406,6 +474,7 @@ function setupNavigation() {
 
 // ---- Period Selector for History Charts ----
 
+/** Attaches click handlers to period buttons (daily/weekly) that fetch and rebuild the history chart. */
 function setupPeriodButtons() {
   document.querySelectorAll('.period-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -420,7 +489,7 @@ function setupPeriodButtons() {
           buildHistoryChart(history);
         }
       } catch (err) {
-        console.warn('Period switch failed:', err);
+        console.error('[APP] Period switch failed:', err.message);
       }
     });
   });
@@ -428,6 +497,7 @@ function setupPeriodButtons() {
 
 // ---- Tracking Summary ----
 
+/** Fetches and displays a summary of how long data has been tracked (days/hours, snapshot count). */
 async function showTrackingSummary() {
   try {
     const res = await fetch('/api/history/summary');
@@ -442,7 +512,7 @@ async function showTrackingSummary() {
       const diffD = Math.round(diffH / 24);
       const timeStr = diffD > 0 ? `${diffD} Tagen` : `${diffH} Stunden`;
 
-      el.textContent = `Tracking seit ${timeStr} · ${summary.team_snapshots} Snapshots · Aktualisiert: ${now.toLocaleString('de-DE')}`;
+      el.textContent = `Tracking seit ${timeStr} \u00B7 ${summary.team_snapshots} Snapshots \u00B7 Aktualisiert: ${now.toLocaleString('de-DE')}`;
     }
   } catch (err) {
     // Silent fail
@@ -451,6 +521,7 @@ async function showTrackingSummary() {
 
 // ---- Last Updated ----
 
+/** Updates the data timestamp display with the current date/time in German locale. */
 function updateTimestamp() {
   const el = document.getElementById('data-timestamp');
   if (el) {
@@ -461,6 +532,11 @@ function updateTimestamp() {
 
 // ---- Main Init ----
 
+/**
+ * Main dashboard loader. Fetches data, populates KPIs, builds the leaderboard,
+ * computes fun stats, and initializes all optional feature modules.
+ * @param {boolean} [isRefresh=false] - If true, skips the loading skeleton (silent refresh).
+ */
 async function loadDashboard(isRefresh = false) {
   if (!isRefresh) showLoading();
 
@@ -512,14 +588,14 @@ async function loadDashboard(isRefresh = false) {
     showTrackingSummary();
 
   } catch (err) {
-    console.error('Dashboard load error:', err);
+    console.error('[APP] Dashboard load error:', err.message);
     hideLoading();
 
     const main = document.querySelector('main') || document.body;
     const errDiv = document.createElement('div');
     errDiv.className = 'error-banner';
     errDiv.innerHTML = `
-      <span>⚠️ Fehler beim Laden der Daten: ${escapeHtml(err.message)}</span>
+      <span>\u26A0\uFE0F Fehler beim Laden der Daten: ${escapeHtml(err.message)}</span>
       <button onclick="location.reload()">Erneut versuchen</button>
     `;
     main.prepend(errDiv);
@@ -527,8 +603,6 @@ async function loadDashboard(isRefresh = false) {
 }
 
 // Boot
-console.log('%c[FAH-STATS] System boot sequence initiated...', 'color: #0000cc; font-family: Courier New, monospace');
-console.log('%c[FAH-STATS] Connecting to Folding@Home API...', 'color: #0000cc; font-family: Courier New, monospace');
 
 document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
@@ -536,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupPeriodButtons();
   loadDashboard();
 
-  // Uptime counter
+  // Uptime counter: updates HH:MM:SS display every second
   const bootTime = Date.now();
   setInterval(() => {
     const el = document.getElementById('uptime');
@@ -548,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.textContent = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }, 1000);
 
-  // Random PID
+  // Cosmetic random PID for the terminal-style UI
   const pidEl = document.getElementById('process-pid');
   if (pidEl) pidEl.textContent = Math.floor(Math.random() * 65535);
 });
@@ -556,6 +630,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 // Tab System
 // ============================================================
+
+/**
+ * Initializes the tab navigation system. Supports tab bar buttons,
+ * nav links with data-tab attributes, URL hash routing, and
+ * keyboard shortcuts (Alt+1..4).
+ */
 function initTabs() {
   var tabBtns = document.querySelectorAll('.tab-btn');
   var navLinks = document.querySelectorAll('.nav-links a[data-tab]');
@@ -564,6 +644,12 @@ function initTabs() {
   tabBtns.forEach(function(b) { allTriggers.push(b); });
   navLinks.forEach(function(b) { allTriggers.push(b); });
 
+  /**
+   * Switches to the specified tab: deactivates all panels/triggers,
+   * activates the target, scrolls to the tab bar if needed, and
+   * updates the URL hash.
+   * @param {string} targetId - The tab panel ID to activate.
+   */
   function switchTab(targetId) {
     // Deactivate all
     allTriggers.forEach(function(b) { b.classList.remove('active'); if (b.setAttribute) b.setAttribute('aria-selected', 'false'); });
@@ -580,7 +666,7 @@ function initTabs() {
       }
     });
 
-    // Scroll to tab bar
+    // Scroll to tab bar if user has scrolled past it
     var tabBar = document.getElementById('tab-bar');
     if (tabBar) {
       var navHeight = 40;

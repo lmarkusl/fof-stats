@@ -113,7 +113,7 @@ async function loadProfileChart(name) {
       },
     });
   } catch (err) {
-    console.warn('Profile chart failed:', err);
+    console.error('[PROFILE] Chart load failed:', err.message);
   }
 }
 
@@ -129,12 +129,6 @@ function closeProfileModal() {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeProfileModal();
 });
-
-// Leaderboard names now link to /donor/:name pages directly.
-// Profile modal can still be opened programmatically via openProfileModal().
-function enableProfileLinks() {
-  // No-op: links navigate to dedicated donor pages
-}
 
 // Export/Share: Generate team score card as image
 function generateShareCard() {
@@ -208,7 +202,6 @@ function generateShareCard() {
 
 // Initialize
 function initProfileFeatures() {
-  enableProfileLinks();
   var exportBtn = document.getElementById('export-share-btn');
   if (exportBtn) exportBtn.addEventListener('click', generateShareCard);
 }

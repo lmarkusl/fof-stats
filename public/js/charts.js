@@ -920,7 +920,7 @@ async function initCharts(data) {
     buildHistoryChart(history);
     buildMoversChart(movers);
   } catch (err) {
-    console.warn('History fetch failed:', err);
+    console.error('[CHARTS] History fetch failed:', err.message);
     buildHistoryChart(null);
     buildMoversChart(null);
   }

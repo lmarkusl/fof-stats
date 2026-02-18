@@ -1,10 +1,15 @@
 // ============================================================
 // Donor Profile Page - Main Logic
+// Renders an individual donor's profile: KPIs, score history chart,
+// comparison bars vs team average, achievement system with modal,
+// and an activity heatmap (day-of-week x hour-of-day).
+// Depends on: utils.js, Chart.js (loaded externally)
 // ============================================================
 
-// Utilities provided by utils.js (escapeHtml, formatScore, formatNumber, getTier)
-
-// Extract donor name from URL path /donor/SomeName
+/**
+ * Extracts the donor name from the current URL path (/donor/<name>).
+ * @returns {string|null} The decoded donor name, or null if not found.
+ */
 function getDonorName() {
   try {
     const path = decodeURIComponent(window.location.pathname);
@@ -17,6 +22,10 @@ function getDonorName() {
 
 // ---- Render Functions ----
 
+/**
+ * Populates the donor profile header and KPI cards (score, WUs, ranks, efficiency, contribution).
+ * @param {{ name: string, score: number, wus: number, rank: number, team_rank: number, team_total_members: number, id: string|number, efficiency: number, contribution: number }} data - Donor summary from API.
+ */
 function renderKPIs(data) {
   const tier = getTier(data.score);
 
@@ -42,6 +51,10 @@ function renderKPIs(data) {
   }
 }
 
+/**
+ * Renders 7-day score/WU gain indicators and the vs-average multiplier.
+ * @param {{ score_gain_7d: number, wus_gain_7d: number, score_vs_avg: number }} data - Gain data from donor summary.
+ */
 function renderGains(data) {
   const scoreGainEl = document.getElementById('donor-score-gain');
   const wusGainEl = document.getElementById('donor-wus-gain');
@@ -63,6 +76,10 @@ function renderGains(data) {
   }
 }
 
+/**
+ * Renders a Chart.js line chart showing the donor's score over time.
+ * @param {Array<{ date: string, score: number }>} history - Historical score snapshots.
+ */
 function renderHistoryChart(history) {
   const canvas = document.getElementById('donor-history-chart');
   if (!canvas || !history || history.length === 0) return;
@@ -120,6 +137,11 @@ function renderHistoryChart(history) {
   });
 }
 
+/**
+ * Renders side-by-side comparison bars (donor vs team average) for
+ * score, work units, and efficiency.
+ * @param {{ score: number, wus: number, efficiency: number, avg_score: number, avg_wus: number }} data - Donor summary with team averages.
+ */
 function renderComparison(data) {
   const container = document.getElementById('donor-comparison-bars');
   if (!container) return;
@@ -152,6 +174,7 @@ function renderComparison(data) {
 
 // ---- Achievement System ----
 
+/** @type {Object<string, string>} Maps achievement tier names to their display colors. */
 const ACH_TIER_COLORS = {
   bronze: '#cd7f32',
   silver: '#c0c0c0',
@@ -161,12 +184,20 @@ const ACH_TIER_COLORS = {
   legendary: '#ff6600',
 };
 
-// State for filtering
+// Achievement filter state
+/** @type {Array} All unlocked achievements for the current donor. */
 let achAllUnlocked = [];
+/** @type {Array} All locked (not yet earned) achievements for the current donor. */
 let achAllLocked = [];
+/** @type {string} Active category filter ('all' or a specific category). */
 let achActiveCategory = 'all';
+/** @type {string} Current search query for achievement name filtering. */
 let achSearchQuery = '';
 
+/**
+ * Updates the achievement summary bar (count, points, completion percentage, progress bar).
+ * @param {{ unlocked_count: number, total: number, points_earned: number, completion_pct: number }} data - Achievement summary stats.
+ */
 function renderAchievementSummary(data) {
   var countEl = document.getElementById('ach-summary-count');
   var pointsEl = document.getElementById('ach-summary-points');
@@ -179,6 +210,12 @@ function renderAchievementSummary(data) {
   if (fillEl) fillEl.style.width = data.completion_pct + '%';
 }
 
+/**
+ * Builds the HTML string for a single achievement card.
+ * @param {{ id: string, name: string, tier: string, icon: string, points: number, progress?: number }} ach - Achievement data.
+ * @param {boolean} isUnlocked - Whether the achievement has been earned.
+ * @returns {string} HTML string for the card element.
+ */
 function buildAchievementCard(ach, isUnlocked) {
   var tierClass = 'tier-' + escapeHtml(ach.tier);
   var stateClass = isUnlocked ? 'unlocked' : 'locked';
@@ -197,6 +234,10 @@ function buildAchievementCard(ach, isUnlocked) {
   return html;
 }
 
+/**
+ * Filters achievements by active category and search query, then
+ * renders them into the grid. Unlocked achievements appear first.
+ */
 function filterAndRenderAchievements() {
   var grid = document.getElementById('ach-grid');
   if (!grid) return;
@@ -247,6 +288,12 @@ function filterAndRenderAchievements() {
   };
 }
 
+/**
+ * Opens a modal dialog showing detailed information about a single achievement,
+ * including description, tier, points, unlock date, and progress bar.
+ * @param {string} achId - The achievement identifier.
+ * @param {boolean} isUnlocked - Whether the achievement is unlocked.
+ */
 function openAchievementModal(achId, isUnlocked) {
   var ach = null;
   if (isUnlocked) {
@@ -302,11 +349,17 @@ function openAchievementModal(achId, isUnlocked) {
   if (closeBtn) closeBtn.focus();
 }
 
+/** Closes the achievement detail modal by removing the 'visible' class. */
 function closeAchievementModal() {
   var overlay = document.getElementById('ach-modal-overlay');
   overlay.classList.remove('visible');
 }
 
+/**
+ * Sets up event listeners for achievement category tabs, search input,
+ * modal close button, overlay click-to-close, and keyboard navigation
+ * (Escape to close, Tab focus trapping within modal).
+ */
 function initAchievementControls() {
   // Tab clicks
   var tabContainer = document.getElementById('ach-tabs');
@@ -365,6 +418,11 @@ function initAchievementControls() {
   });
 }
 
+/**
+ * Entry point for the achievement system. Stores unlocked/locked lists,
+ * renders the summary, sets up controls, and triggers initial render.
+ * @param {{ unlocked: Array, locked: Array, unlocked_count: number, total: number, points_earned: number, completion_pct: number }} achData - Full achievement data from API.
+ */
 function renderAchievements(achData) {
   achAllUnlocked = achData.unlocked || [];
   achAllLocked = achData.locked || [];
@@ -374,10 +432,18 @@ function renderAchievements(achData) {
   filterAndRenderAchievements();
 }
 
-// ---- Heatmap (reuse existing code pattern) ----
+// ---- Activity Heatmap ----
 
+/** @type {string[]} Day-of-week labels (German, Sunday-first). */
 const DAYS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
+/**
+ * Renders a canvas-based heatmap showing score deltas by day-of-week and hour.
+ * Color intensity scales linearly from light beige (0) to dark blue/brown (max).
+ * @param {HTMLElement} container - The DOM element to render the canvas into.
+ * @param {Array<{ day_of_week: number, hour: number, score_delta: number }>} data - Heatmap data points.
+ * @param {string} name - Donor name (reserved for tooltip/title use).
+ */
 function renderDonorHeatmap(container, data, name) {
   container.innerHTML = '';
 
@@ -438,6 +504,11 @@ function renderDonorHeatmap(container, data, name) {
 
 // ---- Main Init ----
 
+/**
+ * Main entry point for the donor profile page. Extracts the donor name
+ * from the URL, fetches summary/achievements/heatmap data in parallel,
+ * and renders all profile sections.
+ */
 async function loadDonorProfile() {
   const name = getDonorName();
   if (!name) {
@@ -485,7 +556,7 @@ async function loadDonorProfile() {
     }
 
   } catch (err) {
-    console.error('Donor profile load error:', err);
+    console.error('[DONOR] Profile load error:', err.message);
     document.getElementById('donor-subtitle').textContent = 'Fehler beim Laden des Profils.';
   }
 }

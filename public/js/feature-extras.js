@@ -1,10 +1,19 @@
 // ============================================================
 // Feature: Score Equivalents + ASCII Achievements + Team Goals
+// Provides fun "what does our score mean?" equivalents, ASCII art
+// milestone badges, and a progress-bar view of team goals.
+// Called from app.js via initExtrasFeatures(team, members).
+// Depends on: utils.js (escapeHtml, formatScoreShort, formatNumber)
 // ============================================================
 
-// Utilities provided by utils.js (escapeHtml, formatScoreShort)
-
 // ---- Score Equivalents ----
+
+/**
+ * Renders fun real-world equivalents of the team's computational score
+ * (CPU-years, simulated proteins, energy consumption, etc.).
+ * @param {{ score: number, wus: number }} team - Team summary data.
+ * @param {Array} members - Team member list (unused, reserved for future use).
+ */
 function renderScoreEquivalents(team, members) {
   const container = document.getElementById('score-equivalents');
   if (!container || !team) return;
@@ -38,6 +47,13 @@ function renderScoreEquivalents(team, members) {
 }
 
 // ---- ASCII Art Achievements ----
+
+/**
+ * Renders ASCII art badges for major team milestones (score thresholds,
+ * rank achievements, member count, work unit milestones).
+ * @param {{ score: number, rank: number, wus: number }} team - Team summary data.
+ * @param {Array} members - Team member list (used for member count checks).
+ */
 function renderAsciiAchievements(team, members) {
   const container = document.getElementById('ascii-achievements');
   if (!container || !team) return;
@@ -140,6 +156,11 @@ function renderAsciiAchievements(team, members) {
 }
 
 // ---- Team Goals ----
+
+/**
+ * Fetches team goals from the API and renders progress bars
+ * into the #team-goals container.
+ */
 async function initTeamGoals() {
   const container = document.getElementById('team-goals');
   if (!container) return;
@@ -154,6 +175,11 @@ async function initTeamGoals() {
   }
 }
 
+/**
+ * Renders a list of team goals with progress bars and current/target labels.
+ * @param {HTMLElement} container - The DOM element to render into.
+ * @param {Array<{ name: string, progress: number, current: number, target: number, remaining: number }>} goals - Goal objects from the API.
+ */
 function renderGoals(container, goals) {
   if (!goals || goals.length === 0) {
     container.innerHTML = '<div class="goals-empty">Keine Ziele definiert.</div>';
@@ -182,6 +208,13 @@ function renderGoals(container, goals) {
 }
 
 // ---- Init ----
+
+/**
+ * Entry point for the Extras tab. Renders score equivalents, ASCII
+ * achievements, and loads team goals.
+ * @param {{ score: number, rank: number, wus: number }} team - Team summary data.
+ * @param {Array} members - Team member list.
+ */
 async function initExtrasFeatures(team, members) {
   renderScoreEquivalents(team, members);
   renderAsciiAchievements(team, members);

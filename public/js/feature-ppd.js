@@ -1,8 +1,12 @@
 // ============================================================
 // Feature: Points Per Day (PPD) and Production Stats
+// Displays current, 7-day, and 30-day PPD averages, daily/weekly/
+// monthly production totals, and a 7-day sparkline trend chart.
+// Called from app.js via initPPD() after dashboard data loads.
+// Depends on: utils.js (formatScore, formatNumber, escapeHtml)
 // ============================================================
 
-// Inject styles
+// Inject component-specific styles into <head>
 (function() {
   var style = document.createElement('style');
   style.textContent = [
@@ -35,8 +39,10 @@
   document.head.appendChild(style);
 })();
 
-// Utilities provided by utils.js (formatScore, formatNumber, escapeHtml)
-
+/**
+ * Initializes the PPD section by fetching PPD stats and team history,
+ * then rendering the results into the #ppd-stats container.
+ */
 function initPPD() {
   var container = document.getElementById('ppd-stats');
   if (!container) return;
@@ -53,10 +59,16 @@ function initPPD() {
   });
 }
 
+/**
+ * Renders PPD cards, production totals, and a 7-day sparkline bar chart.
+ * @param {HTMLElement} container - The DOM element to render into.
+ * @param {{ team: { ppd_24h: number, ppd_7d: number, ppd_30d: number } }} ppdData - PPD stats from the API.
+ * @param {Array<{ score_delta: number }>} historyData - Daily team history snapshots (up to 31 days).
+ */
 function renderPPD(container, ppdData, historyData) {
   var team = ppdData.team;
 
-  // Calculate today/week/month gains from history data
+  // Calculate today/week/month score gains from history data
   var todayGain = historyData.length > 0 ? historyData[historyData.length - 1].score_delta : 0;
   var weekGain = 0;
   var monthGain = 0;

@@ -21,7 +21,7 @@ async function initSocialFeatures() {
       renderMOTW(motw);
     }
   } catch (err) {
-    console.warn('[SOCIAL] Load failed:', err);
+    console.error('[SOCIAL] Load failed:', err.message);
     var streakEl = document.getElementById('streak-counter');
     if (streakEl) streakEl.innerHTML = '<div class="highlight-loading">Fehler beim Laden der Streak-Daten.</div>';
     var motwEl = document.getElementById('member-of-week');
