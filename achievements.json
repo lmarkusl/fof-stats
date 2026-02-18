@@ -533,7 +533,7 @@
   },
   {
     "id": "score_speed_1m_day",
-    "name": "Blitzkrieg",
+    "name": "Blitzstart",
     "description": "Gain 1 million points in a single day",
     "category": "score",
     "tier": "gold",
@@ -3361,7 +3361,7 @@
   },
   {
     "id": "time_early_2020",
-    "name": "COVID-Krieger",
+    "name": "Pandemie-Helfer",
     "description": "Was active during 2020 pandemic peak",
     "category": "time",
     "tier": "gold",
