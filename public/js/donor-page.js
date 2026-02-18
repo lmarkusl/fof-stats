@@ -76,15 +76,24 @@ function renderGains(data) {
   }
 }
 
+/** Reference to the donor history Chart.js instance for cleanup on period switch. */
+var _donorHistoryChart = null;
+
 /**
  * Renders a Chart.js line chart showing the donor's score over time.
+ * Destroys any previous chart instance before creating a new one.
  * @param {Array<{ date: string, score: number }>} history - Historical score snapshots.
  */
 function renderHistoryChart(history) {
   const canvas = document.getElementById('donor-history-chart');
   if (!canvas || !history || history.length === 0) return;
 
-  new Chart(canvas.getContext('2d'), {
+  if (_donorHistoryChart) {
+    _donorHistoryChart.destroy();
+    _donorHistoryChart = null;
+  }
+
+  _donorHistoryChart = new Chart(canvas.getContext('2d'), {
     type: 'line',
     data: {
       labels: history.map(h => h.date),
@@ -97,7 +106,7 @@ function renderHistoryChart(history) {
           borderWidth: 2,
           fill: true,
           tension: 0.3,
-          pointRadius: 1,
+          pointRadius: history.length > 100 ? 0 : 1,
           pointHoverRadius: 4,
         },
       ],
@@ -134,6 +143,42 @@ function renderHistoryChart(history) {
         },
       },
     },
+  });
+}
+
+/**
+ * Sets up the period buttons for switching the history chart between
+ * hourly, daily, weekly, and monthly views.
+ */
+function setupDonorPeriodButtons() {
+  var buttons = document.querySelectorAll('#donor-history .period-btn');
+  if (!buttons.length) return;
+
+  var donorName = getDonorName();
+  if (!donorName) return;
+
+  buttons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      buttons.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      var period = btn.dataset.period;
+      var limit = period === 'hourly' ? 168 : period === 'daily' ? 90 : period === 'weekly' ? 52 : 24;
+
+      fetch('/api/history/member/' + encodeURIComponent(donorName) + '?period=' + period + '&limit=' + limit)
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function(history) {
+          if (history.length > 0) {
+            renderHistoryChart(history);
+          }
+        })
+        .catch(function(err) {
+          console.error('[DONOR] Period switch failed:', err.message);
+        });
+    });
   });
 }
 
@@ -537,6 +582,7 @@ async function loadDonorProfile() {
     renderKPIs(summary);
     renderGains(summary);
     renderHistoryChart(summary.history);
+    setupDonorPeriodButtons();
     renderComparison(summary);
 
     if (achievementsRes.ok) {
