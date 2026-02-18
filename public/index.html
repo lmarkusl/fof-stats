@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="FreilaufendeOnlineFuzzies - Folding@Home Team #240890 Statistics Dashboard">
   <meta name="theme-color" content="#2c2c2c">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
   <title>FreilaufendeOnlineFuzzies | F@H Team #240890 Stats</title>
 
   <!-- Courier New is a system font, no external loading needed -->
@@ -600,7 +600,7 @@
           <li><a href="https://foldingathome.org" target="_blank" rel="noopener noreferrer">Folding@Home</a></li>
           <li><a href="https://stats.foldingathome.org/team/240890" target="_blank" rel="noopener noreferrer">Team Stats</a></li>
           <li><a href="https://fof1.de" target="_blank" rel="noopener noreferrer">fof1.de</a></li>
-          <li><a href="#impressum" onclick="document.getElementById('impressum-modal').style.display='flex'">Impressum</a></li>
+          <li><a href="#impressum">Impressum</a></li>
           <li><a href="/datenschutz.html">Datenschutz</a></li>
         </ul>
         <p class="footer-credit">
@@ -625,27 +625,12 @@
   <script src="/js/feature-certificate.js" defer></script>
   <script src="/js/feature-export.js" defer></script>
   <script src="/js/app.js" defer></script>
-
-  <!-- Inline: Nav toggle for mobile -->
-  <script>
-    document.getElementById('nav-toggle').addEventListener('click', function () {
-      var links = document.getElementById('nav-links');
-      links.classList.toggle('open');
-      this.setAttribute('aria-expanded', links.classList.contains('open'));
-    });
-
-    // Close mobile nav on link click
-    document.querySelectorAll('.nav-links a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        document.getElementById('nav-links').classList.remove('open');
-      });
-    });
-  </script>
+  <script src="/js/nav-toggle.js" defer></script>
 
   <!-- Impressum Modal -->
-  <div id="impressum-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;overflow-y:auto;" onclick="if(event.target===this)this.style.display='none'">
+  <div id="impressum-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;overflow-y:auto;">
     <div style="background:var(--bg-primary,#1e1e1e);border:2px solid var(--border-color,#555);max-width:600px;width:90%;padding:32px;position:relative;font-family:'Courier New',monospace;margin:40px auto;max-height:90vh;overflow-y:auto;">
-      <button onclick="document.getElementById('impressum-modal').style.display='none'" style="position:absolute;top:8px;right:12px;background:none;border:none;color:var(--text-primary,#ccc);font-size:1.4rem;cursor:pointer;">&times;</button>
+      <button style="position:absolute;top:8px;right:12px;background:none;border:none;color:var(--text-primary,#ccc);font-size:1.4rem;cursor:pointer;">&times;</button>
       <h2 style="margin:0 0 16px;color:var(--text-accent,#0f0);">C:\&gt; IMPRESSUM</h2>
       <p style="margin:0 0 8px;"><strong>Angaben gem&auml;&szlig; &sect; 5 DDG</strong></p>
       <p style="margin:0 0 16px;">

@@ -6,9 +6,13 @@
 
 // Extract donor name from URL path /donor/SomeName
 function getDonorName() {
-  const path = decodeURIComponent(window.location.pathname);
-  const match = path.match(/^\/donor\/(.+)$/);
-  return match ? match[1] : null;
+  try {
+    const path = decodeURIComponent(window.location.pathname);
+    const match = path.match(/^\/donor\/(.+)$/);
+    return match ? match[1] : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 // ---- Render Functions ----

@@ -85,18 +85,18 @@ function renderPPD(container, ppdData, historyData) {
 
   // PPD Cards
   html += '<div class="card ppd-card">';
-  html += '<div class="ppd-value">' + formatScore(team.ppd_24h) + '</div>';
+  html += '<div class="ppd-value">' + escapeHtml(formatScore(team.ppd_24h)) + '</div>';
   html += '<div class="ppd-label">PPD (aktuell)</div>';
   html += '</div>';
 
   html += '<div class="card ppd-card">';
-  html += '<div class="ppd-value">' + formatScore(team.ppd_7d) + '</div>';
+  html += '<div class="ppd-value">' + escapeHtml(formatScore(team.ppd_7d)) + '</div>';
   html += '<div class="ppd-label">PPD (7-Tage &#x00D8;)</div>';
-  html += '<div class="ppd-trend ' + trendClass + '">' + trendArrow + ' ' + trendText + '</div>';
+  html += '<div class="ppd-trend ' + trendClass + '">' + trendArrow + ' ' + escapeHtml(trendText) + '</div>';
   html += '</div>';
 
   html += '<div class="card ppd-card">';
-  html += '<div class="ppd-value">' + formatScore(team.ppd_30d) + '</div>';
+  html += '<div class="ppd-value">' + escapeHtml(formatScore(team.ppd_30d)) + '</div>';
   html += '<div class="ppd-label">PPD (30-Tage &#x00D8;)</div>';
   html += '</div>';
 
@@ -106,17 +106,17 @@ function renderPPD(container, ppdData, historyData) {
   html += '<div class="production-grid">';
 
   html += '<div class="card production-card">';
-  html += '<div class="production-value">' + formatScore(todayGain) + '</div>';
+  html += '<div class="production-value">' + escapeHtml(formatScore(todayGain)) + '</div>';
   html += '<div class="production-label">Heute</div>';
   html += '</div>';
 
   html += '<div class="card production-card">';
-  html += '<div class="production-value">' + formatScore(weekGain) + '</div>';
+  html += '<div class="production-value">' + escapeHtml(formatScore(weekGain)) + '</div>';
   html += '<div class="production-label">Diese Woche</div>';
   html += '</div>';
 
   html += '<div class="card production-card">';
-  html += '<div class="production-value">' + formatScore(monthGain) + '</div>';
+  html += '<div class="production-value">' + escapeHtml(formatScore(monthGain)) + '</div>';
   html += '<div class="production-label">Dieser Monat</div>';
   html += '</div>';
 

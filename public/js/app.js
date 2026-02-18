@@ -327,8 +327,8 @@ function renderAchievements(stats) {
       <div class="achievement-icon">${escapeHtml(s.icon)}</div>
       <div class="achievement-content">
         <div class="achievement-title">${escapeHtml(s.title)}</div>
-        <div class="achievement-value">${s.value}</div>
-        <div class="achievement-detail">${s.desc}</div>
+        <div class="achievement-value">${escapeHtml(s.value)}</div>
+        <div class="achievement-detail">${escapeHtml(s.desc)}</div>
       </div>
     </div>
   `).join('');
@@ -605,9 +605,10 @@ function initTabs() {
     });
   });
 
-  // Handle initial hash
+  // Handle initial hash (validate against known tab IDs)
+  var validTabs = ['tab-overview', 'tab-rankings', 'tab-analytics', 'tab-extras'];
   var hash = window.location.hash.replace('#', '');
-  if (hash && document.getElementById(hash)) {
+  if (validTabs.indexOf(hash) !== -1) {
     switchTab(hash);
   }
 

@@ -27,9 +27,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  // CSP: unsafe-inline required for scripts because index.html and donors.html have inline <script> blocks.
-  // TODO: extract inline scripts to external files and remove 'unsafe-inline' from script-src.
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';");
   // Prevent caching of API responses that may contain user-specific data
   if (req.path.startsWith('/api/')) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -41,12 +39,26 @@ app.use((req, res, next) => {
 // ============================================================
 // Rate limiting middleware (in-memory, no dependencies)
 // ============================================================
+const RATE_LIMIT_MAX_ENTRIES = 50000; // SECURITY: bound map size against IP flooding
+
+// SECURITY: Normalize IPv6 to /64 prefix to prevent bypass via address rotation
+function normalizeIP(ip) {
+  if (!ip) return 'unknown';
+  if (ip.includes(':')) {
+    return ip.split(':').slice(0, 4).join(':') + '::/64';
+  }
+  return ip;
+}
+
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX = 100; // max requests per window per IP
 
 app.use((req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress;
+  const ip = normalizeIP(req.ip || req.connection.remoteAddress);
+  if (rateLimitMap.size >= RATE_LIMIT_MAX_ENTRIES) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+  }
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
 
@@ -70,7 +82,10 @@ const HEAVY_RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const HEAVY_RATE_LIMIT_MAX = 10; // max 10 expensive requests per minute per IP
 
 function heavyRateLimit(req, res, next) {
-  const ip = req.ip || req.connection.remoteAddress;
+  const ip = normalizeIP(req.ip || req.connection.remoteAddress);
+  if (heavyRateLimitMap.size >= RATE_LIMIT_MAX_ENTRIES) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+  }
   const now = Date.now();
   const entry = heavyRateLimitMap.get(ip);
 
@@ -1591,16 +1606,36 @@ app.get('/api/donor/:name/summary', heavyRateLimit, async (req, res) => {
 });
 
 // Per-user achievements (powered by achievement engine)
+// SECURITY: concurrency limit + result caching for expensive achievement evaluations
+let activeEvaluations = 0;
+const MAX_CONCURRENT_EVALUATIONS = 3;
+const achievementResultCache = new Map();
+const ACHIEVEMENT_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 app.get('/api/donor/:name/achievements', heavyRateLimit, async (req, res) => {
   const name = validateName(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid name parameter.' });
+
+  // Check cache first
+  const cached = achievementResultCache.get(name);
+  if (cached && Date.now() - cached.timestamp < ACHIEVEMENT_CACHE_TTL) {
+    return res.json(cached.data);
+  }
+
+  if (activeEvaluations >= MAX_CONCURRENT_EVALUATIONS) {
+    return res.status(503).json({ error: 'Server busy. Try again shortly.' });
+  }
+  activeEvaluations++;
   try {
     const result = await evaluateDonorAchievements(name);
     if (!result) return res.status(404).json({ error: 'Member not found' });
+    achievementResultCache.set(name, { data: result, timestamp: Date.now() });
     res.json(result);
   } catch (err) {
     console.error('[API /api/donor/achievements]', err.message);
     res.status(502).json({ error: 'Failed to load achievements' });
+  } finally {
+    activeEvaluations--;
   }
 });
 

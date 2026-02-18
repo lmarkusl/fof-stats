@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2c2c2c">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
   <title>Donor Profile | FOF Stats</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/css/style.css">
@@ -240,18 +240,6 @@
 
   <script src="/js/utils.js" defer></script>
   <script src="/js/donor-page.js" defer></script>
-  <script>
-    document.getElementById('nav-toggle').addEventListener('click', function () {
-      var links = document.getElementById('nav-links');
-      links.classList.toggle('open');
-      this.setAttribute('aria-expanded', links.classList.contains('open'));
-    });
-    document.querySelectorAll('.nav-links a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        document.getElementById('nav-links').classList.remove('open');
-        document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
-      });
-    });
-  </script>
+  <script src="/js/nav-toggle.js" defer></script>
 </body>
 </html>
