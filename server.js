@@ -2688,75 +2688,73 @@ app.get('/api/export/:format', async (req, res) => {
 // API routes - Research Impact, Global Stats, Compare, Hall of Fame, Challenges
 // ============================================================
 
-/** GET /api/research - Aggregated research impact by disease/cause */
+/** GET /api/research - FAH project catalog grouped by disease/cause */
 app.get('/api/research', heavyRateLimit, async (req, res) => {
   try {
-    // Fetch project-cause mapping (cached 1h via fahFetch)
-    let causeData;
-    try {
-      causeData = await fahFetch('/project/cause');
-    } catch {
-      causeData = null;
+    // Step 1: Get list of all cause names from FAH API
+    const causeList = await fahFetch('/project/cause');
+    if (!Array.isArray(causeList) || causeList.length === 0) {
+      return res.json({ total_projects: 0, causes: [] });
     }
 
-    // Build cause-to-project mapping from cause data
-    const causeMap = new Map(); // cause name -> Set of project IDs
-    if (Array.isArray(causeData)) {
-      for (const entry of causeData) {
-        const causeName = entry.cause || entry.name || 'Unknown';
-        if (!causeMap.has(causeName)) causeMap.set(causeName, new Set());
-        if (entry.project) causeMap.get(causeName).add(entry.project);
+    // Step 2: Fetch project lists for all causes in parallel (all cached 1h)
+    const causeProjects = await Promise.all(
+      causeList.map(cause =>
+        fahFetch(`/project?cause=${encodeURIComponent(cause)}`).catch(() => [])
+      )
+    );
+
+    // Step 3: For each cause, fetch up to 3 recent project details
+    const SAMPLE_SIZE = 3;
+    const detailFetches = [];
+    const detailMap = []; // tracks which cause index each detail belongs to
+    for (let i = 0; i < causeList.length; i++) {
+      const projects = Array.isArray(causeProjects[i]) ? causeProjects[i] : [];
+      const sorted = [...projects].sort((a, b) =>
+        new Date(b.modified || 0) - new Date(a.modified || 0)
+      );
+      for (const p of sorted.slice(0, SAMPLE_SIZE)) {
+        detailMap.push({ causeIdx: i, fallback: p });
+        detailFetches.push(fahFetch(`/project/${p.id}`).catch(() => null));
       }
     }
+    const detailResults = await Promise.all(detailFetches);
 
-    // Fetch members and their projects
-    const raw = await fahFetch(`/team/${TEAM_ID}/members`);
-    const members = parseMembers(raw);
-
-    const causeStats = new Map(); // cause -> { projects: Set, wus: number }
-    const MAX_PROJECT_FETCH = 50;
-    const fetchMembers = members.slice(0, MAX_PROJECT_FETCH);
-
-    for (const m of fetchMembers) {
-      try {
-        const projects = await fahFetch(`/user/${encodeURIComponent(m.name)}/projects`);
-        if (Array.isArray(projects)) {
-          for (const p of projects) {
-            // Try to find the cause for this project
-            let foundCause = 'Other';
-            for (const [cause, projectIds] of causeMap) {
-              if (projectIds.has(p.project)) {
-                foundCause = cause;
-                break;
-              }
-            }
-            // Also check if the project itself has a cause field
-            if (p.cause) foundCause = p.cause;
-
-            if (!causeStats.has(foundCause)) {
-              causeStats.set(foundCause, { projects: new Set(), wus: 0 });
-            }
-            const cs = causeStats.get(foundCause);
-            cs.projects.add(p.project);
-            cs.wus += p.wus || p.credit || 0;
-          }
-        }
-      } catch {
-        // Skip members whose projects cannot be fetched
-      }
+    // Helper: strip HTML tags from project descriptions (API returns HTML)
+    function stripHtml(html) {
+      if (typeof html !== 'string') return '';
+      return html.replace(/<[^>]*>/g, '').trim().substring(0, 300);
     }
 
-    const causes = [];
-    for (const [name, stats] of causeStats) {
-      causes.push({
-        name,
-        projects: stats.projects.size,
-        wus: stats.wus,
+    // Step 4: Assemble response
+    const causeSamples = new Map();
+    for (let d = 0; d < detailMap.length; d++) {
+      const { causeIdx, fallback } = detailMap[d];
+      const detail = detailResults[d];
+      if (!causeSamples.has(causeIdx)) causeSamples.set(causeIdx, []);
+      causeSamples.get(causeIdx).push({
+        id: (detail && detail.projects) || fallback.id,
+        manager: (detail && detail.manager) || fallback.manager || '',
+        institution: (detail && detail.institution) || '',
+        description: stripHtml((detail && detail.description) || ''),
+        modified: (detail && detail.modified) || fallback.modified || '',
       });
     }
-    causes.sort((a, b) => b.wus - a.wus);
 
-    res.json({ causes });
+    let totalProjects = 0;
+    const causes = [];
+    for (let i = 0; i < causeList.length; i++) {
+      const count = Array.isArray(causeProjects[i]) ? causeProjects[i].length : 0;
+      totalProjects += count;
+      causes.push({
+        name: causeList[i],
+        project_count: count,
+        sample_projects: causeSamples.get(i) || [],
+      });
+    }
+    causes.sort((a, b) => b.project_count - a.project_count);
+
+    res.json({ total_projects: totalProjects, causes });
   } catch (err) {
     console.error('[API /api/research]', err.message);
     res.status(502).json({ error: 'Failed to fetch research data.' });
