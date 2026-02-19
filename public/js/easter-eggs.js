@@ -2,59 +2,11 @@
 // F@H Stats Dashboard - Easter Eggs
 // Team: FreilaufendeOnlineFuzzies (#240890)
 //
-// Hidden features: Boot sequence, terminal emulator,
+// Hidden features: terminal emulator,
 // BSOD (Konami Code), CRT scanline effect.
 // ============================================================
 
-// ---- 1. Boot Sequence Animation ----
-
-function initBootSequence() {
-  if (sessionStorage.getItem('fof-boot-done')) return;
-  sessionStorage.setItem('fof-boot-done', '1');
-
-  var lines = [
-    'Checking RAM... 640K OK',
-    'Loading FOF_STATS.SYS...',
-    'Initializing NETWORK.DRV...',
-    'Connecting to FAH API... OK',
-    'C:\\FOF> STATS.EXE /ONLINE'
-  ];
-
-  var overlay = document.createElement('div');
-  overlay.id = 'boot-overlay';
-  overlay.setAttribute('style',
-    'position:fixed;inset:0;z-index:99999;background:#000;display:flex;' +
-    'align-items:flex-start;justify-content:flex-start;padding:40px;' +
-    'font-family:"Courier New",Courier,monospace;font-size:1rem;' +
-    'color:#c0c0c0;flex-direction:column;transition:opacity 0.5s ease;'
-  );
-
-  var output = document.createElement('div');
-  overlay.appendChild(output);
-  document.body.appendChild(overlay);
-
-  var i = 0;
-  var interval = setInterval(function() {
-    if (i >= lines.length) {
-      clearInterval(interval);
-      setTimeout(function() {
-        overlay.style.opacity = '0';
-        setTimeout(function() {
-          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        }, 500);
-      }, 400);
-      return;
-    }
-    var line = document.createElement('div');
-    line.textContent = lines[i];
-    line.style.marginBottom = '4px';
-    if (i === lines.length - 1) line.style.color = '#ffffff';
-    output.appendChild(line);
-    i++;
-  }, 300);
-}
-
-// ---- 2. Terminal Easter Egg ----
+// ---- 1. Terminal Easter Egg (Backtick key) ----
 
 function initTerminal() {
   var terminalOpen = false;
@@ -278,7 +230,7 @@ function initTerminal() {
   });
 }
 
-// ---- 3. BSOD Easter Egg (Konami Code) ----
+// ---- 2. BSOD Easter Egg (Konami Code) ----
 
 function initBSOD() {
   var konamiSequence = [
@@ -368,7 +320,7 @@ function initBSOD() {
   });
 }
 
-// ---- 4. CRT Scanline Effect ----
+// ---- 3. CRT Scanline Effect ----
 
 function initCRT() {
   var CRT_KEY = 'fof-crt-enabled';
@@ -468,7 +420,6 @@ function initCRT() {
 // ---- Main Init ----
 
 function initEasterEggs() {
-  initBootSequence();
   initTerminal();
   initBSOD();
   initCRT();
