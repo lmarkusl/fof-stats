@@ -54,7 +54,6 @@ function initTabContent(tabId) {
   if (tabId === 'tab-rankings') {
     if (typeof initRivals === 'function') initRivals();
     if (typeof initMonthly === 'function') initMonthly();
-    if (typeof initPowerRankings === 'function') initPowerRankings();
     if (typeof initSeason === 'function') initSeason();
   }
 
@@ -63,7 +62,6 @@ function initTabContent(tabId) {
       initExtrasFeatures(window._dashboardData.team, window._dashboardData.members);
     }
     if (typeof initAchievementBoard === 'function') initAchievementBoard();
-    if (typeof initVersus === 'function') initVersus();
     if (typeof initChallenges === 'function') initChallenges();
     if (typeof initWeather === 'function') initWeather();
     if (typeof initCertificate === 'function') initCertificate();
@@ -206,7 +204,7 @@ function sortMembers(column) {
     APP.sortAsc = false;
   }
 
-  const sorted = [...APP.members].sort((a, b) => {
+  const sorted = [...getFilteredMembers()].sort((a, b) => {
     let va, vb;
     if (column === 'efficiency') {
       va = a.wus > 0 ? a.score / a.wus : 0;
@@ -247,16 +245,46 @@ function setupLeaderboardSort() {
   });
 }
 
+/**
+ * Returns the currently filtered member list based on active-only checkbox and search query.
+ * @returns {Array} Filtered members.
+ */
+function getFilteredMembers() {
+  var members = APP.members;
+  var activeOnly = document.getElementById('active-only-filter');
+  if (activeOnly && activeOnly.checked) {
+    members = members.filter(function(m) { return m.wus > 0; });
+  }
+  var input = document.getElementById('leaderboard-search');
+  if (input && input.value) {
+    var q = input.value.toLowerCase();
+    members = members.filter(function(m) { return m.name.toLowerCase().indexOf(q) !== -1; });
+  }
+  return members;
+}
+
+/** Re-applies all leaderboard filters and re-renders. */
+function applyLeaderboardFilters() {
+  if (!APP.team) return;
+  var filtered = getFilteredMembers();
+  buildLeaderboard(filtered, APP.team.score);
+}
+
 /** Attaches the leaderboard search input handler for real-time name filtering. */
 function setupSearch() {
   const input = document.getElementById('leaderboard-search');
   if (!input) return;
-  input.addEventListener('input', (e) => {
-    const q = e.target.value.toLowerCase();
-    const filtered = APP.members.filter(m => m.name.toLowerCase().includes(q));
-    buildLeaderboard(filtered, APP.team.score);
-    const visEl = document.getElementById('visible-count');
-    if (visEl) visEl.textContent = filtered.length;
+  input.addEventListener('input', function() {
+    applyLeaderboardFilters();
+  });
+}
+
+/** Attaches the active-only filter checkbox handler. */
+function setupActiveFilter() {
+  var cb = document.getElementById('active-only-filter');
+  if (!cb) return;
+  cb.addEventListener('change', function() {
+    applyLeaderboardFilters();
   });
 }
 
@@ -561,10 +589,13 @@ async function loadDashboard(isRefresh = false) {
 
     hideLoading();
     populateKPIs(team, members);
-    buildLeaderboard(members, team.score);
+    // Apply active-only filter by default
+    var displayMembers = getFilteredMembers();
+    buildLeaderboard(displayMembers, team.score);
     if (!listenersInitialized) {
       setupLeaderboardSort();
       setupSearch();
+      setupActiveFilter();
       listenersInitialized = true;
     }
 

@@ -242,6 +242,9 @@
             spellcheck="false"
           >
         </div>
+        <label class="active-filter-toggle" style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-secondary);cursor:pointer;">
+          <input type="checkbox" id="active-only-filter" checked> Nur aktive Mitglieder
+        </label>
         <div class="leaderboard-info" id="leaderboard-info">
           Zeige <span id="visible-count">0</span> von <span id="total-count">0</span> Mitgliedern
         </div>
@@ -315,23 +318,6 @@
             <div class="forecast-loading">Lade Crossing-Daten...</div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- POWER RANKINGS -->
-  <section class="section" id="power-rankings-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F4AA;</span>
-          POWERRANK.EXE
-        </h2>
-        <p class="section-subtitle">Composite Power Score aus Score, PPD, Effizienz, Streak und Achievements</p>
-      </div>
-
-      <div id="power-rankings">
-        <div class="forecast-loading">Lade Power Rankings...</div>
       </div>
     </div>
   </section>
@@ -621,23 +607,6 @@
     </div>
   </section>
 
-  <!-- VERSUS ARENA (moved from Rankings) -->
-  <section class="section" id="versus-arena-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x2694;&#xFE0F;</span>
-          VERSUS.EXE
-        </h2>
-        <p class="section-subtitle">1v1 Wochenduell-System mit Rangliste</p>
-      </div>
-
-      <div id="versus-arena">
-        <div class="forecast-loading">Lade Duell-Daten...</div>
-      </div>
-    </div>
-  </section>
-
   <!-- TEAM CHALLENGES -->
   <section class="section" id="challenges-section-wrapper">
     <div class="container">
@@ -795,11 +764,9 @@
   <script src="/js/feature-ach-board.js" defer></script>
   <script src="/js/feature-challenges.js" defer></script>
   <script src="/js/feature-activity-feed.js" defer></script>
-  <script src="/js/feature-power-rankings.js" defer></script>
   <script src="/js/feature-constellation.js" defer></script>
   <script src="/js/feature-weather.js" defer></script>
   <script src="/js/feature-season.js" defer></script>
-  <script src="/js/feature-versus.js" defer></script>
   <script src="/js/easter-eggs.js" defer></script>
   <script src="/js/app.js" defer></script>
   <script src="/js/nav-toggle.js" defer></script>
