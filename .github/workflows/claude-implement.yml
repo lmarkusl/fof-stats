@@ -45,39 +45,25 @@ jobs:
             Committe deine Aenderungen auf einem neuen Branch (z.B. feature/issue-${{ github.event.issue.number }}).
             Pushe den Branch. Erstelle KEINEN PR - das wird automatisch gemacht.
 
-      - name: Create Pull Request
-        if: success()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Find feature branch
+        id: find-branch
         run: |
-          # Prüfe ob ein neuer Branch erstellt wurde
-          CURRENT_BRANCH=$(git branch --show-current)
-          if [ "$CURRENT_BRANCH" = "main" ]; then
-            # Claude hat vielleicht auf einem anderen Branch gearbeitet
-            FEATURE_BRANCH=$(git branch -r --sort=-committerdate | grep -v 'origin/main' | head -1 | sed 's|origin/||' | xargs)
-            if [ -z "$FEATURE_BRANCH" ]; then
-              echo "Kein Feature-Branch gefunden, ueberspringe PR-Erstellung"
-              exit 0
-            fi
-          else
-            FEATURE_BRANCH="$CURRENT_BRANCH"
-          fi
-
+          git fetch origin
+          FEATURE_BRANCH=$(git branch -r --sort=-committerdate | grep -v 'origin/main' | grep -v 'HEAD' | head -1 | sed 's|origin/||' | xargs)
+          echo "branch=$FEATURE_BRANCH" >> "$GITHUB_OUTPUT"
           echo "Feature-Branch: $FEATURE_BRANCH"
 
-          # PR erstellen
-          gh pr create \
-            --base main \
-            --head "$FEATURE_BRANCH" \
-            --title "${{ github.event.issue.title }}" \
-            --body "$(cat <<'EOF'
-          ## Automatisch implementiert von Claude Code
-
-          Closes #${{ github.event.issue.number }}
-
-          Dieses Feature wurde automatisch durch Claude Code (Opus 4.6) implementiert.
-          Bitte den Code reviewen bevor gemerged wird.
-
-          🤖 Generated with [Claude Code](https://claude.com/claude-code)
-          EOF
-          )"
+      - name: Create Pull Request
+        if: steps.find-branch.outputs.branch != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `${{ github.event.issue.title }}`,
+              head: `${{ steps.find-branch.outputs.branch }}`,
+              base: 'main',
+              body: `## Automatisch implementiert von Claude Code\n\nCloses #${{ github.event.issue.number }}\n\nDieses Feature wurde automatisch durch Claude Code (Opus 4.6) implementiert.\nBitte den Code reviewen bevor gemerged wird.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+            });
+            console.log(`PR erstellt: ${pr.data.html_url}`);
