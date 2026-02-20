@@ -68,13 +68,11 @@
   </div>
 
   <!-- ============================================================
-       TAB 1: OVERVIEW
+       TAB 1: OVERVIEW (6 sections)
        ============================================================ -->
   <div class="tab-panel active" id="tab-overview" role="tabpanel">
 
-  <!-- ============================================================
-       KPI CARDS
-       ============================================================ -->
+  <!-- KPI CARDS -->
   <section class="section" id="kpi-section">
     <div class="container">
       <pre class="ascii-banner" aria-hidden="true">
@@ -85,34 +83,28 @@
 |_|   \___/|_|    Team #240890
 </pre>
       <div class="kpi-grid">
-
         <div class="card kpi-card" id="kpi-score-card">
           <span class="kpi-icon" aria-hidden="true">&#x1F4CA;</span>
           <div class="kpi-value counting" id="kpi-score">---</div>
           <div class="kpi-label">Total Score</div>
         </div>
-
         <div class="card kpi-card" id="kpi-wus-card">
           <span class="kpi-icon" aria-hidden="true">&#x2699;&#xFE0F;</span>
           <div class="kpi-value counting" id="kpi-wus">---</div>
           <div class="kpi-label">Work Units</div>
         </div>
-
         <div class="card kpi-card" id="kpi-members-card">
           <span class="kpi-icon" aria-hidden="true">&#x1F465;</span>
           <div class="kpi-value counting" id="kpi-members">---</div>
           <div class="kpi-label">Mitglieder</div>
         </div>
-
         <div class="card kpi-card" id="kpi-rank-card">
           <span class="kpi-icon" aria-hidden="true">&#127942;</span>
           <div class="kpi-value counting" id="kpi-rank">---</div>
           <div class="kpi-label">Globaler Rank</div>
         </div>
-
       </div>
 
-      <!-- Data freshness -->
       <div class="data-status" id="data-status">
         <span class="status-dot"></span>
         <span id="data-timestamp" aria-live="polite">Lade Daten...</span>
@@ -123,9 +115,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       TEAM SCORE HISTORY
-       ============================================================ -->
+  <!-- TEAM SCORE HISTORY -->
   <section class="section" id="team-history-section">
     <div class="container">
       <div class="section-header">
@@ -151,9 +141,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       PPD / THROUGHPUT
-       ============================================================ -->
+  <!-- PPD / THROUGHPUT -->
   <section class="section" id="ppd-section">
     <div class="container">
       <div class="section-header">
@@ -170,9 +158,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       HIGHLIGHTS: Streak + Member of the Week
-       ============================================================ -->
+  <!-- HIGHLIGHTS: Streak + Member of the Week -->
   <section class="section" id="highlights">
     <div class="container">
       <div class="section-header">
@@ -194,9 +180,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       MILESTONES + RANK PREDICTION
-       ============================================================ -->
+  <!-- MILESTONES + RANK PREDICTION -->
   <section class="section" id="milestones">
     <div class="container">
       <div class="section-header">
@@ -226,47 +210,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       TEAM GOALS
-       ============================================================ -->
-  <section class="section" id="goals-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F3AF;</span>
-          GOALS.BAT
-        </h2>
-        <p class="section-subtitle">Team-Ziele und Fortschritt</p>
-      </div>
-
-      <div class="goals-grid" id="team-goals">
-        <div class="forecast-loading">Lade Ziele...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       GLOBAL CONTEXT
-       ============================================================ -->
-  <section class="section" id="global-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F30D;</span>
-          GLOBAL.DAT
-        </h2>
-        <p class="section-subtitle">Unser Team im globalen Kontext</p>
-      </div>
-
-      <div id="global-context">
-        <div class="forecast-loading">Lade globale Statistiken...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       RESEARCH IMPACT
-       ============================================================ -->
+  <!-- RESEARCH IMPACT -->
   <section class="section" id="research-section">
     <div class="container">
       <div class="section-header">
@@ -283,92 +227,14 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       ACTIVITY FEED
-       ============================================================ -->
-  <section class="section" id="activity-feed-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F4E1;</span>
-          EVENTLOG.EXE
-        </h2>
-        <p class="section-subtitle">Chronologischer Feed der letzten Team-Ereignisse</p>
-      </div>
-
-      <div id="activity-feed">
-        <div class="forecast-loading">Lade Aktivitaets-Feed...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       TIMELINE FEED
-       ============================================================ -->
-  <section class="section" id="timeline-feed-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F4DC;</span>
-          TIMELINE.EXE
-        </h2>
-        <p class="section-subtitle">DOS-Terminal-Log aller Team-Ereignisse</p>
-      </div>
-
-      <div id="timeline-feed">
-        <div class="forecast-loading">Lade Timeline...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       WEATHER STATION
-       ============================================================ -->
-  <section class="section" id="weather-station-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x2600;&#xFE0F;</span>
-          WEATHER.EXE
-        </h2>
-        <p class="section-subtitle">Team-Aktivitaets-Wetterbericht</p>
-      </div>
-
-      <div id="weather-station">
-        <div class="forecast-loading">Lade Wetterdaten...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       FUN FACTS TICKER
-       ============================================================ -->
-  <section class="section" id="funfacts-ticker-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F4A1;</span>
-          PREDICT.EXE
-        </h2>
-        <p class="section-subtitle">Fun-Facts und Prognosen rund ums Team</p>
-      </div>
-
-      <div id="funfacts-ticker">
-        <div class="forecast-loading">Lade Fun-Facts...</div>
-      </div>
-    </div>
-  </section>
-
   </div><!-- /tab-overview -->
 
   <!-- ============================================================
-       TAB 2: RANKINGS
+       TAB 2: RANKINGS (5 sections)
        ============================================================ -->
   <div class="tab-panel" id="tab-rankings" role="tabpanel">
 
-  <!-- ============================================================
-       LEADERBOARD
-       ============================================================ -->
+  <!-- LEADERBOARD -->
   <section class="section" id="leaderboard">
     <div class="container">
       <div class="section-header">
@@ -412,7 +278,6 @@
             </tr>
           </thead>
           <tbody id="leaderboard-body" aria-live="polite">
-            <!-- Populated by app.js -->
             <tr>
               <td colspan="7" class="skeleton" style="height: 400px;"></td>
             </tr>
@@ -422,9 +287,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       MONTHLY LEADERBOARD
-       ============================================================ -->
+  <!-- MONTHLY LEADERBOARD -->
   <section class="section" id="monthly-section">
     <div class="container">
       <div class="section-header">
@@ -443,9 +306,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       RIVALS / TEAM COMPARISON
-       ============================================================ -->
+  <!-- RIVALS / TEAM COMPARISON -->
   <section class="section" id="rivals-section">
     <div class="container">
       <div class="section-header">
@@ -475,47 +336,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       ACHIEVEMENT LEADERBOARD
-       ============================================================ -->
-  <section class="section" id="ach-board-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F3C5;</span>
-          ACHIEVEMENTS.EXE
-        </h2>
-        <p class="section-subtitle">Wer hat die meisten Achievement-Punkte gesammelt?</p>
-      </div>
-
-      <div id="achievement-board">
-        <div class="forecast-loading">Lade Achievement-Rangliste...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       HALL OF FAME
-       ============================================================ -->
-  <section class="section" id="halloffame-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F451;</span>
-          HALLOFFAME.DAT
-        </h2>
-        <p class="section-subtitle">Member of the Week - Archiv</p>
-      </div>
-
-      <div id="hall-of-fame">
-        <div class="forecast-loading">Lade Hall of Fame...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       POWER RANKINGS
-       ============================================================ -->
+  <!-- POWER RANKINGS -->
   <section class="section" id="power-rankings-section">
     <div class="container">
       <div class="section-header">
@@ -532,9 +353,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       SEASON BOARD
-       ============================================================ -->
+  <!-- SEASON BOARD -->
   <section class="section" id="season-board-section">
     <div class="container">
       <div class="section-header">
@@ -551,35 +370,14 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       VERSUS ARENA
-       ============================================================ -->
-  <section class="section" id="versus-arena-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x2694;&#xFE0F;</span>
-          VERSUS.EXE
-        </h2>
-        <p class="section-subtitle">1v1 Wochenduell-System mit Rangliste</p>
-      </div>
-
-      <div id="versus-arena">
-        <div class="forecast-loading">Lade Duell-Daten...</div>
-      </div>
-    </div>
-  </section>
-
   </div><!-- /tab-rankings -->
 
   <!-- ============================================================
-       TAB 3: ANALYTICS
+       TAB 3: ANALYTICS (4 sections)
        ============================================================ -->
   <div class="tab-panel" id="tab-analytics" role="tabpanel">
 
-  <!-- ============================================================
-       ANALYTICS / CHARTS
-       ============================================================ -->
+  <!-- ANALYTICS / CHARTS -->
   <section class="section" id="analytics">
     <div class="container">
       <div class="section-header">
@@ -698,9 +496,41 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       TEAM CONSTELLATION
-       ============================================================ -->
+  <!-- ACTIVITY FEED (moved from Overview) -->
+  <section class="section" id="activity-feed-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4E1;</span>
+          EVENTLOG.EXE
+        </h2>
+        <p class="section-subtitle">Chronologischer Feed der letzten Team-Ereignisse</p>
+      </div>
+
+      <div id="activity-feed">
+        <div class="forecast-loading">Lade Aktivitaets-Feed...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOBAL CONTEXT (moved from Overview) -->
+  <section class="section" id="global-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F30D;</span>
+          GLOBAL.DAT
+        </h2>
+        <p class="section-subtitle">Unser Team im globalen Kontext</p>
+      </div>
+
+      <div id="global-context">
+        <div class="forecast-loading">Lade globale Statistiken...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM CONSTELLATION -->
   <section class="section" id="constellation-section">
     <div class="container">
       <div class="section-header">
@@ -724,9 +554,7 @@
        ============================================================ -->
   <div class="tab-panel" id="tab-extras" role="tabpanel">
 
-  <!-- ============================================================
-       FUN STATS / ACHIEVEMENTS
-       ============================================================ -->
+  <!-- FUN STATS / ACHIEVEMENTS -->
   <section class="section" id="achievements">
     <div class="container">
       <div class="section-header">
@@ -738,14 +566,11 @@
       </div>
 
       <div class="achievements-grid" id="achievements-grid" aria-live="polite">
-        <!-- Populated by app.js -->
       </div>
     </div>
   </section>
 
-  <!-- ============================================================
-       SCORE EQUIVALENTS + ASCII ACHIEVEMENTS
-       ============================================================ -->
+  <!-- SCORE EQUIVALENTS -->
   <section class="section" id="equivalents">
     <div class="container">
       <div class="section-header">
@@ -762,6 +587,7 @@
     </div>
   </section>
 
+  <!-- ASCII ACHIEVEMENTS -->
   <section class="section" id="ascii-section">
     <div class="container">
       <div class="section-header">
@@ -778,9 +604,92 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       MILESTONE CHRONOLOGY
-       ============================================================ -->
+  <!-- TEAM GOALS (moved from Overview) -->
+  <section class="section" id="goals-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3AF;</span>
+          GOALS.BAT
+        </h2>
+        <p class="section-subtitle">Team-Ziele und Fortschritt</p>
+      </div>
+
+      <div class="goals-grid" id="team-goals">
+        <div class="forecast-loading">Lade Ziele...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENT LEADERBOARD (moved from Rankings) -->
+  <section class="section" id="ach-board-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3C5;</span>
+          ACHIEVEMENTS.EXE
+        </h2>
+        <p class="section-subtitle">Wer hat die meisten Achievement-Punkte gesammelt?</p>
+      </div>
+
+      <div id="achievement-board">
+        <div class="forecast-loading">Lade Achievement-Rangliste...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERSUS ARENA (moved from Rankings) -->
+  <section class="section" id="versus-arena-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x2694;&#xFE0F;</span>
+          VERSUS.EXE
+        </h2>
+        <p class="section-subtitle">1v1 Wochenduell-System mit Rangliste</p>
+      </div>
+
+      <div id="versus-arena">
+        <div class="forecast-loading">Lade Duell-Daten...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM CHALLENGES -->
+  <section class="section" id="challenges-section-wrapper">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F3C1;</span>
+          CHALLENGE.EXE
+        </h2>
+        <p class="section-subtitle">Aktive Team-Challenges und Wettbewerbe</p>
+      </div>
+
+      <div id="challenges-section">
+        <div class="forecast-loading">Lade Challenges...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEATHER STATION (moved from Overview) -->
+  <section class="section" id="weather-station-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x2600;&#xFE0F;</span>
+          WEATHER.EXE
+        </h2>
+        <p class="section-subtitle">Team-Aktivitaets-Wetterbericht</p>
+      </div>
+
+      <div id="weather-station">
+        <div class="forecast-loading">Lade Wetterdaten...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MILESTONE CHRONOLOGY -->
   <section class="section" id="chronology-section">
     <div class="container">
       <div class="section-header">
@@ -799,9 +708,24 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       EXPORT / TOOLS
-       ============================================================ -->
+  <!-- MEMBER COMPARE -->
+  <section class="section" id="compare-section-wrapper">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x2696;&#xFE0F;</span>
+          COMPARE.EXE
+        </h2>
+        <p class="section-subtitle">Vergleiche zwei Mitglieder direkt miteinander</p>
+      </div>
+
+      <div id="compare-section">
+        <div class="forecast-loading">Lade Vergleichs-Tool...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPORT / TOOLS -->
   <section class="section" id="export-section">
     <div class="container">
       <div class="section-header">
@@ -840,63 +764,6 @@
         <div id="certificate-section">
           <div class="forecast-loading">Lade Zertifikat-Generator...</div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       MEMBER COMPARE
-       ============================================================ -->
-  <section class="section" id="compare-section-wrapper">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x2696;&#xFE0F;</span>
-          COMPARE.EXE
-        </h2>
-        <p class="section-subtitle">Vergleiche zwei Mitglieder direkt miteinander</p>
-      </div>
-
-      <div id="compare-section">
-        <div class="forecast-loading">Lade Vergleichs-Tool...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       TEAM CHALLENGES
-       ============================================================ -->
-  <section class="section" id="challenges-section-wrapper">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F3C1;</span>
-          CHALLENGE.EXE
-        </h2>
-        <p class="section-subtitle">Aktive Team-Challenges und Wettbewerbe</p>
-      </div>
-
-      <div id="challenges-section">
-        <div class="forecast-loading">Lade Challenges...</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       TEAM ZEITGEIST
-       ============================================================ -->
-  <section class="section" id="zeitgeist-section-wrapper">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="section-icon" aria-hidden="true">&#x1F4C6;</span>
-          ZEITGEIST.EXE
-        </h2>
-        <p class="section-subtitle">Wochen-, Monats- und Jahresrueckblick mit Top-Performern und Rekorden</p>
-      </div>
-
-      <div id="zeitgeist-section">
-        <div class="forecast-loading">Lade Zeitgeist-Daten...</div>
       </div>
     </div>
   </section>
@@ -944,15 +811,11 @@
   <script src="/js/feature-compare.js" defer></script>
   <script src="/js/feature-global.js" defer></script>
   <script src="/js/feature-ach-board.js" defer></script>
-  <script src="/js/feature-halloffame.js" defer></script>
   <script src="/js/feature-challenges.js" defer></script>
   <script src="/js/feature-activity-feed.js" defer></script>
   <script src="/js/feature-power-rankings.js" defer></script>
-  <script src="/js/feature-zeitgeist.js" defer></script>
   <script src="/js/feature-constellation.js" defer></script>
-  <script src="/js/feature-timeline.js" defer></script>
   <script src="/js/feature-weather.js" defer></script>
-  <script src="/js/feature-funfacts.js" defer></script>
   <script src="/js/feature-season.js" defer></script>
   <script src="/js/feature-versus.js" defer></script>
   <script src="/js/easter-eggs.js" defer></script>

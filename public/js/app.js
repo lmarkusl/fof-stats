@@ -41,6 +41,8 @@ function initTabContent(tabId) {
       initHeatmapSelector(window._dashboardData.members);
     }
     if (typeof initConstellation === 'function') initConstellation();
+    if (typeof initActivityFeed === 'function') initActivityFeed();
+    if (typeof initGlobalContext === 'function') initGlobalContext();
     // Resize charts after they become visible
     setTimeout(function() {
       if (typeof chartInstances !== 'undefined') {
@@ -52,20 +54,22 @@ function initTabContent(tabId) {
   if (tabId === 'tab-rankings') {
     if (typeof initRivals === 'function') initRivals();
     if (typeof initMonthly === 'function') initMonthly();
-    if (typeof initAchievementBoard === 'function') initAchievementBoard();
-    if (typeof initHallOfFame === 'function') initHallOfFame();
     if (typeof initPowerRankings === 'function') initPowerRankings();
     if (typeof initSeason === 'function') initSeason();
-    if (typeof initVersus === 'function') initVersus();
   }
 
   if (tabId === 'tab-extras') {
+    if (typeof initExtrasFeatures === 'function' && window._dashboardData) {
+      initExtrasFeatures(window._dashboardData.team, window._dashboardData.members);
+    }
+    if (typeof initAchievementBoard === 'function') initAchievementBoard();
+    if (typeof initVersus === 'function') initVersus();
+    if (typeof initChallenges === 'function') initChallenges();
+    if (typeof initWeather === 'function') initWeather();
     if (typeof initCertificate === 'function') initCertificate();
     if (typeof initExportFeatures === 'function') initExportFeatures();
     if (typeof initMilestoneChronology === 'function') initMilestoneChronology();
     if (typeof initCompare === 'function') initCompare();
-    if (typeof initChallenges === 'function') initChallenges();
-    if (typeof initZeitgeist === 'function') initZeitgeist();
   }
 }
 
@@ -583,10 +587,6 @@ async function loadDashboard(isRefresh = false) {
       initProfileFeatures();
     }
 
-    // Extras: Score Equivalents + ASCII Achievements + Team Goals
-    if (typeof initExtrasFeatures === 'function') {
-      initExtrasFeatures(team, members);
-    }
 
     // Team Score History Chart (Overview Tab)
     if (typeof initTeamOverviewChart === 'function') {
@@ -598,34 +598,9 @@ async function loadDashboard(isRefresh = false) {
       initPPD();
     }
 
-    // Global Context: Team im weltweiten Vergleich
-    if (typeof initGlobalContext === 'function') {
-      initGlobalContext();
-    }
-
     // Research Impact: Forschungsgebiete
     if (typeof initResearch === 'function') {
       initResearch();
-    }
-
-    // Activity Feed: Live Event Stream
-    if (typeof initActivityFeed === 'function') {
-      initActivityFeed();
-    }
-
-    // Timeline: DOS-Terminal-Log Event Feed
-    if (typeof initTimeline === 'function') {
-      initTimeline();
-    }
-
-    // Weather: Team-Aktivitaets-Wetterbericht
-    if (typeof initWeather === 'function') {
-      initWeather();
-    }
-
-    // Fun Facts: Prognosen und Ticker
-    if (typeof initFunFacts === 'function') {
-      initFunFacts();
     }
 
     updateTimestamp();
