@@ -598,11 +598,6 @@ async function loadDashboard(isRefresh = false) {
       initPPD();
     }
 
-    // Research Impact: Forschungsgebiete
-    if (typeof initResearch === 'function') {
-      initResearch();
-    }
-
     updateTimestamp();
     showTrackingSummary();
 
