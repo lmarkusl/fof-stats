@@ -68,7 +68,7 @@ function initActiveFilter() {
   var container = document.getElementById('active-filter-container');
   if (!container) return;
 
-  var isActive = localStorage.getItem('fof-active-filter') === 'true';
+  var isActive = localStorage.getItem('fof-active-filter') !== 'false';
 
   var html = '<div class="active-filter">';
   html += '<label><input type="checkbox" id="active-filter-toggle" ' + (isActive ? 'checked' : '') + '> Nur aktive Mitglieder (letzte 7 Tage)</label>';

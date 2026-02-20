@@ -189,6 +189,12 @@ function buildLeaderboard(members, teamScore) {
   const totEl = document.getElementById('total-count');
   if (visEl) visEl.textContent = members.length;
   if (totEl) totEl.textContent = APP.members.length;
+
+  // Re-apply active member filter if it exists and is checked
+  var activeToggle = document.getElementById('active-filter-toggle');
+  if (activeToggle && typeof applyActiveFilter === 'function') {
+    applyActiveFilter(activeToggle.checked);
+  }
 }
 
 /**
@@ -204,7 +210,7 @@ function sortMembers(column) {
     APP.sortAsc = false;
   }
 
-  const sorted = [...getFilteredMembers()].sort((a, b) => {
+  const sorted = [...APP.members].sort((a, b) => {
     let va, vb;
     if (column === 'efficiency') {
       va = a.wus > 0 ? a.score / a.wus : 0;
@@ -245,46 +251,16 @@ function setupLeaderboardSort() {
   });
 }
 
-/**
- * Returns the currently filtered member list based on active-only checkbox and search query.
- * @returns {Array} Filtered members.
- */
-function getFilteredMembers() {
-  var members = APP.members;
-  var activeOnly = document.getElementById('active-only-filter');
-  if (activeOnly && activeOnly.checked) {
-    members = members.filter(function(m) { return m.wus > 0; });
-  }
-  var input = document.getElementById('leaderboard-search');
-  if (input && input.value) {
-    var q = input.value.toLowerCase();
-    members = members.filter(function(m) { return m.name.toLowerCase().indexOf(q) !== -1; });
-  }
-  return members;
-}
-
-/** Re-applies all leaderboard filters and re-renders. */
-function applyLeaderboardFilters() {
-  if (!APP.team) return;
-  var filtered = getFilteredMembers();
-  buildLeaderboard(filtered, APP.team.score);
-}
-
 /** Attaches the leaderboard search input handler for real-time name filtering. */
 function setupSearch() {
   const input = document.getElementById('leaderboard-search');
   if (!input) return;
-  input.addEventListener('input', function() {
-    applyLeaderboardFilters();
-  });
-}
-
-/** Attaches the active-only filter checkbox handler. */
-function setupActiveFilter() {
-  var cb = document.getElementById('active-only-filter');
-  if (!cb) return;
-  cb.addEventListener('change', function() {
-    applyLeaderboardFilters();
+  input.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    const filtered = APP.members.filter(m => m.name.toLowerCase().includes(q));
+    buildLeaderboard(filtered, APP.team.score);
+    const visEl = document.getElementById('visible-count');
+    if (visEl) visEl.textContent = filtered.length;
   });
 }
 
@@ -589,13 +565,10 @@ async function loadDashboard(isRefresh = false) {
 
     hideLoading();
     populateKPIs(team, members);
-    // Apply active-only filter by default
-    var displayMembers = getFilteredMembers();
-    buildLeaderboard(displayMembers, team.score);
+    buildLeaderboard(members, team.score);
     if (!listenersInitialized) {
       setupLeaderboardSort();
       setupSearch();
-      setupActiveFilter();
       listenersInitialized = true;
     }
 
