@@ -26,7 +26,6 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           claude_args: "--model claude-opus-4-6 --max-turns 100 --allowedTools Bash,Read,Write,Edit,Glob,Grep"
-          show_full_output: true
           prompt: |
             Du bist ein erfahrener Entwickler fuer das FOF Stats Projekt.
             Lies CLAUDE.md im Repository-Root fuer alle Projekt-Konventionen.
@@ -43,6 +42,42 @@ jobs:
             Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
             ${{ github.event.issue.body }}
 
-            Erstelle einen Branch, implementiere die Aenderungen, und erstelle einen PR mit:
-            - Klarer Beschreibung der Aenderungen
-            - Referenz zum Issue (#${{ github.event.issue.number }})
+            Committe deine Aenderungen auf einem neuen Branch (z.B. feature/issue-${{ github.event.issue.number }}).
+            Pushe den Branch. Erstelle KEINEN PR - das wird automatisch gemacht.
+
+      - name: Create Pull Request
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Prüfe ob ein neuer Branch erstellt wurde
+          CURRENT_BRANCH=$(git branch --show-current)
+          if [ "$CURRENT_BRANCH" = "main" ]; then
+            # Claude hat vielleicht auf einem anderen Branch gearbeitet
+            FEATURE_BRANCH=$(git branch -r --sort=-committerdate | grep -v 'origin/main' | head -1 | sed 's|origin/||' | xargs)
+            if [ -z "$FEATURE_BRANCH" ]; then
+              echo "Kein Feature-Branch gefunden, ueberspringe PR-Erstellung"
+              exit 0
+            fi
+          else
+            FEATURE_BRANCH="$CURRENT_BRANCH"
+          fi
+
+          echo "Feature-Branch: $FEATURE_BRANCH"
+
+          # PR erstellen
+          gh pr create \
+            --base main \
+            --head "$FEATURE_BRANCH" \
+            --title "${{ github.event.issue.title }}" \
+            --body "$(cat <<'EOF'
+          ## Automatisch implementiert von Claude Code
+
+          Closes #${{ github.event.issue.number }}
+
+          Dieses Feature wurde automatisch durch Claude Code (Opus 4.6) implementiert.
+          Bitte den Code reviewen bevor gemerged wird.
+
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)
+          EOF
+          )"
