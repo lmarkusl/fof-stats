@@ -2590,20 +2590,6 @@
     "points": 60
   },
   {
-    "id": "team_pct_50",
-    "name": "Half the Team",
-    "description": "Contribute 50% of team score",
-    "category": "team",
-    "tier": "diamond",
-    "icon": "⚔️",
-    "condition": {
-      "type": "team_pct_gte",
-      "value": 50
-    },
-    "hint": "50% des Team-Scores beitragen",
-    "points": 80
-  },
-  {
     "id": "team_pct_75",
     "name": "Atlas",
     "description": "Contribute 75% of team score",
