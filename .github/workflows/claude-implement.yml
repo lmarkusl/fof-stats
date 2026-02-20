@@ -25,7 +25,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          claude_args: "--model claude-opus-4-6 --max-turns 100"
+          claude_args: "--model claude-opus-4-6 --max-turns 100 --allowedTools Bash,Read,Write,Edit,Glob,Grep"
           show_full_output: true
           prompt: |
             Du bist ein erfahrener Entwickler fuer das FOF Stats Projekt.
@@ -39,6 +39,10 @@ jobs:
             - Folge dem Feature-Modul-Pattern (IIFE CSS, Header-Kommentar, init-Funktion)
             - server.js ist eine einzelne grosse Datei - nicht aufteilen
 
-            Implementiere das Feature aus dem Issue. Erstelle einen PR mit:
+            Implementiere das folgende Feature:
+            Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
+            ${{ github.event.issue.body }}
+
+            Erstelle einen Branch, implementiere die Aenderungen, und erstelle einen PR mit:
             - Klarer Beschreibung der Aenderungen
-            - Referenz zum Issue
+            - Referenz zum Issue (#${{ github.event.issue.number }})
