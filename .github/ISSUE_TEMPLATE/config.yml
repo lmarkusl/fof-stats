@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: FOF Stats Dashboard
+    url: https://fof-stats.de
+    about: Das Live-Dashboard besuchen
+  - name: Folding@Home Teamseite
+    url: https://stats.foldingathome.org/team/240890
+    about: Offizielle Folding@Home Statistiken fuer Team 240890

@@ -1,0 +1,42 @@
+name: Claude Code - Feature Implementation
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  implement:
+    if: github.event.label.name == 'claude'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          model: claude-sonnet-4-20250514
+          max_turns: 25
+          prompt: |
+            Du bist ein erfahrener Entwickler fuer das FOF Stats Projekt.
+            Lies CLAUDE.md im Repository-Root fuer alle Projekt-Konventionen.
+
+            Wichtige Regeln:
+            - Verwende `var` statt `const`/`let` im Frontend-JavaScript
+            - Nutze immer `escapeHtml()` bei innerHTML mit User-Daten
+            - Halte das DOS/Win95 Retro-Theme ein (Monospace, outset/inset Borders, gruener Akzent)
+            - Alle UI-Texte auf Deutsch
+            - Folge dem Feature-Modul-Pattern (IIFE CSS, Header-Kommentar, init-Funktion)
+            - server.js ist eine einzelne grosse Datei - nicht aufteilen
+
+            Implementiere das Feature aus dem Issue. Erstelle einen PR mit:
+            - Klarer Beschreibung der Aenderungen
+            - Referenz zum Issue

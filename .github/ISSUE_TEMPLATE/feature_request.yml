@@ -1,0 +1,69 @@
+name: Feature-Anfrage
+description: Schlage ein neues Feature oder eine Verbesserung fuer das FOF Stats Dashboard vor.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Neue Feature-Anfrage
+        Danke, dass du dir die Zeit nimmst, eine Verbesserung vorzuschlagen!
+        Bitte fuelle die folgenden Felder so detailliert wie moeglich aus.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+      description: Was soll das Feature machen? Beschreibe es so, als wuerdest du es jemandem erklaeren, der das Projekt nicht kennt.
+      placeholder: "Beispiel: Ich wuensche mir eine Rangliste, die zeigt, wer im letzten Monat am meisten gefaltet hat."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: dashboard-area
+    attributes:
+      label: Dashboard-Bereich
+      description: In welchem Tab soll das Feature erscheinen?
+      options:
+        - "Uebersicht (tab-overview)"
+        - "Ranglisten (tab-rankings)"
+        - "Analysen (tab-analytics)"
+        - "Extras (tab-extras)"
+        - "Donor-Profil (donor.html)"
+        - "Mitglieder-Seite (donors.html)"
+        - "Uebergreifend / Sonstiges"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Akzeptanzkriterien
+      description: Woran erkennst du, dass das Feature fertig und korrekt umgesetzt ist?
+      placeholder: |
+        - [ ] Die Rangliste zeigt die Top 10 Falter des Monats
+        - [ ] Die Daten aktualisieren sich stuendlich
+        - [ ] Es gibt eine Sortier-Funktion
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioritaet
+      description: Wie wichtig ist dieses Feature fuer dich?
+      options:
+        - "Niedrig - Waere nett zu haben"
+        - "Mittel - Wuerde das Dashboard verbessern"
+        - "Hoch - Fehlt mir wirklich"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Zusaetzlicher Kontext
+      description: Screenshots, Mockups, Links oder weitere Informationen.
+      placeholder: Hier kannst du optional weitere Details hinzufuegen.
+    validations:
+      required: false
