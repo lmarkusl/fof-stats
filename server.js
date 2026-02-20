@@ -4055,8 +4055,9 @@ app.get('/api/weather', (req, res) => {
   const totalMembers = latest.member_count || 1;
   const humidity = Math.round((activeMembers / totalMembers) * 100);
 
-  // Temperature = activity percentage (capped for display)
-  const temperature = Math.round(activityPct);
+  // Temperature = activity mapped to Celsius-like scale
+  // 0% → -10°C, 100% → 20°C, 200% → 50°C
+  const temperature = Math.round(activityPct * 0.3 - 10);
 
   // Activity ratio
   const activityRatio = ppd30d > 0 ? parseFloat((scoreDelta24h / ppd30d).toFixed(2)) : 1.0;
@@ -4073,13 +4074,13 @@ app.get('/api/weather', (req, res) => {
     alerts.push({ type: 'new_record', message: 'REKORD: 7-Tage-PPD liegt 50%+ ueber dem 30-Tage-Schnitt!' });
   }
 
-  // Forecast with temperature
+  // Forecast with temperature (Celsius-like scale)
   const forecastWithTemp = forecast.map(f => {
     const fPct = f.condition === 'thunderstorm' ? 250 :
                  f.condition === 'sunny' ? 140 :
                  f.condition === 'partly_cloudy' ? 100 :
                  f.condition === 'cloudy' ? 65 : 35;
-    return { day: f.day, condition: f.condition, temperature: fPct };
+    return { day: f.day, condition: f.condition, temperature: Math.round(fPct * 0.3 - 10) };
   });
 
   res.json({

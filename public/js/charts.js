@@ -894,6 +894,150 @@ function buildScoreDistribution(members) {
   }));
 }
 
+// ---- Team Overview History Chart (Overview Tab) ----
+
+function buildTeamOverviewChart(history) {
+  const canvas = ensureCanvas('chart-team-overview', 'Liniendiagramm: Team-Score Verlauf');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  if (history && history.length > 1) {
+    const labels = history.map(d => d.date);
+    const scores = history.map(d => d.score);
+    const deltas = history.map(d => d.score_delta);
+
+    storeChart('chart-team-overview', new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Total Score',
+            data: scores,
+            borderColor: '#1a1a1a',
+            backgroundColor: 'rgba(0,0,204,0.08)',
+            pointBackgroundColor: '#1a1a1a',
+            pointBorderColor: '#888888',
+            pointRadius: 3,
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.35,
+            yAxisID: 'y',
+          },
+          {
+            label: 'Score Zuwachs',
+            data: deltas,
+            type: 'bar',
+            backgroundColor: 'rgba(204,0,0,0.4)',
+            borderColor: '#cc0000',
+            borderWidth: 1,
+            borderRadius: 0,
+            yAxisID: 'y1',
+            order: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          tooltip: {
+            ...tooltipConfig(),
+            callbacks: {
+              label(item) {
+                if (item.dataset.yAxisID === 'y1')
+                  return 'Zuwachs: +' + formatNumberShort(item.parsed.y);
+                return 'Score: ' + formatNumberShort(item.parsed.y);
+              },
+            },
+          },
+          legend: { display: true },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, font: { size: 10 } },
+          },
+          y: {
+            position: 'left',
+            title: { display: true, text: 'Total Score' },
+            ticks: { callback: v => formatNumberShort(v) },
+            grid: { color: 'rgba(0, 0, 0, 0.06)' },
+          },
+          y1: {
+            position: 'right',
+            title: { display: true, text: 'Zuwachs pro Periode' },
+            ticks: { callback: v => formatNumberShort(v) },
+            grid: { drawOnChartArea: false },
+          },
+        },
+      },
+    }));
+  } else {
+    const infoPlugin = {
+      id: 'overviewEarlyData',
+      afterDraw(chart) {
+        const { ctx: c, chartArea: { top: t, bottom: b, left: l, right: r } } = chart;
+        const cx = (l + r) / 2;
+        const cy = (t + b) / 2;
+        c.save();
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.fillStyle = '#888888';
+        c.font = "48px sans-serif";
+        c.fillText('\u{1F4C8}', cx, cy - 48);
+        c.fillStyle = '#1a1a1a';
+        c.font = "bold 18px 'Courier New', monospace";
+        c.fillText('Daten werden gesammelt...', cx, cy + 4);
+        c.fillStyle = '#888888';
+        c.font = "13px 'Courier New', monospace";
+        c.fillText('Trends erscheinen nach einigen Stunden.', cx, cy + 28);
+        c.restore();
+      },
+    };
+    storeChart('chart-team-overview', new Chart(ctx, {
+      type: 'bar',
+      data: { labels: [], datasets: [{ data: [] }] },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: { x: { display: false }, y: { display: false } },
+      },
+      plugins: [infoPlugin],
+    }));
+  }
+}
+
+async function initTeamOverviewChart() {
+  try {
+    const res = await fetch('/api/history/team?period=hourly&limit=168');
+    const history = res.ok ? await res.json() : [];
+    buildTeamOverviewChart(history);
+  } catch (err) {
+    console.error('[CHARTS] Team overview fetch failed:', err.message);
+    buildTeamOverviewChart(null);
+  }
+}
+
+function setupTeamOverviewButtons() {
+  document.querySelectorAll('.team-history-btn').forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+      document.querySelectorAll('.team-history-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var period = btn.dataset.period;
+      var limit = period === 'hourly' ? 168 : period === 'daily' ? 90 : period === 'weekly' ? 52 : 24;
+      try {
+        var res = await fetch('/api/history/team?period=' + period + '&limit=' + limit);
+        var history = res.ok ? await res.json() : [];
+        buildTeamOverviewChart(history);
+      } catch (err) {
+        console.error('[CHARTS] Team overview period switch failed:', err.message);
+      }
+    });
+  });
+}
+
 // ---- Main Entry Point ----
 
 async function initCharts(data) {

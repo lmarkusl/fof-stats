@@ -588,6 +588,11 @@ async function loadDashboard(isRefresh = false) {
       initExtrasFeatures(team, members);
     }
 
+    // Team Score History Chart (Overview Tab)
+    if (typeof initTeamOverviewChart === 'function') {
+      initTeamOverviewChart();
+    }
+
     // PPD: Points Per Day + Production Stats
     if (typeof initPPD === 'function') {
       initPPD();
@@ -647,6 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   setupAutoRefresh();
   setupPeriodButtons();
+  if (typeof setupTeamOverviewButtons === 'function') setupTeamOverviewButtons();
   loadDashboard();
 
   // Uptime counter: updates HH:MM:SS display every second

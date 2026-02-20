@@ -234,7 +234,7 @@ function renderWeather(container, data) {
   // Info
   html += '<div class="wx-info">';
   html += '<div class="wx-condition">' + escapeHtml(data.condition_label || data.condition || '???') + '</div>';
-  html += '<div class="wx-temp ' + getTempClass(data.temperature || 0) + '">' + escapeHtml(String(data.temperature || 0)) + '&deg;F</div>';
+  html += '<div class="wx-temp ' + getTempClass(data.temperature || 0) + '">' + escapeHtml(String(data.temperature || 0)) + '&deg;C</div>';
   html += '<div class="wx-desc">' + escapeHtml(data.description || '') + '</div>';
   html += '</div>';
 

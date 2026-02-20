@@ -124,6 +124,34 @@
   </section>
 
   <!-- ============================================================
+       TEAM SCORE HISTORY
+       ============================================================ -->
+  <section class="section" id="team-history-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon" aria-hidden="true">&#x1F4C8;</span>
+          HISTORY.EXE
+        </h2>
+        <p class="section-subtitle">Team-Score Verlauf und Zuwachs pro Periode</p>
+      </div>
+
+      <div class="card chart-card">
+        <div class="history-controls" style="margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span style="color:var(--text-secondary); font-size:0.85rem; align-self:center;">Zeitraum:</span>
+          <button class="period-btn team-history-btn active" data-period="hourly">Stuendlich</button>
+          <button class="period-btn team-history-btn" data-period="daily">Taeglich</button>
+          <button class="period-btn team-history-btn" data-period="weekly">Woechentlich</button>
+          <button class="period-btn team-history-btn" data-period="monthly">Monatlich</button>
+        </div>
+        <div class="chart-container" id="chart-team-overview">
+          <div class="skeleton" style="width:100%;height:100%;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
        PPD / THROUGHPUT
        ============================================================ -->
   <section class="section" id="ppd-section">
