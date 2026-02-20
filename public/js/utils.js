@@ -60,6 +60,31 @@ function formatScoreShort(n) {
  * @param {number} score - The donor's total score.
  * @returns {{ name: string, icon: string, color: string, class: string }} Tier metadata.
  */
+/**
+ * Fetches the last snapshot timestamp from the API and displays it
+ * in the footer element with id "last-update".
+ * Format: "Letztes Update: TT.MM.JJJJ, HH:MM Uhr"
+ */
+function initFooterLastUpdate() {
+  var el = document.getElementById('last-update');
+  if (!el) return;
+  fetch('/api/history/summary')
+    .then(function(res) { return res.ok ? res.json() : null; })
+    .then(function(data) {
+      if (!data || !data.last_snapshot) return;
+      var d = new Date(data.last_snapshot + 'Z');
+      var day = String(d.getDate()).padStart(2, '0');
+      var month = String(d.getMonth() + 1).padStart(2, '0');
+      var year = d.getFullYear();
+      var hours = String(d.getHours()).padStart(2, '0');
+      var minutes = String(d.getMinutes()).padStart(2, '0');
+      el.textContent = 'Letztes Update: ' + day + '.' + month + '.' + year + ', ' + hours + ':' + minutes + ' Uhr';
+    })
+    .catch(function() {});
+}
+
+document.addEventListener('DOMContentLoaded', initFooterLastUpdate);
+
 function getTier(score) {
   if (score >= 100e9) return { name: 'Diamond', icon: '\u{1F48E}', color: '#0066cc', class: 'tier-diamond' };
   if (score >= 10e9)  return { name: 'Platinum', icon: '\u2B50', color: '#6600aa', class: 'tier-platinum' };
