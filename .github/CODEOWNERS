@@ -1,0 +1,15 @@
+# Schutz fuer sicherheitskritische Dateien
+# Aenderungen an diesen Pfaden erfordern Review vom Repo-Owner
+
+# GitHub Actions Workflows und Templates
+.github/ @lmarkusl
+
+# Server-Backend (API, Datenbank, Security Middleware)
+server.js @lmarkusl
+
+# Package-Konfiguration (Dependency-Aenderungen)
+package.json @lmarkusl
+package-lock.json @lmarkusl
+
+# Projekt-Konfiguration fuer AI-Assistenten
+CLAUDE.md @lmarkusl
