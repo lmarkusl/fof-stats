@@ -7,7 +7,7 @@ It fetches data from the official Folding@Home API, stores hourly snapshots in S
 an interactive retro-themed (DOS/Win95) web frontend with gamification, analytics, and visualizations.
 
 - **Site:** https://fof-stats.de
-- **Repo:** https://github.com/lmarkusl/fof-stats (private)
+- **Repo:** https://github.com/lmarkusl/fof-stats
 - **Version:** 2.0.0
 
 ## Architecture
