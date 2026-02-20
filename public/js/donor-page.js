@@ -80,12 +80,35 @@ function renderGains(data) {
 var _donorHistoryChart = null;
 
 /**
- * Renders a Chart.js line chart showing the donor's score over time.
+ * Ensures history entries have score_delta and wus_delta fields.
+ * Computes them from consecutive entries if missing.
+ * @param {Array<{ date: string, score: number, wus: number, score_delta?: number, wus_delta?: number }>} history
+ * @returns {Array} History with delta fields guaranteed.
+ */
+function ensureDeltas(history) {
+  if (!history || history.length === 0) return history;
+  if (typeof history[0].score_delta === 'number') return history;
+
+  for (var i = 0; i < history.length; i++) {
+    if (i === 0) {
+      history[i].score_delta = 0;
+      history[i].wus_delta = 0;
+    } else {
+      history[i].score_delta = history[i].score - history[i - 1].score;
+      history[i].wus_delta = (history[i].wus || 0) - (history[i - 1].wus || 0);
+    }
+  }
+  return history;
+}
+
+/**
+ * Renders a Chart.js combined line + bar chart showing the donor's score
+ * over time (line) and score gains per period (bars).
  * Destroys any previous chart instance before creating a new one.
- * @param {Array<{ date: string, score: number }>} history - Historical score snapshots.
+ * @param {Array<{ date: string, score: number, score_delta: number }>} history - Historical score snapshots.
  */
 function renderHistoryChart(history) {
-  const canvas = document.getElementById('donor-history-chart');
+  var canvas = document.getElementById('donor-history-chart');
   if (!canvas || !history || history.length === 0) return;
 
   if (_donorHistoryChart) {
@@ -93,57 +116,137 @@ function renderHistoryChart(history) {
     _donorHistoryChart = null;
   }
 
+  history = ensureDeltas(history);
+
+  var labels = history.map(function(h) { return h.date; });
+  var scores = history.map(function(h) { return h.score; });
+  var deltas = history.map(function(h) { return h.score_delta; });
+
   _donorHistoryChart = new Chart(canvas.getContext('2d'), {
     type: 'line',
     data: {
-      labels: history.map(h => h.date),
+      labels: labels,
       datasets: [
         {
           label: 'Score',
-          data: history.map(h => h.score),
+          data: scores,
           borderColor: '#0000cc',
           backgroundColor: 'rgba(0,0,204,0.08)',
+          pointBackgroundColor: '#0000cc',
+          pointBorderColor: '#888888',
           borderWidth: 2,
           fill: true,
           tension: 0.3,
-          pointRadius: history.length > 100 ? 0 : 1,
+          pointRadius: history.length > 100 ? 0 : 2,
           pointHoverRadius: 4,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Score Zuwachs',
+          data: deltas,
+          type: 'bar',
+          backgroundColor: 'rgba(204,0,0,0.4)',
+          borderColor: '#cc0000',
+          borderWidth: 1,
+          borderRadius: 0,
+          yAxisID: 'y1',
+          order: 2,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { display: false },
+        legend: { display: true },
         tooltip: {
           backgroundColor: '#ffffff',
           borderColor: '#808080',
           borderWidth: 1,
+          cornerRadius: 0,
           titleColor: '#1a1a1a',
           bodyColor: '#444444',
-          titleFont: { family: "'Courier New', monospace" },
-          bodyFont: { family: "'Courier New', monospace" },
+          titleFont: { weight: 'bold', size: 11, family: "'Courier New', monospace" },
+          bodyFont: { size: 10, family: "'Courier New', monospace" },
+          padding: 8,
+          displayColors: true,
+          usePointStyle: true,
           callbacks: {
-            label: function(ctx) { return 'Score: ' + formatScore(ctx.raw); },
+            label: function(ctx) {
+              if (ctx.dataset.yAxisID === 'y1') {
+                return 'Zuwachs: +' + formatScore(ctx.parsed.y);
+              }
+              return 'Score: ' + formatScore(ctx.parsed.y);
+            },
           },
         },
       },
       scales: {
         x: {
           grid: { display: false },
-          ticks: { font: { size: 9, family: "'Courier New', monospace" }, maxTicksLimit: 12 },
+          ticks: { font: { size: 9, family: "'Courier New', monospace" }, maxRotation: 45, maxTicksLimit: 12 },
         },
         y: {
+          position: 'left',
+          title: { display: true, text: 'Total Score', font: { size: 10, family: "'Courier New', monospace" } },
           ticks: {
-            callback: v => formatScore(v),
+            callback: function(v) { return formatScore(v); },
             font: { size: 9, family: "'Courier New', monospace" },
           },
           grid: { color: 'rgba(0,0,0,0.06)' },
         },
+        y1: {
+          position: 'right',
+          title: { display: true, text: 'Zuwachs', font: { size: 10, family: "'Courier New', monospace" } },
+          ticks: {
+            callback: function(v) { return formatScore(v); },
+            font: { size: 9, family: "'Courier New', monospace" },
+          },
+          grid: { drawOnChartArea: false },
+        },
       },
     },
   });
+}
+
+/**
+ * Renders the history table with score and WU data per period.
+ * Shows most recent entries first. Uses escapeHtml for safety.
+ * @param {Array<{ date: string, score: number, score_delta: number, wus: number, wus_delta: number }>} history - Historical data.
+ */
+function renderHistoryTable(history) {
+  var tbody = document.getElementById('donor-history-table-body');
+  if (!tbody) return;
+
+  if (!history || history.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="history-table-empty">Keine Daten verfuegbar.</td></tr>';
+    return;
+  }
+
+  history = ensureDeltas(history);
+
+  // Show newest first in the table
+  var rows = [];
+  for (var i = history.length - 1; i >= 0; i--) {
+    var h = history[i];
+    var deltaClass = h.score_delta > 0 ? 'delta-positive' : 'delta-zero';
+    var wuDeltaClass = h.wus_delta > 0 ? 'delta-positive' : 'delta-zero';
+    var deltaPrefix = h.score_delta > 0 ? '+' : '';
+    var wuDeltaPrefix = h.wus_delta > 0 ? '+' : '';
+
+    rows.push(
+      '<tr>' +
+        '<td>' + escapeHtml(h.date) + '</td>' +
+        '<td>' + escapeHtml(formatScore(h.score)) + '</td>' +
+        '<td class="' + deltaClass + '">' + escapeHtml(deltaPrefix + formatScore(h.score_delta)) + '</td>' +
+        '<td>' + escapeHtml(formatNumber(h.wus)) + '</td>' +
+        '<td class="' + wuDeltaClass + '">' + escapeHtml(wuDeltaPrefix + formatNumber(h.wus_delta)) + '</td>' +
+      '</tr>'
+    );
+  }
+
+  tbody.innerHTML = rows.join('');
 }
 
 /**
@@ -174,6 +277,7 @@ function setupDonorPeriodButtons() {
           if (history.length > 0) {
             renderHistoryChart(history);
           }
+          renderHistoryTable(history);
         })
         .catch(function(err) {
           console.error('[DONOR] Period switch failed:', err.message);
@@ -582,6 +686,7 @@ async function loadDonorProfile() {
     renderKPIs(summary);
     renderGains(summary);
     renderHistoryChart(summary.history);
+    renderHistoryTable(summary.history);
     setupDonorPeriodButtons();
     renderComparison(summary);
 
