@@ -2338,9 +2338,9 @@ app.get('/api/donor/:name/summary', heavyRateLimit, async (req, res) => {
     const avgScore = totalScore / members.length;
     const avgWUs = totalWUs / members.length;
 
-    // Last 90 days of daily history from DB
+    // Last 168 hours (7 days) of hourly history from DB
     const history = db.prepare(
-      "SELECT strftime('%Y-%m-%d', timestamp) as date, MAX(score) as score, MAX(wus) as wus, MIN(rank) as best_rank FROM member_snapshots WHERE name = ? GROUP BY date ORDER BY date DESC LIMIT 90"
+      "SELECT strftime('%Y-%m-%d %H:00', timestamp) as date, MAX(score) as score, MAX(wus) as wus, MIN(rank) as best_rank FROM member_snapshots WHERE name = ? GROUP BY date ORDER BY date DESC LIMIT 168"
     ).all(name);
 
     // 7-day gain calculation
