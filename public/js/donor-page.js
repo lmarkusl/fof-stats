@@ -685,9 +685,9 @@ async function loadDonorProfile() {
     const summary = await summaryRes.json();
     renderKPIs(summary);
     renderGains(summary);
-    renderHistoryChart(summary.history);
-    renderHistoryTable(summary.history);
     setupDonorPeriodButtons();
+    var activeBtn = document.querySelector('#donor-history .period-btn.active');
+    if (activeBtn) activeBtn.click();
     renderComparison(summary);
 
     if (achievementsRes.ok) {
