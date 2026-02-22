@@ -53,13 +53,49 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '0');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  // SECURITY: Restrict browser feature access to reduce attack surface
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), magnetometer=(), gyroscope=(), accelerometer=(), autoplay=(), display-capture=(), screen-wake-lock=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/chart.js@4/; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;");
+  // SECURITY: Isolate browsing context to same-origin to prevent cross-origin attacks
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  // SECURITY: Prevent other origins from reading our resources (Spectre-style attacks)
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  // SECURITY: Prevent browsers from pre-fetching DNS for external links
+  res.setHeader('X-DNS-Prefetch-Control', 'off');
+  // SECURITY: Block Adobe Flash/Acrobat cross-domain policy files
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
   // Prevent caching of API responses that may contain user-specific data
   if (req.path.startsWith('/api/')) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.setHeader('Pragma', 'no-cache');
+  }
+  next();
+});
+
+// ============================================================
+// HTTP method restriction
+// ============================================================
+// SECURITY: Only allow methods actually used by the application.
+// Blocks TRACE (XST attacks), DELETE, PUT, PATCH, etc.
+const ALLOWED_METHODS = new Set(['GET', 'HEAD', 'POST', 'OPTIONS']);
+app.use((req, res, next) => {
+  if (!ALLOWED_METHODS.has(req.method)) {
+    res.setHeader('Allow', 'GET, HEAD, POST, OPTIONS');
+    return res.status(405).json({ error: 'Method not allowed.' });
+  }
+  next();
+});
+
+// ============================================================
+// URL length limit
+// ============================================================
+// SECURITY: Reject excessively long URLs that could indicate buffer overflow
+// attempts, ReDoS payloads, or other abuse. 2048 is the common practical limit.
+const MAX_URL_LENGTH = 2048;
+app.use((req, res, next) => {
+  if (req.originalUrl.length > MAX_URL_LENGTH) {
+    return res.status(414).json({ error: 'URI too long.' });
   }
   next();
 });
@@ -239,6 +275,10 @@ function validateAchievementId(id) {
 const db = new Database(path.join(__dirname, 'fah-stats.db'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
+// SECURITY: Disable trusted_schema to prevent malicious triggers/views from
+// executing arbitrary SQL. Hardens against second-order injection if the DB
+// file is ever tampered with.
+db.pragma('trusted_schema = OFF');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS team_snapshots (
@@ -4257,7 +4297,7 @@ app.get('/api/raffle', (req, res) => {
  *   message: string
  * }
  */
-app.post('/api/raffle/draw', express.json(), (req, res) => {
+app.post('/api/raffle/draw', express.json({ limit: '1kb' }), (req, res) => {
   // Draw for previous month
   const now = new Date();
   const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -4702,6 +4742,8 @@ const server = app.listen(PORT, () => {
 // SECURITY: Set timeouts to prevent slow-loris and similar DoS attacks
 server.keepAliveTimeout = 65 * 1000; // slightly above typical LB idle timeout
 server.headersTimeout = 66 * 1000;   // must be > keepAliveTimeout
+// SECURITY: Limit total time a request can take (prevents hung connections)
+server.requestTimeout = 30 * 1000;   // 30 seconds max per request
 
 // ============================================================
 // Graceful shutdown
