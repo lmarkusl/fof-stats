@@ -66,7 +66,6 @@ function initTabContent(tabId) {
     if (typeof initWeather === 'function') initWeather();
     if (typeof initCertificate === 'function') initCertificate();
     if (typeof initExportFeatures === 'function') initExportFeatures();
-    if (typeof initMilestoneChronology === 'function') initMilestoneChronology();
     if (typeof initCompare === 'function') initCompare();
   }
 }
