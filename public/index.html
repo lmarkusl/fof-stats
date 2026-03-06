@@ -163,6 +163,15 @@
     </div>
   </section>
 
+  <!-- MILESTONE EHRUNG -->
+  <section class="section" id="milestone-ehrung-section">
+    <div class="container">
+      <div class="card" id="milestone-ehrung-card" style="padding: 0; overflow: hidden;">
+        <div class="ehrung-loading" style="padding: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">Lade Meilenstein-Ehrungen...</div>
+      </div>
+    </div>
+  </section>
+
   <!-- PPD / THROUGHPUT -->
   <section class="section" id="ppd-section">
     <div class="container">
@@ -202,7 +211,7 @@
     </div>
   </section>
 
-  <!-- MILESTONES + RANK PREDICTION -->
+  <!-- MILESTONES -->
   <section class="section" id="milestones">
     <div class="container">
       <div class="section-header">
@@ -210,7 +219,7 @@
           <span class="section-icon" aria-hidden="true">&#x1F3AF;</span>
           FORECAST.EXE
         </h2>
-        <p class="section-subtitle">Meilensteine und Rang-Prognosen basierend auf historischen Daten</p>
+        <p class="section-subtitle">Meilensteine basierend auf historischen Daten</p>
       </div>
 
       <div class="forecast-grid">
@@ -219,13 +228,6 @@
           <div class="forecast-card-subtitle">Naechste Punkte-Meilensteine mit geschaetzter Ankunft</div>
           <div id="milestone-tracker">
             <div class="forecast-loading">Lade Meilenstein-Daten...</div>
-          </div>
-        </div>
-        <div class="card forecast-card">
-          <div class="forecast-card-title">PREDICT.COM</div>
-          <div class="forecast-card-subtitle">Rang-Entwicklung basierend auf 30-Tage-Trend</div>
-          <div id="rank-prediction">
-            <div class="forecast-loading">Lade Prognose-Daten...</div>
           </div>
         </div>
       </div>
@@ -751,6 +753,7 @@
   <script src="/js/utils.js" defer></script>
   <script src="/js/charts.js" defer></script>
   <script src="/js/feature-milestone.js" defer></script>
+  <script src="/js/feature-ehrung.js" defer></script>
   <script src="/js/feature-heatmap.js" defer></script>
   <script src="/js/feature-social.js" defer></script>
   <script src="/js/feature-profile.js" defer></script>

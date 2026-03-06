@@ -26,7 +26,22 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
-const { parseMembers } = require('./lib');
+const nodemailer = require('nodemailer');
+const { parseMembers, formatScore } = require('./lib');
+
+// SMTP email configuration (optional - milestones only send if configured)
+const smtpTransport = (process.env.SMTP_HOST && process.env.SMTP_PORT) ? nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT, 10),
+  secure: parseInt(process.env.SMTP_PORT, 10) === 465,
+  auth: (process.env.SMTP_USER && process.env.SMTP_PASS) ? {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  } : undefined,
+}) : null;
+
+const SMTP_FROM = process.env.SMTP_FROM || 'noreply@fof-stats.de';
+const MILESTONE_NOTIFY_EMAIL = process.env.MILESTONE_NOTIFY_EMAIL || null;
 
 // ============================================================
 // App initialization & constants
@@ -579,8 +594,45 @@ function finalizeExpiredDuels() {
   }
 }
 
-/** Score thresholds that trigger milestone events (1M, 10M, ... 1T). */
-const MILESTONE_THRESHOLDS = [1e6, 10e6, 100e6, 1e9, 10e9, 100e9, 1e12];
+/** Score thresholds that trigger milestone events (1M, 2M, ..., 1T). */
+const MILESTONE_THRESHOLDS = (function() {
+  var thresholds = [];
+  var bases = [1e6, 10e6, 100e6, 1e9, 10e9, 100e9];
+  for (var b = 0; b < bases.length; b++) {
+    for (var m = 1; m <= 9; m++) {
+      thresholds.push(bases[b] * m);
+    }
+  }
+  thresholds.push(1e12);
+  return thresholds;
+})();
+
+/**
+ * Send milestone notification email (fire-and-forget, never throws).
+ * @param {string} memberName
+ * @param {string} milestone - threshold as string
+ * @param {number} scoreAtTime
+ */
+async function sendMilestoneEmail(memberName, milestone, scoreAtTime) {
+  if (!smtpTransport || !MILESTONE_NOTIFY_EMAIL) return;
+  try {
+    const milestoneFormatted = formatScore(Number(milestone));
+    await smtpTransport.sendMail({
+      from: SMTP_FROM,
+      to: MILESTONE_NOTIFY_EMAIL,
+      subject: `[FOF Stats] Meilenstein: ${memberName} hat ${milestoneFormatted} Punkte erreicht!`,
+      text: `Hallo!\n\n${memberName} hat den Meilenstein von ${milestoneFormatted} Punkten erreicht.\n\nAktueller Score: ${formatScore(scoreAtTime)}\nZeitpunkt: ${new Date().toISOString()}\n\nGruesse,\nFOF Stats Bot`,
+      html: `<h2>&#x2B50; Meilenstein erreicht!</h2>
+<p><strong>${memberName}</strong> hat den Meilenstein von <strong>${milestoneFormatted} Punkten</strong> erreicht.</p>
+<p>Aktueller Score: ${formatScore(scoreAtTime)}<br>Zeitpunkt: ${new Date().toISOString()}</p>
+<p><a href="https://fof-stats.de/donor.html?name=${encodeURIComponent(memberName)}">Profil ansehen</a></p>
+<p>-- FOF Stats Bot</p>`,
+    });
+    console.log(`[EMAIL] Milestone notification sent for ${memberName} at ${milestone}`);
+  } catch (err) {
+    console.error(`[EMAIL] Failed to send milestone notification:`, err.message);
+  }
+}
 
 // ============================================================
 // Achievements system - definition loading & DB access
@@ -1698,15 +1750,28 @@ async function takeSnapshot() {
     })));
 
     // Detect milestone crossings for each member
+    const newMilestones = [];
     for (const m of members) {
       for (const threshold of MILESTONE_THRESHOLDS) {
         if (m.score >= threshold) {
-          insertMilestone.run(m.name, String(threshold), m.score);
+          const result = insertMilestone.run(m.name, String(threshold), m.score);
+          if (result.changes > 0) {
+            newMilestones.push({ name: m.name, milestone: String(threshold), score: m.score });
+          }
         }
       }
     }
 
-    console.log(`[SNAPSHOT] score=${teamData.score}, members=${members.length}`);
+    // Send email notifications for newly detected milestones (cap to avoid flood on threshold expansion)
+    if (newMilestones.length > 0 && newMilestones.length <= 20) {
+      for (const nm of newMilestones) {
+        sendMilestoneEmail(nm.name, nm.milestone, nm.score);
+      }
+    } else if (newMilestones.length > 20) {
+      console.log(`[SNAPSHOT] Skipping email notifications: ${newMilestones.length} new milestones detected (likely threshold expansion backfill)`);
+    }
+
+    console.log(`[SNAPSHOT] score=${teamData.score}, members=${members.length}, new_milestones=${newMilestones.length}`);
 
     // Re-evaluate achievements for active members.
     // SECURITY/DoS: Cap evaluation to prevent CPU exhaustion if member list grows very large.
@@ -2150,34 +2215,6 @@ app.get('/api/milestones', (req, res) => {
     daily_rate: Math.round(dailyRate),
     weekly_rate: Math.round(dailyRate * 7),
     milestones,
-  });
-});
-
-/** GET /api/prediction/rank - Predict future team rank based on 30-day linear trend */
-app.get('/api/prediction/rank', (req, res) => {
-  const history = db.prepare(`
-    SELECT rank, score, timestamp FROM team_snapshots
-    WHERE timestamp >= datetime('now', '-30 days')
-    ORDER BY timestamp DESC
-    LIMIT 30
-  `).all();
-
-  if (history.length < 2) return res.json({ predictions: [] });
-
-  const latest = history[0];
-  const oldest = history[history.length - 1];
-  const daysDiff = (new Date(latest.timestamp) - new Date(oldest.timestamp)) / 86400000;
-  const rankChange = daysDiff > 0 ? (oldest.rank - latest.rank) / daysDiff : 0;
-
-  const predictions = [7, 14, 30, 90].map(days => ({
-    days,
-    predicted_rank: Math.max(1, Math.round(latest.rank - rankChange * days)),
-  }));
-
-  res.json({
-    current_rank: latest.rank,
-    rank_change_per_day: parseFloat(rankChange.toFixed(3)),
-    predictions,
   });
 });
 

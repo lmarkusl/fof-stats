@@ -1364,11 +1364,11 @@ button:focus-visible {
 }
 
 /* ============================================================
-   FORECAST: Milestones + Rank Prediction
+   FORECAST: Milestones
    ============================================================ */
 .forecast-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -1481,46 +1481,6 @@ button:focus-visible {
 }
 
 .milestone-empty {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-family: var(--font-mono);
-  padding: 16px;
-}
-
-/* Rank prediction */
-.prediction-current {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-  padding: 8px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-}
-
-.prediction-table table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-}
-
-.prediction-table th {
-  background: #d4d4d4;
-  padding: 6px 12px;
-  text-align: left;
-  border: 1px solid var(--border-strong);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-}
-
-.prediction-table td {
-  padding: 6px 12px;
-  border: 1px solid #d0d0d0;
-  background: #ffffff;
-}
-
-.prediction-empty {
   color: var(--text-muted);
   font-size: 0.8rem;
   font-family: var(--font-mono);

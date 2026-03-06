@@ -1,31 +1,20 @@
 // ============================================================
-// Feature: Milestone Tracker + Rank Prediction
+// Feature: Milestone Tracker
 // ============================================================
 
 // Utilities provided by utils.js (escapeHtml, formatScore, formatNumber, formatScoreShort)
 
 async function initMilestoneFeatures() {
   try {
-    const [milestonesRes, predictionRes] = await Promise.all([
-      fetch('/api/milestones'),
-      fetch('/api/prediction/rank'),
-    ]);
-
-    if (milestonesRes.ok) {
-      const data = await milestonesRes.json();
+    var res = await fetch('/api/milestones');
+    if (res.ok) {
+      var data = await res.json();
       renderMilestones(data);
-    }
-
-    if (predictionRes.ok) {
-      const pred = await predictionRes.json();
-      renderPredictions(pred);
     }
   } catch (err) {
     console.error('[MILESTONES] Load failed:', err.message);
     var msEl = document.getElementById('milestone-tracker');
     if (msEl) msEl.innerHTML = '<div class="milestone-empty">Fehler beim Laden der Meilenstein-Daten.</div>';
-    var rpEl = document.getElementById('rank-prediction');
-    if (rpEl) rpEl.innerHTML = '<div class="prediction-empty">Fehler beim Laden der Prognose-Daten.</div>';
   }
 }
 
@@ -69,35 +58,3 @@ function renderMilestones(data) {
 
   container.innerHTML = rateHtml + '<div class="milestones-list">' + milestonesHtml + '</div>';
 }
-
-function renderPredictions(data) {
-  const container = document.getElementById('rank-prediction');
-  if (!container) return;
-
-  if (!data.predictions || data.predictions.length === 0) {
-    container.innerHTML = '<div class="prediction-empty">Noch nicht genug historische Daten fuer Rang-Prognosen.</div>';
-    return;
-  }
-
-  const direction = data.rank_change_per_day < 0 ? 'aufsteigend' : data.rank_change_per_day > 0 ? 'absteigend' : 'stabil';
-
-  const html = `
-    <div class="prediction-current">
-      Aktueller Rang: <strong>#${escapeHtml(String(data.current_rank))}</strong> | Trend: <strong>${escapeHtml(direction)}</strong> (${data.rank_change_per_day > 0 ? '+' : ''}${escapeHtml(data.rank_change_per_day.toFixed(2))}/Tag)
-    </div>
-    <div class="prediction-table">
-      <table>
-        <tr><th>Zeitraum</th><th>Prognose</th></tr>
-        ${data.predictions.map(p => `
-          <tr>
-            <td>${escapeHtml(String(p.days))} Tage</td>
-            <td><strong>#${escapeHtml(String(p.predicted_rank))}</strong></td>
-          </tr>
-        `).join('')}
-      </table>
-    </div>
-  `;
-
-  container.innerHTML = html;
-}
-

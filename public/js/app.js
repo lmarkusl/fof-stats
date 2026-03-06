@@ -575,9 +575,14 @@ async function loadDashboard(isRefresh = false) {
     const funStats = computeFunStats(team, members);
     renderAchievements(funStats);
 
-    // New features: Milestones + Rank Prediction
+    // Milestones
     if (typeof initMilestoneFeatures === 'function') {
       initMilestoneFeatures();
+    }
+
+    // Milestone Ehrung
+    if (typeof initMilestoneEhrung === 'function') {
+      initMilestoneEhrung();
     }
 
     // Social: Streak + Member of the Week
