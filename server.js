@@ -2685,7 +2685,7 @@ app.get('/api/milestones/chronology', (req, res) => {
   const rows = db.prepare(`
     SELECT name, MAX(CAST(milestone AS INTEGER)) as milestone, MAX(score_at_time) as score_at_time, detected_at
     FROM milestone_events
-    WHERE detected_at >= '2026-03-01 00:00:00'
+    WHERE detected_at >= '2026-02-22 00:00:00'
     GROUP BY name, detected_at
     ORDER BY detected_at DESC, milestone DESC
     LIMIT ?
