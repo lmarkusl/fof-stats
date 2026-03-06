@@ -2685,6 +2685,7 @@ app.get('/api/milestones/chronology', (req, res) => {
   const rows = db.prepare(`
     SELECT name, MAX(CAST(milestone AS INTEGER)) as milestone, MAX(score_at_time) as score_at_time, detected_at
     FROM milestone_events
+    WHERE detected_at >= '2026-03-01 00:00:00'
     GROUP BY name, detected_at
     ORDER BY detected_at DESC, milestone DESC
     LIMIT ?
@@ -2694,6 +2695,19 @@ app.get('/api/milestones/chronology', (req, res) => {
   rows.forEach(r => { r.milestone = String(r.milestone); });
 
   res.json(rows);
+});
+
+/** GET /api/test-email - Send a test milestone notification email */
+app.get('/api/test-email', async (req, res) => {
+  if (!smtpTransport || !MILESTONE_NOTIFY_EMAIL) {
+    return res.json({ error: 'Email nicht konfiguriert. MILESTONE_NOTIFY_EMAIL und nodemailer muessen eingerichtet sein.' });
+  }
+  try {
+    await sendMilestoneEmail('TestUser', '1000000000', 1234567890);
+    res.json({ success: true, message: 'Test-Email gesendet an ' + MILESTONE_NOTIFY_EMAIL });
+  } catch (err) {
+    res.json({ error: 'Email-Versand fehlgeschlagen: ' + err.message });
+  }
 });
 
 /**
