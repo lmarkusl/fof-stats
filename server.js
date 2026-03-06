@@ -26,12 +26,13 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
-const nodemailer = require('nodemailer');
+let nodemailer;
+try { nodemailer = require('nodemailer'); } catch (_) { nodemailer = null; }
 const { parseMembers, formatScore } = require('./lib');
 
 // SMTP email configuration (optional - milestones only send if configured)
 const MILESTONE_NOTIFY_EMAIL = process.env.MILESTONE_NOTIFY_EMAIL || null;
-const smtpTransport = MILESTONE_NOTIFY_EMAIL ? nodemailer.createTransport({
+const smtpTransport = (nodemailer && MILESTONE_NOTIFY_EMAIL) ? nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'localhost',
   port: parseInt(process.env.SMTP_PORT || '25', 10),
   secure: false,
@@ -43,6 +44,8 @@ const smtpTransport = MILESTONE_NOTIFY_EMAIL ? nodemailer.createTransport({
 }) : null;
 
 const SMTP_FROM = process.env.SMTP_FROM || 'noreply@fof-stats.de';
+
+if (!nodemailer) console.warn('[EMAIL] nodemailer not installed - email notifications disabled. Run: npm install nodemailer');
 
 // ============================================================
 // App initialization & constants
