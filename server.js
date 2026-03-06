@@ -2680,11 +2680,15 @@ app.get('/api/milestones/chronology', (req, res) => {
   const limit = validatePositiveInt(req.query.limit, 100, 500);
 
   const rows = db.prepare(`
-    SELECT name, milestone, score_at_time, detected_at
+    SELECT name, MAX(CAST(milestone AS INTEGER)) as milestone, MAX(score_at_time) as score_at_time, detected_at
     FROM milestone_events
-    ORDER BY detected_at DESC
+    GROUP BY name, detected_at
+    ORDER BY detected_at DESC, milestone DESC
     LIMIT ?
   `).all(limit);
+
+  // Convert milestone back to string for consistency
+  rows.forEach(r => { r.milestone = String(r.milestone); });
 
   res.json(rows);
 });
