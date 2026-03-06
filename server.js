@@ -2700,13 +2700,20 @@ app.get('/api/milestones/chronology', (req, res) => {
 /** GET /api/test-email - Send a test milestone notification email */
 app.get('/api/test-email', async (req, res) => {
   if (!smtpTransport || !MILESTONE_NOTIFY_EMAIL) {
-    return res.json({ error: 'Email nicht konfiguriert. MILESTONE_NOTIFY_EMAIL und nodemailer muessen eingerichtet sein.' });
+    return res.json({ error: 'Email nicht konfiguriert. MILESTONE_NOTIFY_EMAIL und nodemailer muessen eingerichtet sein.', nodemailer: !!nodemailer, recipient: MILESTONE_NOTIFY_EMAIL });
   }
   try {
-    await sendMilestoneEmail('TestUser', '1000000000', 1234567890);
-    res.json({ success: true, message: 'Test-Email gesendet an ' + MILESTONE_NOTIFY_EMAIL });
+    const milestoneFormatted = formatScore(1e9);
+    const info = await smtpTransport.sendMail({
+      from: SMTP_FROM,
+      to: MILESTONE_NOTIFY_EMAIL,
+      subject: '[FOF Stats] Test: Meilenstein-Benachrichtigung',
+      text: 'Hallo!\n\nDies ist eine Test-Email von FOF Stats.\n\nWenn du diese Email siehst, funktioniert die Meilenstein-Benachrichtigung.\n\nBeispiel: TestUser hat den Meilenstein von ' + milestoneFormatted + ' Punkten erreicht.\n\nGruesse,\nFOF Stats Bot',
+      html: '<h2>&#x2B50; Test: Meilenstein-Benachrichtigung</h2><p>Dies ist eine Test-Email von FOF Stats.</p><p>Wenn du diese Email siehst, funktioniert die Meilenstein-Benachrichtigung.</p><p><strong>Beispiel:</strong> TestUser hat den Meilenstein von <strong>' + milestoneFormatted + ' Punkten</strong> erreicht.</p><p>-- FOF Stats Bot</p>',
+    });
+    res.json({ success: true, message: 'Test-Email gesendet an ' + MILESTONE_NOTIFY_EMAIL, smtp_response: info.response, message_id: info.messageId });
   } catch (err) {
-    res.json({ error: 'Email-Versand fehlgeschlagen: ' + err.message });
+    res.json({ success: false, error: err.message, code: err.code, command: err.command });
   }
 });
 
