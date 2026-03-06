@@ -1052,12 +1052,12 @@ async function initTeamOverviewChart() {
   try {
     const res = await fetch('/api/history/team?period=daily&limit=90');
     const history = res.ok ? await res.json() : [];
-    buildTeamOverviewChart(history);
     renderTeamHistoryTable(history);
+    buildTeamOverviewChart(history);
   } catch (err) {
     console.error('[CHARTS] Team overview fetch failed:', err.message);
-    buildTeamOverviewChart(null);
     renderTeamHistoryTable(null);
+    buildTeamOverviewChart(null);
   }
 }
 
