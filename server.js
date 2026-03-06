@@ -35,7 +35,7 @@ const MILESTONE_NOTIFY_EMAIL = process.env.MILESTONE_NOTIFY_EMAIL || null;
 const smtpTransport = (nodemailer && MILESTONE_NOTIFY_EMAIL) ? nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'localhost',
   port: parseInt(process.env.SMTP_PORT || '25', 10),
-  secure: false,
+  secure: parseInt(process.env.SMTP_PORT || '25', 10) === 465,
   tls: { rejectUnauthorized: false },
   auth: (process.env.SMTP_USER && process.env.SMTP_PASS) ? {
     user: process.env.SMTP_USER,
