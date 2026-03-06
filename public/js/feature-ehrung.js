@@ -116,7 +116,12 @@ function initMilestoneEhrung() {
       for (var i = 0; i < data.length; i++) {
         var item = data[i];
         var label = thresholdLabels[item.milestone] || formatScore(Number(item.milestone));
-        var dateStr = item.detected_at ? item.detected_at.split('T')[0] : '---';
+        var dateStr = '---';
+        if (item.detected_at) {
+          var d = new Date(item.detected_at.replace(' ', 'T') + 'Z');
+          dateStr = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            + ' ' + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        }
         html += '<div class="ehrung-item">'
           + '<span class="ehrung-icon">&#x2B50;</span>'
           + '<a class="ehrung-name" href="/donor.html?name=' + encodeURIComponent(item.name) + '">' + escapeHtml(item.name) + '</a>'
