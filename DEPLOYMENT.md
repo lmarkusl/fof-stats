@@ -178,3 +178,37 @@ pm2 restart fah-stats
 # Plesk: Logs im Plesk Panel unter
 # Websites & Domains > Logs
 ```
+
+---
+
+## Email-Benachrichtigungen (Meilensteine)
+
+Standardmaessig sind E-Mail-Benachrichtigungen **deaktiviert**.
+
+### Aktivierung
+
+Umgebungsvariable setzen:
+
+```bash
+MILESTONE_NOTIFY_EMAIL=empfaenger@example.de
+```
+
+Damit werden E-Mails verschickt, wenn ein Mitglied einen neuen Score-Meilenstein erreicht.
+
+### SMTP-Konfiguration
+
+Standardmaessig wird **localhost SMTP (Port 25)** verwendet - funktioniert auf Plesk-Servern mit lokalem Mailversand ohne weitere Konfiguration.
+
+Optionale Umgebungsvariablen zum Ueberschreiben:
+
+| Variable | Standard | Beschreibung |
+|----------|----------|--------------|
+| `SMTP_HOST` | `localhost` | SMTP-Server |
+| `SMTP_PORT` | `25` | SMTP-Port |
+| `SMTP_USER` | *(leer)* | SMTP-Benutzername (nur bei externem Server) |
+| `SMTP_PASS` | *(leer)* | SMTP-Passwort (nur bei externem Server) |
+| `SMTP_FROM` | `noreply@fof-stats.de` | Absenderadresse |
+
+### Spam-Schutz
+
+Pro Snapshot-Zyklus werden maximal **20 E-Mails** verschickt.

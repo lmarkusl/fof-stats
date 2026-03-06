@@ -30,10 +30,12 @@ const nodemailer = require('nodemailer');
 const { parseMembers, formatScore } = require('./lib');
 
 // SMTP email configuration (optional - milestones only send if configured)
-const smtpTransport = (process.env.SMTP_HOST && process.env.SMTP_PORT) ? nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT, 10),
-  secure: parseInt(process.env.SMTP_PORT, 10) === 465,
+const MILESTONE_NOTIFY_EMAIL = process.env.MILESTONE_NOTIFY_EMAIL || null;
+const smtpTransport = MILESTONE_NOTIFY_EMAIL ? nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'localhost',
+  port: parseInt(process.env.SMTP_PORT || '25', 10),
+  secure: false,
+  tls: { rejectUnauthorized: false },
   auth: (process.env.SMTP_USER && process.env.SMTP_PASS) ? {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -41,7 +43,6 @@ const smtpTransport = (process.env.SMTP_HOST && process.env.SMTP_PORT) ? nodemai
 }) : null;
 
 const SMTP_FROM = process.env.SMTP_FROM || 'noreply@fof-stats.de';
-const MILESTONE_NOTIFY_EMAIL = process.env.MILESTONE_NOTIFY_EMAIL || null;
 
 // ============================================================
 // App initialization & constants
