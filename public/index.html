@@ -129,13 +129,35 @@
       <div class="card chart-card">
         <div class="history-controls" style="margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap;">
           <span style="color:var(--text-secondary); font-size:0.85rem; align-self:center;">Zeitraum:</span>
-          <button class="period-btn team-history-btn active" data-period="hourly">Stuendlich</button>
-          <button class="period-btn team-history-btn" data-period="daily">Taeglich</button>
+          <button class="period-btn team-history-btn" data-period="hourly">Stuendlich</button>
+          <button class="period-btn team-history-btn active" data-period="daily">Taeglich</button>
           <button class="period-btn team-history-btn" data-period="weekly">Woechentlich</button>
           <button class="period-btn team-history-btn" data-period="monthly">Monatlich</button>
         </div>
         <div class="chart-container" id="chart-team-overview">
           <div class="skeleton" style="width:100%;height:100%;"></div>
+        </div>
+      </div>
+      <!-- History Table -->
+      <div class="card team-history-table-card">
+        <div class="team-history-table-header">
+          <span class="section-icon">&#x1F4CB;</span> PUNKTE-HISTORIE
+        </div>
+        <div class="team-history-table-wrap">
+          <table class="team-history-table" id="team-history-table">
+            <thead>
+              <tr>
+                <th>Zeitraum</th>
+                <th>Score</th>
+                <th>Zuwachs</th>
+                <th>Work Units</th>
+                <th>WU Zuwachs</th>
+              </tr>
+            </thead>
+            <tbody id="team-history-table-body">
+              <tr><td colspan="5" class="history-table-empty">Lade Daten...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -401,8 +423,8 @@
           <div class="chart-card-subtitle">Historischer Trend mit Zuwachs pro Periode</div>
           <div class="history-controls" style="margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap;">
             <span style="color:var(--text-secondary); font-size:0.85rem; align-self:center;">Zeitraum:</span>
-            <button class="period-btn active" data-period="hourly">Stuendlich</button>
-            <button class="period-btn" data-period="daily">Taeglich</button>
+            <button class="period-btn" data-period="hourly">Stuendlich</button>
+            <button class="period-btn active" data-period="daily">Taeglich</button>
             <button class="period-btn" data-period="weekly">Woechentlich</button>
             <button class="period-btn" data-period="monthly">Monatlich</button>
           </div>

@@ -1009,14 +1009,55 @@ function buildTeamOverviewChart(history) {
   }
 }
 
+function renderTeamHistoryTable(history) {
+  var tbody = document.getElementById('team-history-table-body');
+  if (!tbody) return;
+
+  if (!history || history.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="history-table-empty">Keine Daten verfuegbar.</td></tr>';
+    return;
+  }
+
+  // Ensure deltas exist
+  for (var i = 0; i < history.length; i++) {
+    if (typeof history[i].score_delta !== 'number') {
+      history[i].score_delta = i === 0 ? 0 : history[i].score - history[i - 1].score;
+      history[i].wus_delta = i === 0 ? 0 : (history[i].wus || 0) - (history[i - 1].wus || 0);
+    }
+  }
+
+  var rows = [];
+  for (var i = history.length - 1; i >= 0; i--) {
+    var h = history[i];
+    var deltaClass = h.score_delta > 0 ? 'delta-positive' : 'delta-zero';
+    var wuDeltaClass = h.wus_delta > 0 ? 'delta-positive' : 'delta-zero';
+    var deltaPrefix = h.score_delta > 0 ? '+' : '';
+    var wuDeltaPrefix = h.wus_delta > 0 ? '+' : '';
+
+    rows.push(
+      '<tr>' +
+        '<td>' + escapeHtml(h.date) + '</td>' +
+        '<td>' + escapeHtml(formatScore(h.score)) + '</td>' +
+        '<td class="' + deltaClass + '">' + escapeHtml(deltaPrefix + formatScore(h.score_delta)) + '</td>' +
+        '<td>' + escapeHtml(formatNumber(h.wus)) + '</td>' +
+        '<td class="' + wuDeltaClass + '">' + escapeHtml(wuDeltaPrefix + formatNumber(h.wus_delta)) + '</td>' +
+      '</tr>'
+    );
+  }
+
+  tbody.innerHTML = rows.join('');
+}
+
 async function initTeamOverviewChart() {
   try {
-    const res = await fetch('/api/history/team?period=hourly&limit=168');
+    const res = await fetch('/api/history/team?period=daily&limit=90');
     const history = res.ok ? await res.json() : [];
     buildTeamOverviewChart(history);
+    renderTeamHistoryTable(history);
   } catch (err) {
     console.error('[CHARTS] Team overview fetch failed:', err.message);
     buildTeamOverviewChart(null);
+    renderTeamHistoryTable(null);
   }
 }
 
@@ -1031,6 +1072,7 @@ function setupTeamOverviewButtons() {
         var res = await fetch('/api/history/team?period=' + period + '&limit=' + limit);
         var history = res.ok ? await res.json() : [];
         buildTeamOverviewChart(history);
+        renderTeamHistoryTable(history);
       } catch (err) {
         console.error('[CHARTS] Team overview period switch failed:', err.message);
       }
