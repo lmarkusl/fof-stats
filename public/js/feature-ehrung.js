@@ -117,7 +117,7 @@ function initMilestoneEhrung() {
         }
         html += '<div class="ehrung-item">'
           + '<span class="ehrung-icon">&#x2B50;</span>'
-          + '<a class="ehrung-name" href="/donor.html?name=' + encodeURIComponent(item.name) + '">' + escapeHtml(item.name) + '</a>'
+          + '<a class="ehrung-name" href="/donor/' + encodeURIComponent(item.name) + '">' + escapeHtml(item.name) + '</a>'
           + '<span>hat</span>'
           + '<span class="ehrung-milestone ' + colorClass + '">' + escapeHtml(label) + '</span>'
           + '<span>Punkte erreicht!</span>'
