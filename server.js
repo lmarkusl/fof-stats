@@ -442,32 +442,6 @@ const insertMilestone = db.prepare(
   'INSERT OR IGNORE INTO milestone_events (name, milestone, score_at_time) VALUES (?, ?, ?)'
 );
 
-// One-time migration: reconstruct milestone dates from historical snapshots
-(function backfillMilestoneDates() {
-  const count = db.prepare(`
-    SELECT COUNT(*) as n FROM milestone_events
-    WHERE detected_at IN (
-      SELECT detected_at FROM milestone_events GROUP BY detected_at HAVING COUNT(*) > 20
-    )
-  `).get();
-  if (!count || count.n === 0) return;
-
-  console.log(`[MIGRATION] Reconstructing milestone dates from historical snapshots (${count.n} entries)...`);
-  const updated = db.prepare(`
-    UPDATE milestone_events SET detected_at = (
-      SELECT MIN(ms.timestamp) FROM member_snapshots ms
-      WHERE ms.name = milestone_events.name
-      AND ms.score >= CAST(milestone_events.milestone AS INTEGER)
-    )
-    WHERE EXISTS (
-      SELECT 1 FROM member_snapshots ms
-      WHERE ms.name = milestone_events.name
-      AND ms.score >= CAST(milestone_events.milestone AS INTEGER)
-    )
-  `).run();
-  console.log(`[MIGRATION] Updated ${updated.changes} milestone dates from snapshot history.`);
-})();
-
 const insertMotwHistory = db.prepare(
   'INSERT OR REPLACE INTO motw_history (week, name, score_gain, wu_gain) VALUES (?, ?, ?, ?)'
 );
