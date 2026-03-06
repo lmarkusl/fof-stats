@@ -11,10 +11,6 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       PORT: 3000,
-      SMTP_HOST: 'localhost',
-      SMTP_PORT: '25',
-      SMTP_FROM: 'noreply@fof-stats.de',
-      MILESTONE_NOTIFY_EMAIL: 'admin@fof-stats.de',
     },
   }],
 };
