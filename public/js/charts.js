@@ -1037,8 +1037,8 @@ function renderTeamHistoryTable(history) {
     rows.push(
       '<tr>' +
         '<td>' + escapeHtml(h.date) + '</td>' +
-        '<td>' + escapeHtml(formatScore(h.score)) + '</td>' +
-        '<td class="' + deltaClass + '">' + escapeHtml(deltaPrefix + formatScore(h.score_delta)) + '</td>' +
+        '<td>' + escapeHtml(formatNumber(h.score)) + '</td>' +
+        '<td class="' + deltaClass + '">' + escapeHtml(deltaPrefix + formatNumber(h.score_delta)) + '</td>' +
         '<td>' + escapeHtml(formatNumber(h.wus)) + '</td>' +
         '<td class="' + wuDeltaClass + '">' + escapeHtml(wuDeltaPrefix + formatNumber(h.wus_delta)) + '</td>' +
       '</tr>'
