@@ -629,7 +629,7 @@ async function sendMilestoneEmail(memberName, milestone, scoreAtTime) {
       html: `<h2>&#x2B50; Meilenstein erreicht!</h2>
 <p><strong>${memberName}</strong> hat den Meilenstein von <strong>${milestoneFormatted} Punkten</strong> erreicht.</p>
 <p>Aktueller Score: ${formatScore(scoreAtTime)}<br>Zeitpunkt: ${new Date().toISOString()}</p>
-<p><a href="https://fof-stats.de/donor.html?name=${encodeURIComponent(memberName)}">Profil ansehen</a></p>
+<p><a href="https://fof-stats.de/donor/${encodeURIComponent(memberName)}">Profil ansehen</a></p>
 <p>-- FOF Stats Bot</p>`,
     });
     console.log(`[EMAIL] Milestone notification sent for ${memberName} at ${milestone}`);
