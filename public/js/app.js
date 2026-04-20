@@ -645,9 +645,6 @@ document.addEventListener('DOMContentLoaded', () => {
     el.textContent = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }, 1000);
 
-  // Cosmetic random PID for the terminal-style UI
-  const pidEl = document.getElementById('process-pid');
-  if (pidEl) pidEl.textContent = Math.floor(Math.random() * 65535);
 });
 
 // ============================================================
