@@ -29,6 +29,7 @@ const Database = require('better-sqlite3');
 let nodemailer;
 try { nodemailer = require('nodemailer'); } catch (_) { nodemailer = null; }
 const { parseMembers, formatScore } = require('./lib');
+const pkg = require('./package.json');
 
 // SMTP email configuration (optional - milestones only send if configured)
 const MILESTONE_NOTIFY_EMAIL = process.env.MILESTONE_NOTIFY_EMAIL || null;
@@ -2002,6 +2003,11 @@ app.use(express.static(path.join(__dirname, 'public'), {
 // ============================================================
 // API routes - live proxy to F@H API
 // ============================================================
+
+/** GET /api/version - App version from package.json (used by footer) */
+app.get('/api/version', (req, res) => {
+  res.json({ version: pkg.version });
+});
 
 /** GET /api/team - Proxy team summary from F@H API */
 app.get('/api/team', async (req, res) => {

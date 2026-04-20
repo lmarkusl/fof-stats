@@ -5,6 +5,17 @@
 // scripts for Content Security Policy compliance.
 // ============================================================
 document.addEventListener('DOMContentLoaded', function () {
+  // App version in footer (source: /api/version -> package.json)
+  var versionEl = document.getElementById('app-version');
+  if (versionEl) {
+    fetch('/api/version')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && data.version) versionEl.textContent = data.version;
+      })
+      .catch(function () { /* keep placeholder on error */ });
+  }
+
   var toggle = document.getElementById('nav-toggle');
   if (!toggle) return;
 
