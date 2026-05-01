@@ -1,8 +1,30 @@
 const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
+const path = require('node:path');
+const { spawn } = require('node:child_process');
 
 const BASE = 'http://localhost:3000';
+
+function pingRoot() {
+  return new Promise((resolve) => {
+    const req = http.get(BASE + '/', (res) => {
+      res.resume();
+      resolve(true);
+    });
+    req.on('error', () => resolve(false));
+    req.setTimeout(500, () => { req.destroy(); resolve(false); });
+  });
+}
+
+async function waitForServer(timeoutMs = 15000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await pingRoot()) return true;
+    await new Promise(r => setTimeout(r, 200));
+  }
+  return false;
+}
 
 function fetchJSON(path) {
   return new Promise((resolve, reject) => {
@@ -30,9 +52,35 @@ function fetchStatus(path) {
 }
 
 // ============================================================
-// API Integration Tests (require running server on port 3000)
+// API Integration Tests
+// Auto-starts server.js on port 3000 if not already running.
 // ============================================================
 describe('API Endpoints', () => {
+  let child = null;
+
+  before(async () => {
+    if (await pingRoot()) return;
+    const serverPath = path.join(__dirname, '..', 'server.js');
+    child = spawn(process.execPath, [serverPath], {
+      cwd: path.join(__dirname, '..'),
+      stdio: ['ignore', 'ignore', 'ignore'],
+      env: { ...process.env, PORT: '3000' },
+    });
+    const ready = await waitForServer();
+    if (!ready) {
+      try { child.kill('SIGTERM'); } catch {}
+      throw new Error('server.js did not become ready on port 3000 within 15s');
+    }
+  });
+
+  after(async () => {
+    if (!child) return;
+    await new Promise((resolve) => {
+      child.once('exit', resolve);
+      child.kill('SIGTERM');
+      setTimeout(() => { try { child.kill('SIGKILL'); } catch {} resolve(); }, 5000);
+    });
+  });
 
   it('GET / returns 200 (HTML page)', async () => {
     const status = await fetchStatus('/');
