@@ -46,6 +46,11 @@ const smtpTransport = (nodemailer && MILESTONE_NOTIFY_EMAIL) ? nodemailer.create
 
 const SMTP_FROM = process.env.SMTP_FROM || 'noreply@fof-stats.de';
 
+// Alert by email when too many hourly snapshots are missing from the last 24h
+// (data gaps, e.g. from a sustained upstream F@H outage). Default: warn at 3
+// missed snapshots/day. Set to 0 to disable. At most one alert email per day.
+const SNAPSHOT_GAP_ALERT_THRESHOLD = parseInt(process.env.SNAPSHOT_GAP_ALERT_THRESHOLD || '3', 10);
+
 if (!nodemailer) console.warn('[EMAIL] nodemailer not installed - email notifications disabled. Run: npm install nodemailer');
 
 // ============================================================
@@ -284,6 +289,11 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_team_ts ON team_snapshots(timestamp);
   CREATE INDEX IF NOT EXISTS idx_member_ts ON member_snapshots(timestamp);
   CREATE INDEX IF NOT EXISTS idx_member_name_ts ON member_snapshots(name, timestamp);
+
+  CREATE TABLE IF NOT EXISTS system_alerts (
+    kind TEXT PRIMARY KEY,
+    last_sent_date TEXT
+  );
 
   CREATE TABLE IF NOT EXISTS donor_achievements (
     donor_name TEXT NOT NULL,
@@ -637,6 +647,33 @@ async function sendMilestoneEmail(memberName, milestone, scoreAtTime) {
     console.log(`[EMAIL] Milestone notification sent for ${memberName} at ${milestone}`);
   } catch (err) {
     console.error(`[EMAIL] Failed to send milestone notification:`, err.message);
+  }
+}
+
+/**
+ * Send a data-gap alert email (fire-and-forget, never throws).
+ * @param {number} missed - number of missing snapshots in the last 24h
+ * @param {number} expected - number of snapshots expected in 24h
+ * @param {string|null} lastSnapshot - timestamp of the most recent snapshot
+ */
+async function sendSnapshotGapAlert(missed, expected, lastSnapshot) {
+  if (!smtpTransport || !MILESTONE_NOTIFY_EMAIL) return;
+  try {
+    const captured = expected - missed;
+    await smtpTransport.sendMail({
+      from: SMTP_FROM,
+      to: MILESTONE_NOTIFY_EMAIL,
+      subject: `[FOF Stats] Warnung: ${missed} fehlende Snapshots in den letzten 24h`,
+      text: `Achtung!\n\nIn den letzten 24 Stunden wurden nur ${captured} von ${expected} erwarteten Snapshots gespeichert (${missed} fehlen).\n\nLetzter Snapshot: ${lastSnapshot || 'unbekannt'}\nZeitpunkt der Pruefung: ${new Date().toISOString()}\n\nMoegliche Ursachen: Ausfall der Folding@Home-API, Netzwerkprobleme oder ein gestoppter Node-Prozess.\n\nGruesse,\nFOF Stats Bot`,
+      html: `<h2>&#x26A0;&#xFE0F; Daten-Luecke erkannt</h2>
+<p>In den letzten 24 Stunden wurden nur <strong>${captured} von ${expected}</strong> erwarteten Snapshots gespeichert (<strong>${missed} fehlen</strong>).</p>
+<p>Letzter Snapshot: ${lastSnapshot || 'unbekannt'}<br>Zeitpunkt der Pruefung: ${new Date().toISOString()}</p>
+<p>Moegliche Ursachen: Ausfall der Folding@Home-API, Netzwerkprobleme oder ein gestoppter Node-Prozess.</p>
+<p>-- FOF Stats Bot</p>`,
+    });
+    console.log(`[EMAIL] Snapshot gap alert sent (${missed} missing of ${expected})`);
+  } catch (err) {
+    console.error(`[EMAIL] Failed to send snapshot gap alert:`, err.message);
   }
 }
 
@@ -2018,9 +2055,48 @@ async function takeSnapshot() {
   }
 }
 
-// Take first snapshot on startup, then every hour
-takeSnapshot();
-const snapshotInterval = setInterval(takeSnapshot, SNAPSHOT_INTERVAL);
+/**
+ * Check for missing hourly snapshots in the last 24h and send an alert email
+ * if the gap reaches SNAPSHOT_GAP_ALERT_THRESHOLD. Sends at most one email per
+ * calendar day (tracked in system_alerts, survives restarts). Runs after every
+ * snapshot tick so it fires even when snapshots are currently failing.
+ */
+function checkSnapshotGaps() {
+  if (SNAPSHOT_GAP_ALERT_THRESHOLD <= 0) return;
+  try {
+    const expected = Math.round((24 * 60 * 60 * 1000) / SNAPSHOT_INTERVAL);
+    const stats = db.prepare(
+      "SELECT COUNT(*) AS c, MAX(timestamp) AS last, MIN(timestamp) AS first FROM team_snapshots WHERE timestamp >= datetime('now', '-24 hours')"
+    ).get();
+    // Don't alert on a fresh database that hasn't collected 24h of history yet.
+    const oldest = db.prepare('SELECT MIN(timestamp) AS first FROM team_snapshots').get();
+    if (!oldest.first || oldest.first > new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) return;
+
+    const missed = Math.max(0, expected - stats.c);
+    if (missed < SNAPSHOT_GAP_ALERT_THRESHOLD) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const last = db.prepare("SELECT last_sent_date FROM system_alerts WHERE kind = 'snapshot_gap'").get();
+    if (last && last.last_sent_date === today) return; // already alerted today
+
+    db.prepare(
+      "INSERT INTO system_alerts (kind, last_sent_date) VALUES ('snapshot_gap', ?) ON CONFLICT(kind) DO UPDATE SET last_sent_date = ?"
+    ).run(today, today);
+    console.warn(`[SNAPSHOT GAP] ${missed} of ${expected} snapshots missing in last 24h - sending alert.`);
+    sendSnapshotGapAlert(missed, expected, stats.last);
+  } catch (err) {
+    console.error('[SNAPSHOT GAP CHECK]', err.message);
+  }
+}
+
+// Take first snapshot on startup, then every hour. The gap check runs after
+// each tick (takeSnapshot swallows its own errors, so it never rejects here).
+async function snapshotTick() {
+  await takeSnapshot();
+  checkSnapshotGaps();
+}
+snapshotTick();
+const snapshotInterval = setInterval(snapshotTick, SNAPSHOT_INTERVAL);
 
 // ============================================================
 // Static file serving
