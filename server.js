@@ -60,6 +60,7 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 const TEAM_ID = 240890;
+const TEAM_NAME = 'FreilaufendeOnlineFuzzies';
 const FAH_API = 'https://api.foldingathome.org';
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const CACHE_MAX_ENTRIES = 500; // SECURITY: prevent unbounded cache growth
@@ -1719,6 +1720,44 @@ async function fahFetch(endpoint) {
   }
 }
 
+/**
+ * Fetch team-level summary stats ({ score, wus, rank }).
+ *
+ * The upstream F@H team-summary endpoint (/team/<id>) has been observed to
+ * return HTTP 500 ("DB:1318: Incorrect number of arguments for PROCEDURE
+ * stats.TeamGet") due to a server-side change on api.foldingathome.org. The
+ * per-member endpoint (/team/<id>/members) still works, so when the summary
+ * endpoint fails we derive score and WU totals by summing the member list and
+ * carry over the team rank from the most recent DB snapshot (rank is a global
+ * standing that cannot be computed from members alone).
+ *
+ * @returns {Promise<{score:number, wus:number, rank:(number|null), member_count:number, derived?:boolean}>}
+ */
+async function fetchTeamData() {
+  try {
+    const data = await fahFetch(`/team/${TEAM_ID}`);
+    if (data && typeof data.score === 'number') return data;
+    throw new Error('Team summary missing score');
+  } catch (err) {
+    // Fallback: derive totals from the member list, which is still served.
+    const members = parseMembers(await fahFetch(`/team/${TEAM_ID}/members`));
+    const score = members.reduce((s, m) => s + (Number(m.score) || 0), 0);
+    const wus = members.reduce((s, m) => s + (Number(m.wus) || 0), 0);
+    const lastRank = db
+      .prepare('SELECT rank FROM team_snapshots WHERE rank IS NOT NULL ORDER BY id DESC LIMIT 1')
+      .get();
+    console.warn(`[fetchTeamData] Upstream team summary failed (${err.message}); derived score/wus from member list.`);
+    return {
+      name: TEAM_NAME,
+      score,
+      wus,
+      rank: lastRank ? lastRank.rank : null,
+      member_count: members.length,
+      derived: true,
+    };
+  }
+}
+
 // ============================================================
 // Periodic snapshot scheduler
 // ============================================================
@@ -1733,7 +1772,7 @@ async function fahFetch(endpoint) {
 async function takeSnapshot() {
   try {
     const [teamData, rawMembers] = await Promise.all([
-      fahFetch(`/team/${TEAM_ID}`),
+      fetchTeamData(),
       fahFetch(`/team/${TEAM_ID}/members`),
     ]);
 
@@ -2012,7 +2051,7 @@ app.get('/api/version', (req, res) => {
 /** GET /api/team - Proxy team summary from F@H API */
 app.get('/api/team', async (req, res) => {
   try {
-    const data = await fahFetch(`/team/${TEAM_ID}`);
+    const data = await fetchTeamData();
     res.json(data);
   } catch (err) {
     console.error('[API /api/team]', err.message);
@@ -2619,7 +2658,7 @@ app.get('/api/leaderboard/monthly', (req, res) => {
  */
 app.get('/api/rivals', async (req, res) => {
   try {
-    const ourTeam = await fahFetch('/team/' + TEAM_ID);
+    const ourTeam = await fetchTeamData();
     if (!ourTeam || !ourTeam.rank) return res.json({ our_team: null, rivals: [] });
 
     const ourRank = ourTeam.rank;
@@ -2819,7 +2858,7 @@ app.get('/api/global-stats', async (req, res) => {
     const [userCount, teamCount, ourTeam] = await Promise.all([
       fahFetch('/user-count'),
       fahFetch('/team/count'),
-      fahFetch(`/team/${TEAM_ID}`),
+      fetchTeamData(),
     ]);
 
     // Extract counts - API may return number directly or as an object
@@ -4554,7 +4593,7 @@ app.get('/api/funfacts', async (req, res) => {
 
     // Rivalry: check who might overtake us or who we might overtake
     try {
-      const ourTeam = await fahFetch('/team/' + TEAM_ID);
+      const ourTeam = await fetchTeamData();
       if (ourTeam && ourTeam.rank && ppd7d > 0) {
         facts.push({
           icon: 'swords', title: 'Rang-Kampf',
