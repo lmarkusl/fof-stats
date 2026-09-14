@@ -15,13 +15,14 @@ function createProfileModal() {
     <div class="profile-modal-content card">
       <div class="profile-modal-header">
         <span class="profile-modal-title">MEMBER.EXE</span>
-        <button class="profile-modal-close" onclick="closeProfileModal()">[ X ]</button>
+        <button class="profile-modal-close">[ X ]</button>
       </div>
       <div class="profile-modal-body" id="profile-modal-body">
         Loading...
       </div>
     </div>
   `;
+  modal.querySelector('.profile-modal-close').addEventListener('click', closeProfileModal);
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeProfileModal();
   });

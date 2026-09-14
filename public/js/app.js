@@ -618,8 +618,9 @@ async function loadDashboard(isRefresh = false) {
     errDiv.className = 'error-banner';
     errDiv.innerHTML = `
       <span>\u26A0\uFE0F Fehler beim Laden der Daten: ${escapeHtml(err.message)}</span>
-      <button onclick="location.reload()">Erneut versuchen</button>
+      <button class="error-retry">Erneut versuchen</button>
     `;
+    errDiv.querySelector('.error-retry').addEventListener('click', () => location.reload());
     main.prepend(errDiv);
   }
 }
