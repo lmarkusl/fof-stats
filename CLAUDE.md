@@ -17,7 +17,7 @@ an interactive retro-themed (DOS/Win95) web frontend with gamification, analytic
 | Backend | Node.js + Express 4 |
 | Database | SQLite via better-sqlite3 (WAL mode) |
 | Frontend | Vanilla HTML/CSS/JS (no framework, no build step) |
-| Charts | Chart.js 4 loaded via CDN with SRI integrity hash |
+| Charts | Chart.js 4.5.1, self-hosted at `public/js/vendor/chart.umd.min.js` (was CDN `@4` + SRI; broke when `@4` resolved to a newer release) |
 | Process Manager | PM2 (ecosystem.config.js) |
 | Tests | Node.js built-in test runner (`node --test`) |
 

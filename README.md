@@ -90,7 +90,7 @@ Das gesamte Dashboard ist im Stil eines DOS/Windows-95-Terminals gestaltet:
 | Backend | Node.js + Express 4 |
 | Datenbank | SQLite via better-sqlite3 (WAL-Modus) |
 | Frontend | Vanilla HTML/CSS/JS (kein Framework, kein Build-Step) |
-| Charts | Chart.js 4 (CDN mit SRI) |
+| Charts | Chart.js 4.5.1 (lokal in `public/js/vendor/`) |
 | Prozessmanager | PM2 |
 | Tests | Node.js built-in Test Runner |
 | Hosting | Plesk VPS mit Git-Extension |
